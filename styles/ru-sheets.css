@@ -1,0 +1,21 @@
+/**
+ * RU-only layout overrides for WoD20 system sheets.
+ * Loaded by Foundry when this module is enabled.
+ *
+ * Notes:
+ * - We scope everything to Russian UI language via html[lang="ru"].
+ * - We target the Application window element for Actor sheets in this system.
+ *   WoD20 adds "wod20" and "wod-sheet" to sheet application classes.
+ */
+
+html[lang="ru"] .app.window-app.wod20.wod-sheet {
+  /* Increase overall sheet window width for longer Russian labels. */
+  width: 920px;
+  min-width: 920px;
+}
+
+/* Optional: keep content from feeling too cramped on wider window. */
+html[lang="ru"] .app.window-app.wod20.wod-sheet .window-content {
+  /* Let inner layout use available space without forcing overflow. */
+  overflow: auto;
+}

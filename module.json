@@ -35,5 +35,8 @@
         "compatibility": {}
       }
     ]
-  }
+  },
+  "styles": [
+    "styles/ru-sheets.css"
+  ]
 }
