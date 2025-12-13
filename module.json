@@ -36,6 +36,9 @@
       }
     ]
   },
+  "esmodules": [
+    "scripts/debug.js"
+  ],
   "styles": [
     "styles/ru-sheets.css"
   ]
