@@ -19,6 +19,14 @@
   "flags": {
     "canUpload": true
   },
+  "languages": [
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json",
+      "flags": {}
+    }
+  ],
   "relationships": {
     "systems": [
       {
