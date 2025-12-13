@@ -1,0 +1,31 @@
+{
+  "id": "foundryvtt_wod_v20_ru",
+  "title": "World of Darkness 20th Russian translation v.2.0",
+  "version": "0.0.1",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "description": "<p>Russian translation and interface adaptation for WoD 20th system</p>",
+  "authors": [
+    {
+      "name": "Ilya \"RUSBAR\" Barkalov",
+      "url": "https://github.com/RUSBAR-ITS",
+      "discord": "rusbar",
+      "flags": {}
+    }
+  ],
+  "url": "https://raw.githubusercontent.com/RUSBAR-ITS/foundryvtt_wod_v20_ru/main/module.json",
+  "flags": {
+    "canUpload": true
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "worldofdarkness",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  }
+}
