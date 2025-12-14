@@ -44,6 +44,9 @@
   ],
   "styles": [
     "styles/ru-vars.css",
-    "styles/ru-sheets.css"
+    "styles/ru-sheets.css",
+    "styles/typography/ru-fonts.css",
+    "styles/typography/ru-typography-vars.css",
+    "styles/typography/ru-core-typography.css"
   ]
 }

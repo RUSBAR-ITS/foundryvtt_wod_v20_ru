@@ -1,0 +1,101 @@
+/**
+ * RU CORE TAB TYPOGRAPHY
+ *
+ * FIXED:
+ * - Column headers are no longer overridden by generic headline rules
+ * - Attribute/Ability labels properly override system font sizes
+ * - Experience (XP) block targets correct container
+ */
+
+/* ============================================================
+ * RU: set main font for the whole sheet
+ * ============================================================ */
+.langRU.wod20,
+.langRU.wod-sheet,
+.langRU.wod20.window-app {
+  --main-font: var(--ru-font-family-main);
+}
+
+/* ============================================================
+ * RU: disable splat fonts (hard rule)
+ * ============================================================ */
+.langRU nav,
+.langRU .splatFont {
+  font-family: var(--main-font) !important;
+}
+
+/* ============================================================
+ * Core tab base (affects dots and inherited text)
+ * ============================================================ */
+.langRU .wod-sheet .tab.core,
+.langRU.wod20 .tab.core {
+  font-family: var(--main-font);
+  font-size: var(--ru-core-font-size);
+  line-height: var(--ru-core-line-height);
+  letter-spacing: var(--ru-core-letter-spacing);
+}
+
+/* ============================================================
+ * Resource dots alignment
+ * ============================================================ */
+.langRU.wod20 .resource-counter .resource-value-step {
+  vertical-align: middle !important;
+}
+
+/* ============================================================
+ * Attribute / Ability / Virtue LABELS
+ * (override system label sizes)
+ * ============================================================ */
+.langRU .tab.core label.headlineNormal,
+.langRU .tab.core label.ability-headlineWidth,
+.langRU .tab.core label.attribute-headlineWidth {
+  font-family: var(--main-font);
+  font-size: var(--ru-core-label-font-size);
+  font-weight: var(--ru-core-label-font-weight);
+  line-height: var(--ru-core-label-line-height);
+}
+
+/* ============================================================
+ * Column headers: Physical / Social / Mental, Talents / Skills / Knowledges
+ * MUST BE AFTER generic headline rules
+ * ============================================================ */
+.langRU .tab.core .attribute-statArea.headlineGroup,
+.langRU .tab.core .ability-statArea.headlineGroup {
+  font-family: var(--main-font) !important;
+  font-size: var(--ru-core-column-header-font-size);
+  font-weight: var(--ru-core-column-header-font-weight);
+  letter-spacing: var(--ru-core-column-header-letter-spacing);
+  line-height: 1.1;
+}
+
+/* ============================================================
+ * Generic headline hierarchy (smaller than column headers)
+ * ============================================================ */
+.langRU .tab.core .headlineGroup,
+.langRU .tab.core .headlineNormal,
+.langRU .tab.core .headlineList {
+  font-family: var(--main-font) !important;
+  font-size: var(--ru-core-section-headline-size);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+/* ============================================================
+ * Experience (XP) — real target
+ * ============================================================ */
+.langRU .total.experienceValue,
+.langRU .total.experienceValue span {
+  font-family: var(--main-font);
+  font-size: var(--ru-core-experience-font-size);
+  font-weight: var(--ru-core-experience-font-weight);
+}
+
+/* ============================================================
+ * Experience label ("Experience") — text above the value
+ * ============================================================ */
+.langRU .tab.core .clearareaBox.sheet-headline.headlineGroup.splatFont .item-row > div:first-child {
+  font-family: var(--main-font);
+  font-size: var(--ru-core-experience-label-font-size) !important; 
+  font-weight: var(--ru-core-experience-label-font-weight);
+  line-height: 1.1;
+}

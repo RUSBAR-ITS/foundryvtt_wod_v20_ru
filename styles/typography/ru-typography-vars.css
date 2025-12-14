@@ -1,0 +1,55 @@
+/**
+ * RU TYPOGRAPHY VARIABLES
+ *
+ * This file defines ONLY CSS custom properties for RU typography.
+ *
+ * Requested changes:
+ * - Increase default text size by +2px (core tab and common controls)
+ * - Make column headers (attributes/abilities groups) more prominent
+ * - Increase experience (XP) text size which appears too small
+ */
+
+:root {
+  /* Main RU font stack (module-provided family first) */
+  --ru-font-family-main: "RUSBAR Roboto Condensed", "Roboto Condensed", "Roboto", "Arial", sans-serif;
+
+  /* ============================================================
+   * Core tab base metrics (increased by +2px)
+   * ============================================================ */
+  --ru-core-font-size: 15px;          /* was effectively ~13px */
+  --ru-core-font-weight: 400;
+  --ru-core-line-height: 1.25;
+  --ru-core-letter-spacing: 0px;
+
+  /* Labels (slightly smaller than base, but more weighted) */
+  --ru-core-label-font-size: 18px;
+  --ru-core-label-font-weight: 400;
+  --ru-core-label-line-height: 1.25;
+
+  /* Values / controls (same as base) */
+  --ru-core-value-font-size: 15px;
+  --ru-core-value-font-weight: 400;
+  --ru-core-value-line-height: 1.25;
+
+  /* ============================================================
+   * Column group headers (Attributes/Abilities: Physical/Social/Mental, etc.)
+   * ============================================================ */
+  --ru-core-column-header-font-size: 24px;
+  --ru-core-column-header-font-weight: 700;
+  --ru-core-column-header-letter-spacing: 0.2px;
+
+  /* ============================================================
+   * Sheet / section headlines (kept reasonable for RU length)
+   * ============================================================ */
+  --ru-core-sheet-headline-size: 26px;
+  --ru-core-section-headline-size: 15px;
+  --ru-core-row-headline-size: 14px;
+
+  /* ============================================================
+   * Experience (XP) block
+   * ============================================================ */
+  --ru-core-experience-font-size: 28px;
+  --ru-core-experience-font-weight: 700;
+  --ru-core-experience-label-font-size: 28px;
+  --ru-core-experience-label-font-weight: 700;
+}

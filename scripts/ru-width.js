@@ -24,6 +24,10 @@ import {
 const LANG_CLASS = "langRU";
 const LANG_CLASS_RE = /^lang[A-Z]{2}$/;
 
+// RU always disables splat fonts for readability.
+// This is a system-supported class (used by WoD20 sheets/CSS).
+const NO_SPLAT_CLASS = "noSplatFont";
+
 /**
  * Resolve active language in a safe and tolerant way.
  * game.i18n.lang is authoritative, but we fallback to <html lang>.
@@ -139,10 +143,15 @@ Hooks.on("renderActorSheet", (app, html) => {
   let removedLangClasses = [];
   if (shouldApply) {
     removedLangClasses = normalizeLangClassesForRU(root);
+
+    // RU always disables decorative splat fonts.
+    root.classList.add(NO_SPLAT_CLASS);
   }
 
   const afterClasses = classString(root);
   const hasLangRU = root.classList.contains(LANG_CLASS);
+  const hasNoSplatFont = root.classList.contains(NO_SPLAT_CLASS);
+
   const snap = takeSnapshot(app, root);
 
   info("RU-WIDTH: language class applied", {
@@ -150,6 +159,7 @@ Hooks.on("renderActorSheet", (app, html) => {
     shouldApply,
     hadLangRU,
     hasLangRU,
+    hasNoSplatFont,
     removedLangClasses,
     beforeClasses,
     afterClasses,

@@ -1,0 +1,60 @@
+/**
+ * RU TYPOGRAPHY: FONT REGISTRATION (Roboto Condensed static)
+ *
+ * This file contains ONLY @font-face declarations.
+ *
+ * Source files are provided by the module:
+ *   fonts/RobotoCondensed-*.ttf
+ *
+ * Why static:
+ * - Maximum predictability in the Foundry/Electron environment
+ * - Clear mapping to CSS font-weight/font-style
+ */
+
+@font-face {
+  font-family: "RUSBAR Roboto Condensed";
+  src: url("../../fonts/RobotoCondensed-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "RUSBAR Roboto Condensed";
+  src: url("../../fonts/RobotoCondensed-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "RUSBAR Roboto Condensed";
+  src: url("../../fonts/RobotoCondensed-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "RUSBAR Roboto Condensed";
+  src: url("../../fonts/RobotoCondensed-MediumItalic.ttf") format("truetype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "RUSBAR Roboto Condensed";
+  src: url("../../fonts/RobotoCondensed-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "RUSBAR Roboto Condensed";
+  src: url("../../fonts/RobotoCondensed-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
