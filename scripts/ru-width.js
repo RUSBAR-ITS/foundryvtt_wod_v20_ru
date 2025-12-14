@@ -3,15 +3,20 @@
 /**
  * RU SHEET WIDTH PATCH
  *
- * - Adds langRU class to WoD20 actor sheets when Foundry UI language is ru.
- * - Logs are readable in saved console exports:
- *   - One-line summary (always when debug enabled)
- *   - JSON details (always when debug enabled)
+ * Goal:
+ * - When Foundry UI language is ru, ensure sheet root has ONLY langRU language class
+ *   (remove langEN/langDE/etc) to avoid CSS conflicts.
+ * - Keep behavior non-invasive for other languages: do not touch their classes.
+ *
+ * Logging:
+ * - Controlled by module setting: game.settings.get(MOD_ID, "debugLogging")
+ * - Logs are JSON-stringified to be readable in exported console logs.
  */
 
 const MOD_ID = "foundryvtt_wod_v20_ru";
 const TAG = "[wod-v20-ru][ru-width]";
 const LANG_CLASS = "langRU";
+const LANG_CLASS_RE = /^lang[A-Z]{2}$/;
 
 function now() {
   try {
@@ -22,7 +27,7 @@ function now() {
   }
 }
 
-function enabled() {
+function debugEnabled() {
   try {
     return !!game.settings.get(MOD_ID, "debugLogging");
   } catch {
@@ -30,30 +35,30 @@ function enabled() {
   }
 }
 
-function info(msg, data) {
-  if (!enabled()) return;
+function log(level, msg, data) {
+  if (!debugEnabled()) return;
+
+  const prefix = `${TAG} ${now()} ${msg}`;
   if (data === undefined) {
-    console.info(`${TAG} ${now()} ${msg}`);
+    console[level](prefix);
     return;
   }
+
   let json = "";
   try {
     json = JSON.stringify(data);
   } catch {
     json = String(data);
   }
-  console.info(`${TAG} ${now()} ${msg} ${json}`);
+  console[level](`${prefix} ${json}`);
+}
+
+function info(msg, data) {
+  log("info", msg, data);
 }
 
 function warn(msg, data) {
-  if (!enabled()) return;
-  let json = "";
-  try {
-    json = data === undefined ? "" : JSON.stringify(data);
-  } catch {
-    json = String(data);
-  }
-  console.warn(`${TAG} ${now()} ${msg}${json ? " " + json : ""}`);
+  log("warn", msg, data);
 }
 
 function safe(fn, fallback = undefined) {
@@ -111,14 +116,6 @@ function takeSnapshot(app, root) {
         minHeight: computed(root, "min-height")
       }
     },
-    windowContent: content
-      ? {
-          computed: {
-            width: computed(content, "width"),
-            overflow: computed(content, "overflow")
-          }
-        }
-      : null,
     sheetInnerArea: inner
       ? {
           computed: {
@@ -134,6 +131,23 @@ function takeSnapshot(app, root) {
   };
 }
 
+function normalizeLangClassesForRU(root) {
+  const removed = [];
+
+  // Remove any existing langXX class to avoid conflicts (langEN, langDE, etc)
+  for (const cls of Array.from(root.classList)) {
+    if (LANG_CLASS_RE.test(cls) && cls !== LANG_CLASS) {
+      root.classList.remove(cls);
+      removed.push(cls);
+    }
+  }
+
+  // Ensure langRU exists
+  root.classList.add(LANG_CLASS);
+
+  return removed;
+}
+
 Hooks.on("renderActorSheet", (app, html) => {
   const lang = getLang();
   const shouldApply = lang === "ru";
@@ -144,35 +158,38 @@ Hooks.on("renderActorSheet", (app, html) => {
     return;
   }
 
-  const had = root.classList.contains(LANG_CLASS);
+  const hadLangRU = root.classList.contains(LANG_CLASS);
+  const beforeClasses = classString(root);
 
-  if (shouldApply) root.classList.add(LANG_CLASS);
-  else root.classList.remove(LANG_CLASS);
+  let removedLangClasses = [];
+  if (shouldApply) {
+    removedLangClasses = normalizeLangClassesForRU(root);
+  } else {
+    // Do not touch non-RU languages.
+  }
 
-  const has = root.classList.contains(LANG_CLASS);
+  const afterClasses = classString(root);
+  const hasLangRU = root.classList.contains(LANG_CLASS);
 
   const snap = takeSnapshot(app, root);
 
-  // Readable one-liner for saved logs:
-  info(
-    "Applied language class",
-    {
-      lang,
-      shouldApply,
-      had,
-      has,
-      sheetClass: snap.sheetClass,
-      title: snap.title,
-      appId: snap.appId,
-      actorName: snap.actorName,
-      actorType: snap.actorType,
-      rootWidth: snap.root.computed.width,
-      innerWidth: snap.sheetInnerArea?.computed?.width ?? null,
-      classes: snap.root.classString
-    }
-  );
+  info("Applied language class", {
+    lang,
+    shouldApply,
+    hadLangRU,
+    hasLangRU,
+    removedLangClasses,
+    beforeClasses,
+    afterClasses,
+    sheetClass: snap.sheetClass,
+    title: snap.title,
+    appId: snap.appId,
+    actorName: snap.actorName,
+    actorType: snap.actorType,
+    rootWidth: snap.root.computed.width,
+    innerWidth: snap.sheetInnerArea?.computed?.width ?? null
+  });
 
-  // Optional warning if inner area not found (helps when sheet differs)
   if (shouldApply && !snap.nodes.hasSheetInnerArea) {
     warn("No .sheet-inner-area found; CSS may need additional selectors", {
       sheetClass: snap.sheetClass,
@@ -181,6 +198,5 @@ Hooks.on("renderActorSheet", (app, html) => {
     });
   }
 
-  // Full snapshot as JSON (still readable)
   info("Sheet snapshot", snap);
 });
