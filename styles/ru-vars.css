@@ -1,15 +1,21 @@
-/* Module style variables (single source of truth). */
+/**
+ * RU layout variables (single source of truth).
+ *
+ * This file contains ONLY tunable numbers as CSS custom properties.
+ * `ru-sheets.css` maps these numbers onto specific UI structures/selectors.
+ *
+ * Conventions:
+ * - Use % for label/value split inside 1/3-column blocks (Attributes/Abilities are 3-column layouts).
+ * - Keep icon widths in px (icons are intrinsically fixed-size).
+ * - Prefer stable, predictable behavior over "magic" auto widths.
+ */
 
 :root {
-  /* Defaults (fallback) */
-  --wodru-sheet-min-width: 1100px;
+  /* ============================================================
+   * Base sheet geometry (RU behaves like DE)
+   * ========================================================== */
+  --wodru-sheet-min-width: 1400px;
+  --wodru-sheet-width: 1400px; /* optional; can be removed to rely on min-width only */
   --wodru-sheet-min-height: 900px;
-  --wodru-inner-width: 990px;
-}
-
-/* RU overrides (applied when the sheet root has .langRU) */
-.langRU {
-  --wodru-sheet-min-width: 1500px;
-  --wodru-sheet-min-height: 900px;
-  --wodru-inner-width: 1390px;
+  --wodru-inner-width: 1290px;
 }
