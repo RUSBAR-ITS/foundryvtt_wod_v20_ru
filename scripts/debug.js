@@ -3,21 +3,14 @@
 /**
  * VERY VERBOSE DEBUG LOGGER (gated by module setting)
  *
- * Goals:
- * - Provide strict, readable diagnostics.
- * - Make init-time failures actionable:
- *   - Named hook functions (avoid Foundry showing '' as callback name)
- *   - Step runner with BEGIN/OK/FAIL
- *   - Full stack traces
- *   - Global error/unhandledrejection handlers (debug mode only)
+ * This revision fixes init crash caused by trying to monkey-patch read-only Foundry APIs.
  *
- * Includes:
- * - CSS sanity checks via probe (authoritative)
- *   - Expected values are sourced from CSS custom properties (no JS hardcode)
- *
- * - Template loader patch WITHOUT deprecated globals:
- *   - Prefer foundry.applications.handlebars.getTemplate/loadTemplates (V13+)
- *   - Fallback to global getTemplate/loadTemplates only if namespaced is missing
+ * Key changes:
+ * - Step runner supports fatal/non-fatal steps.
+ * - Template patch is best-effort:
+ *   - Patch only when property is writable (or configurable on the instance).
+ *   - If API is frozen/read-only, log "skipped" and continue without throwing.
+ * - Full stacks for errors, plus global error/unhandledrejection handlers (debug-only).
  */
 
 const MOD_ID = "foundryvtt_wod_v20_ru";
@@ -104,7 +97,12 @@ function classString(el) {
 
 let __stepSeq = 0;
 
-async function runStep(name, fn) {
+/**
+ * Run a named step with BEGIN/OK/FAIL logs.
+ * If fatal=false, failures are logged but not thrown (init continues).
+ */
+async function runStep(name, fn, opts = {}) {
+  const { fatal = true } = opts;
   const id = ++__stepSeq;
   const start = safe(() => globalThis.performance?.now?.() ?? null, null);
 
@@ -122,12 +120,15 @@ async function runStep(name, fn) {
 
     error(`STEP FAIL  #${id} ${name}`, {
       durMs: dur,
+      fatal,
       err: String(e),
       stack: e?.stack ?? null
     });
 
-    // rethrow so outer init handler can also see it (optional)
-    throw e;
+    if (fatal) throw e;
+
+    // Non-fatal: do not throw, do not create unhandled rejections.
+    return null;
   }
 }
 
@@ -139,7 +140,6 @@ function installGlobalErrorHooks() {
   if (__globalErrorHooksInstalled) return;
   __globalErrorHooksInstalled = true;
 
-  // window.onerror
   globalThis.addEventListener?.("error", (ev) => {
     if (!enabled()) return;
     try {
@@ -157,7 +157,6 @@ function installGlobalErrorHooks() {
     }
   });
 
-  // unhandledrejection
   globalThis.addEventListener?.("unhandledrejection", (ev) => {
     if (!enabled()) return;
     try {
@@ -237,7 +236,6 @@ function readCssVar(style, name) {
 }
 
 function cssProbeCheck() {
-  // Create a hidden probe which matches our selectors and carries langRU.
   const probe = document.createElement("div");
   probe.className = "langRU wod-sheet";
   probe.style.position = "absolute";
@@ -254,7 +252,6 @@ function cssProbeCheck() {
   const probeComputed = safe(() => getComputedStyle(probe), null);
   const innerComputed = safe(() => getComputedStyle(inner), null);
 
-  // Expected values come from CSS variables (single source of truth).
   const expected = {
     sheetMinWidth: readCssVar(probeComputed, "--wodru-sheet-min-width"),
     sheetMinHeight: readCssVar(probeComputed, "--wodru-sheet-min-height"),
@@ -316,50 +313,152 @@ function cssSanityCheck() {
   });
 }
 
-/* ---------------- Template loader patch (no deprecated globals) ---------------- */
+/* ---------------- Template loader patch (best-effort) ---------------- */
 
 function getHandlebarsApi() {
   const api = safe(() => globalThis.foundry?.applications?.handlebars, null);
   if (!api) return null;
 
-  const gt = api.getTemplate;
-  const lt = api.loadTemplates;
-
   return {
     api,
-    hasGetTemplate: typeof gt === "function",
-    hasLoadTemplates: typeof lt === "function"
+    hasGetTemplate: typeof api.getTemplate === "function",
+    hasLoadTemplates: typeof api.loadTemplates === "function",
+    frozen: safe(() => Object.isFrozen(api), null),
+    sealed: safe(() => Object.isSealed(api), null),
+    extensible: safe(() => Object.isExtensible(api), null)
   };
+}
+
+function describeDescriptor(desc) {
+  if (!desc) return null;
+  return {
+    writable: !!desc.writable,
+    configurable: !!desc.configurable,
+    enumerable: !!desc.enumerable,
+    hasGet: typeof desc.get === "function",
+    hasSet: typeof desc.set === "function"
+  };
+}
+
+/**
+ * Resolve a property descriptor on an object or its prototype chain.
+ */
+function getDescriptorDeep(obj, prop) {
+  let cur = obj;
+  let depth = 0;
+  while (cur && depth < 8) {
+    const d = Object.getOwnPropertyDescriptor(cur, prop);
+    if (d) return { owner: cur, descriptor: d, depth };
+    cur = Object.getPrototypeOf(cur);
+    depth += 1;
+  }
+  return { owner: null, descriptor: null, depth };
+}
+
+function canAssignProperty(obj, prop) {
+  const deep = getDescriptorDeep(obj, prop);
+  const d = deep.descriptor;
+
+  // If we can't find descriptor, assignment might still work on extensible objects.
+  if (!d) {
+    return {
+      ok: safe(() => Object.isExtensible(obj), false),
+      reason: "no-descriptor",
+      deep
+    };
+  }
+
+  // Data property: writable?
+  if ("writable" in d) {
+    return {
+      ok: !!d.writable,
+      reason: d.writable ? "writable" : "read-only-data",
+      deep
+    };
+  }
+
+  // Accessor property: has setter?
+  if ("set" in d) {
+    return {
+      ok: typeof d.set === "function",
+      reason: typeof d.set === "function" ? "setter-present" : "read-only-accessor",
+      deep
+    };
+  }
+
+  return { ok: false, reason: "unknown-descriptor", deep };
 }
 
 function patchTemplateFns(target, label) {
   const patched = {
     label,
     patchedGetTemplate: false,
-    patchedLoadTemplates: false
+    patchedLoadTemplates: false,
+    skipped: [],
+    frozen: safe(() => Object.isFrozen(target), null),
+    sealed: safe(() => Object.isSealed(target), null),
+    extensible: safe(() => Object.isExtensible(target), null),
+    descriptors: {
+      getTemplate: describeDescriptor(getDescriptorDeep(target, "getTemplate").descriptor),
+      loadTemplates: describeDescriptor(getDescriptorDeep(target, "loadTemplates").descriptor)
+    }
   };
 
+  // getTemplate
   if (typeof target.getTemplate === "function") {
-    const original = target.getTemplate;
-    target.getTemplate = async function patchedGetTemplate(path, ...rest) {
-      debug("getTemplate", { label, path });
-      return original.call(this, path, ...rest);
-    };
-    patched.patchedGetTemplate = true;
+    const chk = canAssignProperty(target, "getTemplate");
+    if (!chk.ok) {
+      patched.skipped.push({ prop: "getTemplate", reason: chk.reason, descriptor: patched.descriptors.getTemplate });
+    } else {
+      const original = target.getTemplate;
+      try {
+        target.getTemplate = async function patchedGetTemplate(path, ...rest) {
+          debug("getTemplate", { label, path });
+          return original.call(this, path, ...rest);
+        };
+        patched.patchedGetTemplate = true;
+      } catch (e) {
+        patched.skipped.push({
+          prop: "getTemplate",
+          reason: "assign-throw",
+          err: String(e),
+          stack: e?.stack ?? null
+        });
+      }
+    }
+  } else {
+    patched.skipped.push({ prop: "getTemplate", reason: "missing-or-not-function" });
   }
 
+  // loadTemplates
   if (typeof target.loadTemplates === "function") {
-    const original = target.loadTemplates;
-    target.loadTemplates = async function patchedLoadTemplates(paths, ...rest) {
+    const chk = canAssignProperty(target, "loadTemplates");
+    if (!chk.ok) {
+      patched.skipped.push({ prop: "loadTemplates", reason: chk.reason, descriptor: patched.descriptors.loadTemplates });
+    } else {
+      const original = target.loadTemplates;
       try {
-        if (Array.isArray(paths)) debug("loadTemplates", { label, count: paths.length });
-        else debug("loadTemplates", { label, paths: String(paths) });
+        target.loadTemplates = async function patchedLoadTemplates(paths, ...rest) {
+          try {
+            if (Array.isArray(paths)) debug("loadTemplates", { label, count: paths.length });
+            else debug("loadTemplates", { label, paths: String(paths) });
+          } catch (logErr) {
+            warn("loadTemplates logging failed", { label, err: String(logErr), stack: logErr?.stack ?? null });
+          }
+          return original.call(this, paths, ...rest);
+        };
+        patched.patchedLoadTemplates = true;
       } catch (e) {
-        warn("loadTemplates logging failed", { label, err: String(e), stack: e?.stack ?? null });
+        patched.skipped.push({
+          prop: "loadTemplates",
+          reason: "assign-throw",
+          err: String(e),
+          stack: e?.stack ?? null
+        });
       }
-      return original.call(this, paths, ...rest);
-    };
-    patched.patchedLoadTemplates = true;
+    }
+  } else {
+    patched.skipped.push({ prop: "loadTemplates", reason: "missing-or-not-function" });
   }
 
   return patched;
@@ -371,11 +470,17 @@ function patchTemplateLoaders() {
   // Prefer namespaced API (V13+)
   if (hb?.api && (hb.hasGetTemplate || hb.hasLoadTemplates)) {
     const res = patchTemplateFns(hb.api, "foundry.applications.handlebars");
-    info("Template patch applied (namespaced)", res);
+
+    if (res.patchedGetTemplate || res.patchedLoadTemplates) {
+      info("Template patch applied (namespaced)", res);
+    } else {
+      warn("Template patch skipped (namespaced, read-only or non-writable)", res);
+    }
+
     return;
   }
 
-  // Fallback for older cores only — best-effort.
+  // Fallback: global functions (best-effort, may be deprecated on some cores)
   const globals = {
     getTemplate: globalThis.getTemplate,
     loadTemplates: globalThis.loadTemplates
@@ -385,7 +490,13 @@ function patchTemplateLoaders() {
     const res = patchTemplateFns(globals, "globalThis (fallback)");
     if (globals.getTemplate) globalThis.getTemplate = globals.getTemplate;
     if (globals.loadTemplates) globalThis.loadTemplates = globals.loadTemplates;
-    info("Template patch applied (global fallback)", res);
+
+    if (res.patchedGetTemplate || res.patchedLoadTemplates) {
+      info("Template patch applied (global fallback)", res);
+    } else {
+      warn("Template patch skipped (global fallback)", res);
+    }
+
     return;
   }
 
@@ -461,7 +572,6 @@ async function onInitDebug() {
 
   info("Debug logging ENABLED at init");
 
-  // Install global error hooks ASAP to catch init-time async errors.
   await runStep("installGlobalErrorHooks", async () => {
     installGlobalErrorHooks();
   });
@@ -470,9 +580,14 @@ async function onInitDebug() {
     dumpCoreState("init");
   });
 
-  await runStep("patchTemplateLoaders", async () => {
-    patchTemplateLoaders();
-  });
+  // Non-fatal: patching may be impossible if the API is read-only / frozen.
+  await runStep(
+    "patchTemplateLoaders",
+    async () => {
+      patchTemplateLoaders();
+    },
+    { fatal: false }
+  );
 
   await runStep("registerDebugHooks", async () => {
     registerDebugHooks();
