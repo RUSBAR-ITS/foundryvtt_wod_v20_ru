@@ -3,17 +3,13 @@
 /**
  * VERY VERBOSE DEBUG LOGGER (gated by module setting)
  *
- * Fixes:
- * - Register debug hooks early enough to capture init/setup/ready.
- * - Make saved logs readable: do not rely on console object expansion.
+ * This revision:
+ * 1) Fix CSS sanity checks to avoid false negatives.
+ * 2) Patch template loaders WITHOUT deprecated global access:
+ *    - Prefer foundry.applications.handlebars.getTemplate/loadTemplates (V13+)
+ *    - Fallback to global getTemplate/loadTemplates only if namespaced is missing
  *
- * Design:
- * - We always register Hooks.once("init") and inside it decide whether debug is enabled.
- * - If enabled at init time, we immediately log init-state and register the rest (setup/ready/render/etc).
- * - If disabled, we only print a single short status line at ready.
- *
- * Note:
- * - This module targets Foundry V13, system sheets may be V1 and produce core warnings (not ours).
+ * Saved logs are readable: all structured data is JSON-stringified.
  */
 
 const MOD_ID = "foundryvtt_wod_v20_ru";
@@ -29,7 +25,6 @@ function now() {
 }
 
 function enabled() {
-  // Safe: settings are registered on init by settings.js (loaded before this file).
   try {
     return !!game.settings.get(MOD_ID, "debugLogging");
   } catch {
@@ -46,7 +41,6 @@ function log(level, msg, data) {
     return;
   }
 
-  // Make sure saved logs are readable: print a JSON string.
   let json = "";
   try {
     json = JSON.stringify(data);
@@ -126,54 +120,176 @@ function dumpCoreState(phase) {
   });
 }
 
+/* ---------------- CSS sanity ---------------- */
+
+function expectedStyleUrls() {
+  const styles = safe(() => game.modules?.get(MOD_ID)?.styles, []) ?? [];
+  const urls = [];
+  for (const p of styles) urls.push(`/modules/${MOD_ID}/${p}`);
+  return urls;
+}
+
+function matchesAnySuffix(href, suffixes) {
+  if (!href) return false;
+  for (const s of suffixes) if (href.includes(s)) return true;
+  return false;
+}
+
+function cssProbeCheck() {
+  const probe = document.createElement("div");
+  probe.className = "langRU wod-sheet";
+  probe.style.position = "absolute";
+  probe.style.left = "-10000px";
+  probe.style.top = "-10000px";
+  probe.style.visibility = "hidden";
+
+  const inner = document.createElement("div");
+  inner.className = "sheet-inner-area";
+  probe.appendChild(inner);
+
+  document.body.appendChild(probe);
+
+  const probeComputed = safe(() => getComputedStyle(probe), null);
+  const innerComputed = safe(() => getComputedStyle(inner), null);
+
+  const result = {
+    probe: {
+      width: probeComputed?.width ?? null,
+      minWidth: probeComputed?.minWidth ?? null,
+      height: probeComputed?.height ?? null,
+      minHeight: probeComputed?.minHeight ?? null
+    },
+    inner: {
+      width: innerComputed?.width ?? null,
+      minWidth: innerComputed?.minWidth ?? null
+    }
+  };
+
+  probe.remove();
+
+  const expected = {
+    probeMinWidth: "1100px",
+    innerWidth: "990px"
+  };
+
+  const pass = {
+    probeMinWidth: result.probe.minWidth === expected.probeMinWidth,
+    innerWidth: result.inner.width === expected.innerWidth
+  };
+
+  return { result, expected, pass };
+}
+
 function cssSanityCheck() {
-  const matchedStyleSheets = [];
-  const matchedLinks = [];
+  const expected = expectedStyleUrls();
 
-  const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
-  for (const s of sheets) {
-    const href = s?.href ?? "";
-    if (href.includes(`/modules/${MOD_ID}/`) || href.includes("ru-sheets.css")) matchedStyleSheets.push(href);
-  }
-
+  const linkHrefs = [];
   const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
   for (const l of links) {
     const href = l?.href ?? "";
-    if (href.includes(`/modules/${MOD_ID}/`) || href.includes("ru-sheets.css")) matchedLinks.push(href);
+    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css")) linkHrefs.push(href);
   }
 
-  info("CSS sanity check", { matchedStyleSheets, matchedLinks });
+  const sheetHrefs = [];
+  const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
+  for (const s of sheets) {
+    const href = s?.href ?? "";
+    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css")) sheetHrefs.push(href);
+  }
+
+  const probe = safe(() => cssProbeCheck(), null);
+
+  info("CSS sanity check", {
+    expectedSuffixes: expected,
+    matchedLinkTags: linkHrefs,
+    matchedStyleSheets: sheetHrefs,
+    probe
+  });
+}
+
+/* ---------------- Template loader patch (no deprecated globals) ---------------- */
+
+/**
+ * Locate namespaced Handlebars API in Foundry V13+:
+ * foundry.applications.handlebars.{getTemplate,loadTemplates}
+ */
+function getHandlebarsApi() {
+  const api = safe(() => globalThis.foundry?.applications?.handlebars, null);
+  if (!api) return null;
+
+  const gt = api.getTemplate;
+  const lt = api.loadTemplates;
+
+  return {
+    api,
+    hasGetTemplate: typeof gt === "function",
+    hasLoadTemplates: typeof lt === "function"
+  };
+}
+
+function patchTemplateFns(target, label) {
+  const patched = {
+    label,
+    patchedGetTemplate: false,
+    patchedLoadTemplates: false
+  };
+
+  if (typeof target.getTemplate === "function") {
+    const original = target.getTemplate;
+    target.getTemplate = async function patchedGetTemplate(path, ...rest) {
+      debug("getTemplate", { label, path });
+      return original.call(this, path, ...rest);
+    };
+    patched.patchedGetTemplate = true;
+  }
+
+  if (typeof target.loadTemplates === "function") {
+    const original = target.loadTemplates;
+    target.loadTemplates = async function patchedLoadTemplates(paths, ...rest) {
+      try {
+        if (Array.isArray(paths)) debug("loadTemplates", { label, count: paths.length });
+        else debug("loadTemplates", { label, paths: String(paths) });
+      } catch (e) {
+        warn("loadTemplates logging failed", { label, err: String(e) });
+      }
+      return original.call(this, paths, ...rest);
+    };
+    patched.patchedLoadTemplates = true;
+  }
+
+  return patched;
 }
 
 function patchTemplateLoaders() {
-  // Optional but very useful during debugging.
-  const originalGetTemplate = globalThis.getTemplate;
-  if (typeof originalGetTemplate === "function") {
-    globalThis.getTemplate = async function patchedGetTemplate(path, ...rest) {
-      debug("getTemplate", { path });
-      return originalGetTemplate.call(this, path, ...rest);
-    };
-    info("Patched getTemplate");
-  } else {
-    warn("getTemplate not found");
+  const hb = getHandlebarsApi();
+
+  // Prefer namespaced API (V13+)
+  if (hb?.api && (hb.hasGetTemplate || hb.hasLoadTemplates)) {
+    const res = patchTemplateFns(hb.api, "foundry.applications.handlebars");
+    info("Template patch applied (namespaced)", res);
+    return;
   }
 
-  const originalLoadTemplates = globalThis.loadTemplates;
-  if (typeof originalLoadTemplates === "function") {
-    globalThis.loadTemplates = async function patchedLoadTemplates(paths, ...rest) {
-      try {
-        if (Array.isArray(paths)) debug("loadTemplates", { count: paths.length });
-        else debug("loadTemplates", { paths: String(paths) });
-      } catch (e) {
-        warn("loadTemplates logging failed", { err: String(e) });
-      }
-      return originalLoadTemplates.call(this, paths, ...rest);
-    };
-    info("Patched loadTemplates");
-  } else {
-    warn("loadTemplates not found");
+  // Fallback for older cores only — yes, deprecated, but better than nothing.
+  const globals = {
+    getTemplate: globalThis.getTemplate,
+    loadTemplates: globalThis.loadTemplates
+  };
+
+  if (typeof globals.getTemplate === "function" || typeof globals.loadTemplates === "function") {
+    const res = patchTemplateFns(globals, "globalThis (fallback)");
+    // Copy patched functions back to globals
+    if (globals.getTemplate) globalThis.getTemplate = globals.getTemplate;
+    if (globals.loadTemplates) globalThis.loadTemplates = globals.loadTemplates;
+
+    info("Template patch applied (global fallback)", res);
+    return;
   }
+
+  warn("Template patch skipped (no known API found)");
 }
+
+/* ---------------- Render logging ---------------- */
 
 function dumpRender(app, html) {
   const el = app?.element?.[0] ?? html?.[0] ?? null;
@@ -202,14 +318,10 @@ function dumpRender(app, html) {
 }
 
 function registerDebugHooks() {
-  // We are already inside init when this is called (see Hooks.once("init") below).
-
-  // i18n init
   Hooks.on("i18nInit", () => {
     info("Hooks.on(i18nInit)", { lang: safe(() => game.i18n?.lang) });
   });
 
-  // setup / ready
   Hooks.once("setup", () => {
     info("Hooks.once(setup)");
     dumpCoreState("setup");
@@ -221,14 +333,12 @@ function registerDebugHooks() {
     cssSanityCheck();
   });
 
-  // Render hooks
   Hooks.on("renderApplication", (app, html) => dumpRender(app, html));
   Hooks.on("renderActorSheet", (app, html) => dumpRender(app, html));
   Hooks.on("renderItemSheet", (app, html) => dumpRender(app, html));
   Hooks.on("renderDialog", (app, html) => dumpRender(app, html));
   Hooks.on("renderSettings", (app, html) => dumpRender(app, html));
 
-  // Errors (if fired)
   Hooks.on("error", (location, err) => {
     error("Hooks.on(error)", { location, err: String(err) });
   });
@@ -236,11 +346,10 @@ function registerDebugHooks() {
   info("Debug hooks registered");
 }
 
-// Always register init: inside we decide whether to enable the noisy hooks.
+/* ---------------- Lifecycle ---------------- */
+
 Hooks.once("init", () => {
   const on = enabled();
-
-  // Always print one line at init if debug enabled (readable in saved log).
   if (on) {
     info("Debug logging ENABLED at init");
     dumpCoreState("init");
@@ -249,8 +358,6 @@ Hooks.once("init", () => {
   }
 });
 
-// Always print a single status line at ready (even if debug disabled) so user sees the mode.
-// This is intentionally minimal.
 Hooks.once("ready", () => {
   const on = enabled();
   console.info(`${TAG} ${now()} Debug logging is ${on ? "ENABLED" : "DISABLED"} (toggle in module settings).`);
