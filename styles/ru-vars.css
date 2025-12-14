@@ -9,7 +9,7 @@
 
 /* RU overrides (applied when the sheet root has .langRU) */
 .langRU {
-  --wodru-sheet-min-width: 1100px;
+  --wodru-sheet-min-width: 1500px;
   --wodru-sheet-min-height: 900px;
-  --wodru-inner-width: 990px;
+  --wodru-inner-width: 1390px;
 }
