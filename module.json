@@ -43,6 +43,7 @@
     "scripts/ru-width.js"
   ],
   "styles": [
+    "styles/ru-vars.css",
     "styles/ru-sheets.css"
   ]
 }
