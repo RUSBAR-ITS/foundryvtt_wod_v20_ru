@@ -3,90 +3,49 @@
 /**
  * RU SHEET WIDTH PATCH
  *
- * Goal:
- * - When Foundry UI language is ru, ensure sheet root has ONLY langRU language class
- *   (remove langEN/langDE/etc) to avoid CSS conflicts.
- * - Keep behavior non-invasive for other languages: do not touch their classes.
+ * Responsibility:
+ * - Apply RU-specific language class normalization on Actor Sheets.
+ * - Ensure ONLY langRU is present when game language is "ru".
+ * - Never interfere with non-RU languages.
  *
  * Logging:
- * - Controlled by module setting: game.settings.get(MOD_ID, "debugLogging")
- * - Logs are JSON-stringified to be readable in exported console logs.
+ * - Uses shared logger from scripts/logger/core.js
+ * - All logs are gated by module debug setting
+ * - Messages are prefixed logically with "RU-WIDTH"
  */
 
-const MOD_ID = "foundryvtt_wod_v20_ru";
-const TAG = "[wod-v20-ru][ru-width]";
+import {
+  info,
+  warn,
+  safe,
+  classString
+} from "./logger/core.js";
+
 const LANG_CLASS = "langRU";
 const LANG_CLASS_RE = /^lang[A-Z]{2}$/;
 
-function now() {
-  try {
-    const t = (globalThis.performance?.now?.() ?? 0).toFixed(1);
-    return `t+${t}ms`;
-  } catch {
-    return "t+?";
-  }
-}
-
-function debugEnabled() {
-  try {
-    return !!game.settings.get(MOD_ID, "debugLogging");
-  } catch {
-    return false;
-  }
-}
-
-function log(level, msg, data) {
-  if (!debugEnabled()) return;
-
-  const prefix = `${TAG} ${now()} ${msg}`;
-  if (data === undefined) {
-    console[level](prefix);
-    return;
-  }
-
-  let json = "";
-  try {
-    json = JSON.stringify(data);
-  } catch {
-    json = String(data);
-  }
-  console[level](`${prefix} ${json}`);
-}
-
-function info(msg, data) {
-  log("info", msg, data);
-}
-
-function warn(msg, data) {
-  log("warn", msg, data);
-}
-
-function safe(fn, fallback = undefined) {
-  try {
-    return fn();
-  } catch (e) {
-    warn("safe() caught", { err: String(e) });
-    return fallback;
-  }
-}
-
+/**
+ * Resolve active language in a safe and tolerant way.
+ * game.i18n.lang is authoritative, but we fallback to <html lang>.
+ */
 function getLang() {
-  return safe(() => game.i18n?.lang, document.documentElement?.lang) ?? document.documentElement?.lang ?? "en";
+  return (
+    safe(() => game.i18n?.lang, null) ??
+    document.documentElement?.lang ??
+    "en"
+  );
 }
 
+/**
+ * Extract the root HTML element of an application render.
+ */
 function getRootElement(app, html) {
   return app?.element?.[0] ?? html?.[0] ?? null;
 }
 
-function classString(el) {
-  if (!el) return "";
-  try {
-    return Array.from(el.classList).join(" ");
-  } catch {
-    return "";
-  }
-}
-
+/**
+ * Safe computed style getter.
+ */
 function computed(el, prop) {
   try {
     if (!el) return null;
@@ -96,6 +55,10 @@ function computed(el, prop) {
   }
 }
 
+/**
+ * Collect a detailed snapshot of the sheet state.
+ * Used purely for diagnostics/logging.
+ */
 function takeSnapshot(app, root) {
   const inner = root?.querySelector?.(".sheet-inner-area") ?? null;
   const content = root?.querySelector?.(".window-content") ?? null;
@@ -106,6 +69,7 @@ function takeSnapshot(app, root) {
     appId: safe(() => app?.appId),
     actorName: safe(() => app?.actor?.name),
     actorType: safe(() => app?.actor?.type),
+
     root: {
       classString: classString(root),
       styleAttr: safe(() => root?.getAttribute?.("style")),
@@ -116,6 +80,7 @@ function takeSnapshot(app, root) {
         minHeight: computed(root, "min-height")
       }
     },
+
     sheetInnerArea: inner
       ? {
           computed: {
@@ -124,6 +89,7 @@ function takeSnapshot(app, root) {
           }
         }
       : null,
+
     nodes: {
       hasWindowContent: !!content,
       hasSheetInnerArea: !!inner
@@ -131,10 +97,15 @@ function takeSnapshot(app, root) {
   };
 }
 
+/**
+ * Normalize language classes on the sheet root for RU.
+ *
+ * - Removes all langXX classes except langRU
+ * - Ensures langRU is present
+ */
 function normalizeLangClassesForRU(root) {
   const removed = [];
 
-  // Remove any existing langXX class to avoid conflicts (langEN, langDE, etc)
   for (const cls of Array.from(root.classList)) {
     if (LANG_CLASS_RE.test(cls) && cls !== LANG_CLASS) {
       root.classList.remove(cls);
@@ -142,19 +113,23 @@ function normalizeLangClassesForRU(root) {
     }
   }
 
-  // Ensure langRU exists
   root.classList.add(LANG_CLASS);
-
   return removed;
 }
 
+/**
+ * Main hook: applied on every ActorSheet render.
+ */
 Hooks.on("renderActorSheet", (app, html) => {
   const lang = getLang();
   const shouldApply = lang === "ru";
 
   const root = getRootElement(app, html);
   if (!root) {
-    warn("renderActorSheet: no root element", { sheetClass: app?.constructor?.name, title: safe(() => app?.title) });
+    warn("RU-WIDTH: renderActorSheet without root element", {
+      sheetClass: app?.constructor?.name,
+      title: safe(() => app?.title)
+    });
     return;
   }
 
@@ -164,16 +139,13 @@ Hooks.on("renderActorSheet", (app, html) => {
   let removedLangClasses = [];
   if (shouldApply) {
     removedLangClasses = normalizeLangClassesForRU(root);
-  } else {
-    // Do not touch non-RU languages.
   }
 
   const afterClasses = classString(root);
   const hasLangRU = root.classList.contains(LANG_CLASS);
-
   const snap = takeSnapshot(app, root);
 
-  info("Applied language class", {
+  info("RU-WIDTH: language class applied", {
     lang,
     shouldApply,
     hadLangRU,
@@ -191,12 +163,12 @@ Hooks.on("renderActorSheet", (app, html) => {
   });
 
   if (shouldApply && !snap.nodes.hasSheetInnerArea) {
-    warn("No .sheet-inner-area found; CSS may need additional selectors", {
+    warn("RU-WIDTH: .sheet-inner-area not found", {
       sheetClass: snap.sheetClass,
       title: snap.title,
       classes: snap.root.classString
     });
   }
 
-  info("Sheet snapshot", snap);
+  info("RU-WIDTH: sheet snapshot", snap);
 });
