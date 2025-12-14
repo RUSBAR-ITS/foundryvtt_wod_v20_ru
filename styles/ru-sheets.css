@@ -1,23 +1,27 @@
-/**
+/** 
  * RU-only responsive overrides for WoD20 sheets.
  * Make RU behave like DE by reusing the same layout dimensions.
  *
  * This file assumes the module's JS adds `langRU` class to the sheet root element for RU language.
+ *
+ * IMPORTANT:
+ * - All tunable layout numbers are sourced from CSS custom properties defined in styles/ru-vars.css
+ *   so we have a single source of truth.
  */
 
 .langRU.wod-sheet:not(.minimized) {
-  min-width: 1100px;
-  width: 1100px;
-  min-height: 900px;
+  min-width: var(--wodru-sheet-min-width);
+  width: var(--wodru-sheet-width, var(--wodru-sheet-min-width));
+  min-height: var(--wodru-sheet-min-height);
 }
 
 .langRU.wod-sheet .sheet-inner-area {
-  width: 990px;
+  width: var(--wodru-inner-width);
 }
 
 /* Core */
 .langRU.wod-sheet .ability-headlineWidth {
-  width: 60%;
+  width: var(--wodru-ability-headline-width, 60%);
 }
 
 .langRU.werewolf .ability-headlineWidth,
@@ -26,11 +30,11 @@
 .langRU.vampire .ability-headlineWidth,
 .langRU.hunter .ability-headlineWidth,
 .langRU.mortal .ability-headlineWidth {
-  width: 60%;
+  width: var(--wodru-ability-headline-width, 60%);
 }
 
 .langRU.changeling .health-headlineWidth {
-  width: 60%;
+  width: var(--wodru-health-headline-width, 60%);
 }
 
 /* Item lists / drag rows (copied from langDE ruleset intent) */
@@ -40,11 +44,11 @@
 .wod20.langRU .combat-armor-itemlist .width-abilitybox,
 .wod20.langRU .power-itemlist .width-abilitybox,
 .langRU .wod20-drag-row .width-abilitybox {
-  width: 22%;
+  width: var(--wodru-itemlist-abilitybox-width, 22%);
 }
 
 .wod20.langRU .gear-itemlist .width-abilitybox {
-  width: 30%;
+  width: var(--wodru-gear-abilitybox-width, 30%);
 }
 
 .wod20.langRU .combat-natural-itemlist .width-valuebox,
@@ -54,29 +58,29 @@
 .wod20.langRU .gear-itemlist .width-valuebox,
 .wod20.langRU .feature-itemlist .width-valuebox,
 .langRU .wod20-drag-row .width-valuebox {
-  width: 15%;
+  width: var(--wodru-itemlist-valuebox-width, 15%);
 }
 
 .wod20.langRU .effect-itemlist .item-row .width-mediumbox {
-  width: 20%;
+  width: var(--wodru-effect-mediumbox-width, 20%);
 }
 
 .langRU.wod-sheet .power-dicebox {
-  width: 45%;
+  width: var(--wodru-power-dicebox-width, 45%);
 }
 
 .langRU.wod-sheet .power-row .power-iconbox {
-  width: 10%;
+  width: var(--wodru-power-iconbox-width, 10%);
 }
 
 .langRU.aretecasting-dialog .dialog-label {
-  width: 28%;
+  width: var(--wodru-aretecasting-dialog-label-width, 28%);
 }
 
 .langRU .dialog-casting-type-label {
-  width: 30%;
+  width: var(--wodru-dialog-casting-type-label-width, 30%);
 }
 
 .langRU .comboboxRow {
-  width: 60%;
+  width: var(--wodru-combobox-row-width, 60%);
 }

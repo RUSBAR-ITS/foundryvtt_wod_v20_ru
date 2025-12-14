@@ -3,11 +3,15 @@
 /**
  * VERY VERBOSE DEBUG LOGGER (gated by module setting)
  *
- * This revision:
- * 1) Fix CSS sanity checks to avoid false negatives.
- * 2) Patch template loaders WITHOUT deprecated global access:
- *    - Prefer foundry.applications.handlebars.getTemplate/loadTemplates (V13+)
- *    - Fallback to global getTemplate/loadTemplates only if namespaced is missing
+ * Includes:
+ * - CSS sanity checks without false negatives:
+ *   - link/styleSheet discovery (best-effort)
+ *   - computed-style probe check (authoritative)
+ *   - expected values are sourced from CSS custom properties (no JS hardcode)
+ *
+ * - Template loader patch WITHOUT deprecated globals:
+ *   - Prefer foundry.applications.handlebars.getTemplate/loadTemplates (V13+)
+ *   - Fallback to global getTemplate/loadTemplates only if namespaced is missing
  *
  * Saved logs are readable: all structured data is JSON-stringified.
  */
@@ -135,7 +139,17 @@ function matchesAnySuffix(href, suffixes) {
   return false;
 }
 
+function readCssVar(style, name) {
+  try {
+    const v = (style?.getPropertyValue(name) ?? "").trim();
+    return v || null;
+  } catch {
+    return null;
+  }
+}
+
 function cssProbeCheck() {
+  // Create a hidden probe which matches our selectors and carries langRU.
   const probe = document.createElement("div");
   probe.className = "langRU wod-sheet";
   probe.style.position = "absolute";
@@ -152,6 +166,13 @@ function cssProbeCheck() {
   const probeComputed = safe(() => getComputedStyle(probe), null);
   const innerComputed = safe(() => getComputedStyle(inner), null);
 
+  // Expected values come from CSS variables (single source of truth).
+  const expected = {
+    sheetMinWidth: readCssVar(probeComputed, "--wodru-sheet-min-width"),
+    sheetMinHeight: readCssVar(probeComputed, "--wodru-sheet-min-height"),
+    innerWidth: readCssVar(probeComputed, "--wodru-inner-width")
+  };
+
   const result = {
     probe: {
       width: probeComputed?.width ?? null,
@@ -167,14 +188,10 @@ function cssProbeCheck() {
 
   probe.remove();
 
-  const expected = {
-    probeMinWidth: "1100px",
-    innerWidth: "990px"
-  };
-
   const pass = {
-    probeMinWidth: result.probe.minWidth === expected.probeMinWidth,
-    innerWidth: result.inner.width === expected.innerWidth
+    sheetMinWidth: expected.sheetMinWidth ? result.probe.minWidth === expected.sheetMinWidth : null,
+    sheetMinHeight: expected.sheetMinHeight ? result.probe.minHeight === expected.sheetMinHeight : null,
+    innerWidth: expected.innerWidth ? result.inner.width === expected.innerWidth : null
   };
 
   return { result, expected, pass };
@@ -183,20 +200,27 @@ function cssProbeCheck() {
 function cssSanityCheck() {
   const expected = expectedStyleUrls();
 
+  // 1) Link tags
   const linkHrefs = [];
   const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
   for (const l of links) {
     const href = l?.href ?? "";
-    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css")) linkHrefs.push(href);
+    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css") || href.includes("ru-vars.css")) {
+      linkHrefs.push(href);
+    }
   }
 
+  // 2) document.styleSheets hrefs (can be empty/null in some cases)
   const sheetHrefs = [];
   const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
   for (const s of sheets) {
     const href = s?.href ?? "";
-    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css")) sheetHrefs.push(href);
+    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css") || href.includes("ru-vars.css")) {
+      sheetHrefs.push(href);
+    }
   }
 
+  // 3) Authoritative computed-style probe
   const probe = safe(() => cssProbeCheck(), null);
 
   info("CSS sanity check", {
@@ -270,7 +294,7 @@ function patchTemplateLoaders() {
     return;
   }
 
-  // Fallback for older cores only — yes, deprecated, but better than nothing.
+  // Fallback for older cores only — may be deprecated there, but kept as best-effort.
   const globals = {
     getTemplate: globalThis.getTemplate,
     loadTemplates: globalThis.loadTemplates
@@ -278,10 +302,8 @@ function patchTemplateLoaders() {
 
   if (typeof globals.getTemplate === "function" || typeof globals.loadTemplates === "function") {
     const res = patchTemplateFns(globals, "globalThis (fallback)");
-    // Copy patched functions back to globals
     if (globals.getTemplate) globalThis.getTemplate = globals.getTemplate;
     if (globals.loadTemplates) globalThis.loadTemplates = globals.loadTemplates;
-
     info("Template patch applied (global fallback)", res);
     return;
   }

@@ -1,0 +1,15 @@
+/* Module style variables (single source of truth). */
+
+:root {
+  /* Defaults (fallback) */
+  --wodru-sheet-min-width: 1100px;
+  --wodru-sheet-min-height: 900px;
+  --wodru-inner-width: 990px;
+}
+
+/* RU overrides (applied when the sheet root has .langRU) */
+.langRU {
+  --wodru-sheet-min-width: 1100px;
+  --wodru-sheet-min-height: 900px;
+  --wodru-inner-width: 990px;
+}
