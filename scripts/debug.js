@@ -3,14 +3,12 @@
 /**
  * VERY VERBOSE DEBUG LOGGER (gated by module setting)
  *
- * This revision fixes init crash caused by trying to monkey-patch read-only Foundry APIs.
+ * This revision fixes CSS sanity check for Foundry v13+ where module.styles may be
+ * an array of objects like { src: "modules/<id>/styles/file.css" } instead of strings.
  *
  * Key changes:
- * - Step runner supports fatal/non-fatal steps.
- * - Template patch is best-effort:
- *   - Patch only when property is writable (or configurable on the instance).
- *   - If API is frozen/read-only, log "skipped" and continue without throwing.
- * - Full stacks for errors, plus global error/unhandledrejection handlers (debug-only).
+ * - expectedStyleUrls() now normalizes styles entries (string OR object with src).
+ * - matchedLinkTags / matchedStyleSheets now work reliably.
  */
 
 const MOD_ID = "foundryvtt_wod_v20_ru";
@@ -126,8 +124,6 @@ async function runStep(name, fn, opts = {}) {
     });
 
     if (fatal) throw e;
-
-    // Non-fatal: do not throw, do not create unhandled rejections.
     return null;
   }
 }
@@ -213,16 +209,71 @@ function dumpCoreState(phase) {
 
 /* ---------------- CSS sanity ---------------- */
 
+// FIX: normalize module.styles entries in Foundry v13+
+// styles can be:
+// - string: "styles/ru-sheets.css"
+// - object: { src: "modules/<id>/styles/ru-sheets.css" } OR { src: "styles/ru-sheets.css" }
+function normalizeStyleEntry(entry) {
+  if (!entry) return null;
+
+  if (typeof entry === "string") return entry;
+
+  if (typeof entry === "object") {
+    const src = entry.src ?? entry.href ?? entry.path ?? null;
+    if (typeof src === "string") return src;
+  }
+
+  return null;
+}
+
+// FIX: build comparable URLs/suffixes for matching <link> and document.styleSheets
+function toComparableStyleHint(raw) {
+  if (!raw) return null;
+  const s = String(raw);
+
+  // If it is already an absolute /modules/... path, keep it.
+  if (s.startsWith("/modules/") || s.startsWith("modules/")) {
+    return s.startsWith("/") ? s : `/${s}`;
+  }
+
+  // If it is a module-relative style file path (styles/..), map to /modules/<id>/styles/..
+  if (s.startsWith("styles/")) return `/modules/${MOD_ID}/${s}`;
+
+  // If it is a plain filename or other relative path, still try module mapping.
+  if (!s.includes("://") && !s.startsWith("/")) return `/modules/${MOD_ID}/${s}`;
+
+  return s;
+}
+
+// FIX: expectedStyleUrls now supports object entries
 function expectedStyleUrls() {
-  const styles = safe(() => game.modules?.get(MOD_ID)?.styles, []) ?? [];
-  const urls = [];
-  for (const p of styles) urls.push(`/modules/${MOD_ID}/${p}`);
-  return urls;
+  const stylesRaw = safe(() => game.modules?.get(MOD_ID)?.styles, []) ?? [];
+  const hints = [];
+
+  for (const entry of stylesRaw) {
+    const norm = normalizeStyleEntry(entry);
+    const hint = toComparableStyleHint(norm);
+    if (hint) hints.push(hint);
+  }
+
+  // Also add known file names as fallback hints (in case module metadata differs)
+  hints.push(`/modules/${MOD_ID}/styles/ru-sheets.css`);
+  hints.push(`/modules/${MOD_ID}/styles/ru-vars.css`);
+
+  // Deduplicate
+  return Array.from(new Set(hints));
 }
 
 function matchesAnySuffix(href, suffixes) {
   if (!href) return false;
-  for (const s of suffixes) if (href.includes(s)) return true;
+  for (const s of suffixes) {
+    if (href.includes(s)) return true;
+    // sometimes href is absolute URL including origin, compare by path part too
+    if (s.startsWith("/modules/")) {
+      const idx = href.indexOf("/modules/");
+      if (idx >= 0 && href.slice(idx).includes(s)) return true;
+    }
+  }
   return false;
 }
 
@@ -289,24 +340,20 @@ function cssSanityCheck() {
   const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
   for (const l of links) {
     const href = l?.href ?? "";
-    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css") || href.includes("ru-vars.css")) {
-      linkHrefs.push(href);
-    }
+    if (matchesAnySuffix(href, expected)) linkHrefs.push(href);
   }
 
   const sheetHrefs = [];
   const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
   for (const s of sheets) {
     const href = s?.href ?? "";
-    if (matchesAnySuffix(href, expected) || href.includes("ru-sheets.css") || href.includes("ru-vars.css")) {
-      sheetHrefs.push(href);
-    }
+    if (matchesAnySuffix(href, expected)) sheetHrefs.push(href);
   }
 
   const probe = safe(() => cssProbeCheck(), null);
 
   info("CSS sanity check", {
-    expectedSuffixes: expected,
+    expectedHints: expected, // FIX: renamed for clarity
     matchedLinkTags: linkHrefs,
     matchedStyleSheets: sheetHrefs,
     probe
@@ -340,9 +387,6 @@ function describeDescriptor(desc) {
   };
 }
 
-/**
- * Resolve a property descriptor on an object or its prototype chain.
- */
 function getDescriptorDeep(obj, prop) {
   let cur = obj;
   let depth = 0;
@@ -359,7 +403,6 @@ function canAssignProperty(obj, prop) {
   const deep = getDescriptorDeep(obj, prop);
   const d = deep.descriptor;
 
-  // If we can't find descriptor, assignment might still work on extensible objects.
   if (!d) {
     return {
       ok: safe(() => Object.isExtensible(obj), false),
@@ -368,7 +411,6 @@ function canAssignProperty(obj, prop) {
     };
   }
 
-  // Data property: writable?
   if ("writable" in d) {
     return {
       ok: !!d.writable,
@@ -377,7 +419,6 @@ function canAssignProperty(obj, prop) {
     };
   }
 
-  // Accessor property: has setter?
   if ("set" in d) {
     return {
       ok: typeof d.set === "function",
@@ -404,7 +445,6 @@ function patchTemplateFns(target, label) {
     }
   };
 
-  // getTemplate
   if (typeof target.getTemplate === "function") {
     const chk = canAssignProperty(target, "getTemplate");
     if (!chk.ok) {
@@ -418,19 +458,13 @@ function patchTemplateFns(target, label) {
         };
         patched.patchedGetTemplate = true;
       } catch (e) {
-        patched.skipped.push({
-          prop: "getTemplate",
-          reason: "assign-throw",
-          err: String(e),
-          stack: e?.stack ?? null
-        });
+        patched.skipped.push({ prop: "getTemplate", reason: "assign-throw", err: String(e), stack: e?.stack ?? null });
       }
     }
   } else {
     patched.skipped.push({ prop: "getTemplate", reason: "missing-or-not-function" });
   }
 
-  // loadTemplates
   if (typeof target.loadTemplates === "function") {
     const chk = canAssignProperty(target, "loadTemplates");
     if (!chk.ok) {
@@ -449,12 +483,7 @@ function patchTemplateFns(target, label) {
         };
         patched.patchedLoadTemplates = true;
       } catch (e) {
-        patched.skipped.push({
-          prop: "loadTemplates",
-          reason: "assign-throw",
-          err: String(e),
-          stack: e?.stack ?? null
-        });
+        patched.skipped.push({ prop: "loadTemplates", reason: "assign-throw", err: String(e), stack: e?.stack ?? null });
       }
     }
   } else {
@@ -467,20 +496,13 @@ function patchTemplateFns(target, label) {
 function patchTemplateLoaders() {
   const hb = getHandlebarsApi();
 
-  // Prefer namespaced API (V13+)
   if (hb?.api && (hb.hasGetTemplate || hb.hasLoadTemplates)) {
     const res = patchTemplateFns(hb.api, "foundry.applications.handlebars");
-
-    if (res.patchedGetTemplate || res.patchedLoadTemplates) {
-      info("Template patch applied (namespaced)", res);
-    } else {
-      warn("Template patch skipped (namespaced, read-only or non-writable)", res);
-    }
-
+    if (res.patchedGetTemplate || res.patchedLoadTemplates) info("Template patch applied (namespaced)", res);
+    else warn("Template patch skipped (namespaced, read-only or non-writable)", res);
     return;
   }
 
-  // Fallback: global functions (best-effort, may be deprecated on some cores)
   const globals = {
     getTemplate: globalThis.getTemplate,
     loadTemplates: globalThis.loadTemplates
@@ -491,11 +513,8 @@ function patchTemplateLoaders() {
     if (globals.getTemplate) globalThis.getTemplate = globals.getTemplate;
     if (globals.loadTemplates) globalThis.loadTemplates = globals.loadTemplates;
 
-    if (res.patchedGetTemplate || res.patchedLoadTemplates) {
-      info("Template patch applied (global fallback)", res);
-    } else {
-      warn("Template patch skipped (global fallback)", res);
-    }
+    if (res.patchedGetTemplate || res.patchedLoadTemplates) info("Template patch applied (global fallback)", res);
+    else warn("Template patch skipped (global fallback)", res);
 
     return;
   }
@@ -580,7 +599,6 @@ async function onInitDebug() {
     dumpCoreState("init");
   });
 
-  // Non-fatal: patching may be impossible if the API is read-only / frozen.
   await runStep(
     "patchTemplateLoaders",
     async () => {
