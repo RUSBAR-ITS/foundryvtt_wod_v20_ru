@@ -3,7 +3,11 @@
  *
  * There are 2 levels of checks:
  * 1) "Hint-based" checks: try to find module css in <link> tags and document.styleSheets by href.
- *    This can fail in some environments where styles are injected and href is null.
+ *    This can fail if:
+ *    - href has different prefix ("/modules/..." vs "modules/...")
+ *    - href includes origin or query parameters
+ *    - styles are injected in a way where href is null or inaccessible
+ *
  * 2) Probe-based checks (most reliable): create a hidden DOM element with expected classes (langRU)
  *    and read computed styles + CSS variables.
  *
@@ -26,49 +30,106 @@ function normalizeStyleEntry(entry) {
   return null;
 }
 
+function addHintVariants(hints, hint) {
+  if (!hint) return;
+
+  // Keep original
+  hints.push(hint);
+
+  // If it starts with "/modules/", also add "modules/..." variant
+  if (hint.startsWith("/modules/")) {
+    hints.push(hint.slice(1)); // remove leading slash
+    return;
+  }
+
+  // If it starts with "modules/", also add "/modules/..." variant
+  if (hint.startsWith("modules/")) {
+    hints.push(`/${hint}`);
+    return;
+  }
+}
+
 function toComparableStyleHint(raw) {
   if (!raw) return null;
   const s = String(raw);
 
+  // Already a URL or absolute path
+  if (s.includes("://")) return s;
+
+  // Normalize common forms
   if (s.startsWith("/modules/") || s.startsWith("modules/")) {
-    return s.startsWith("/") ? s : `/${s}`;
+    return s;
   }
 
-  if (s.startsWith("styles/")) return `/modules/${MOD_ID}/${s}`;
+  // Common module-relative form: "styles/foo.css"
+  if (s.startsWith("styles/")) {
+    return `/modules/${MOD_ID}/${s}`;
+  }
 
-  if (!s.includes("://") && !s.startsWith("/")) return `/modules/${MOD_ID}/${s}`;
+  // Generic relative: "ru-sheets.css" or "css/..." etc.
+  if (!s.startsWith("/")) {
+    return `/modules/${MOD_ID}/${s}`;
+  }
 
   return s;
 }
 
+/**
+ * Build expected style hints from module metadata plus known fallbacks.
+ * We generate both "/modules/..." and "modules/..." variants to be tolerant.
+ */
 function expectedStyleHints() {
   const stylesRaw = safe(() => game.modules?.get(MOD_ID)?.styles, []) ?? [];
-  const hints = [];
+  const baseHints = [];
 
   for (const entry of stylesRaw) {
     const norm = normalizeStyleEntry(entry);
     const hint = toComparableStyleHint(norm);
-    if (hint) hints.push(hint);
+    if (hint) baseHints.push(hint);
   }
 
   // Known fallback names in case module metadata differs.
-  hints.push(`/modules/${MOD_ID}/styles/ru-sheets.css`);
-  hints.push(`/modules/${MOD_ID}/styles/ru-vars.css`);
+  baseHints.push(`/modules/${MOD_ID}/styles/ru-sheets.css`);
+  baseHints.push(`/modules/${MOD_ID}/styles/ru-vars.css`);
 
-  return Array.from(new Set(hints));
+  // Expand into tolerant variants (with/without leading slash).
+  const expanded = [];
+  for (const h of baseHints) addHintVariants(expanded, h);
+
+  return Array.from(new Set(expanded));
+}
+
+function normalizeHrefForMatch(href) {
+  if (!href) return "";
+
+  const h = String(href);
+
+  // If the href contains origin, cut to "/modules/..." when possible.
+  const idx = h.indexOf("/modules/");
+  if (idx >= 0) return h.slice(idx);
+
+  // If it contains "modules/" (no leading slash), cut to that.
+  const idx2 = h.indexOf("modules/");
+  if (idx2 >= 0) return h.slice(idx2);
+
+  return h;
 }
 
 function matchesAnyHint(href, hints) {
   if (!href) return false;
 
-  for (const h of hints) {
-    if (href.includes(h)) return true;
+  const normalized = normalizeHrefForMatch(href);
 
-    // Some href strings include origin; match from the "/modules/" path segment.
-    if (h.startsWith("/modules/")) {
-      const idx = href.indexOf("/modules/");
-      if (idx >= 0 && href.slice(idx).includes(h)) return true;
-    }
+  for (const hint of hints) {
+    // Match against full href and normalized tail.
+    if (href.includes(hint)) return true;
+    if (normalized.includes(hint)) return true;
+
+    // Also tolerate query strings by matching just the path part of hint.
+    // E.g. hint "/modules/x/styles/a.css" should match "/modules/x/styles/a.css?ver=..."
+    const q = hint.indexOf("?");
+    const hintNoQuery = q >= 0 ? hint.slice(0, q) : hint;
+    if (hintNoQuery && (href.includes(hintNoQuery) || normalized.includes(hintNoQuery))) return true;
   }
 
   return false;
@@ -84,9 +145,6 @@ function readCssVar(style, name) {
 }
 
 function cssProbeCheck() {
-  // We intentionally use a "sheet-like" root:
-  // - langRU: our JS adds this class on real sheets
-  // - wod-sheet: system sheet class
   const probe = document.createElement("div");
   probe.className = "langRU wod-sheet";
   probe.style.position = "absolute";
@@ -103,7 +161,6 @@ function cssProbeCheck() {
   const probeComputed = safe(() => getComputedStyle(probe), null);
   const innerComputed = safe(() => getComputedStyle(inner), null);
 
-  // Probe expected values via CSS variables (so sanity does not hardcode numbers).
   const expected = {
     sheetMinWidth: readCssVar(probeComputed, "--wodru-sheet-min-width"),
     sheetMinHeight: readCssVar(probeComputed, "--wodru-sheet-min-height"),
@@ -134,29 +191,59 @@ function cssProbeCheck() {
   return { result, expected, pass };
 }
 
+function collectHrefSamples() {
+  // Keep samples small to avoid log bloat.
+  const max = 12;
+
+  const linkSamples = [];
+  const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
+  for (const l of links) {
+    const href = l?.getAttribute?.("href") ?? l?.href ?? null;
+    if (href) linkSamples.push(href);
+    if (linkSamples.length >= max) break;
+  }
+
+  const sheetSamples = [];
+  const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
+  for (const s of sheets) {
+    const href = s?.href ?? null;
+    if (href) sheetSamples.push(href);
+    if (sheetSamples.length >= max) break;
+  }
+
+  return { linkSamples, sheetSamples };
+}
+
 export function cssSanityCheck() {
   const hints = expectedStyleHints();
 
-  const linkHrefs = [];
+  const matchedLinkHrefs = [];
   const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
   for (const l of links) {
-    const href = l?.href ?? "";
-    if (matchesAnyHint(href, hints)) linkHrefs.push(href);
+    const href = l?.getAttribute?.("href") ?? l?.href ?? "";
+    if (matchesAnyHint(href, hints)) matchedLinkHrefs.push(href);
   }
 
-  const sheetHrefs = [];
+  const matchedSheetHrefs = [];
   const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
   for (const s of sheets) {
     const href = s?.href ?? "";
-    if (matchesAnyHint(href, hints)) sheetHrefs.push(href);
+    if (matchesAnyHint(href, hints)) matchedSheetHrefs.push(href);
   }
 
   const probe = safe(() => cssProbeCheck(), null);
 
+  // If we didn't match anything by href, include small samples to help debugging.
+  const samples =
+    matchedLinkHrefs.length === 0 && matchedSheetHrefs.length === 0
+      ? collectHrefSamples()
+      : null;
+
   info("CSS sanity check", {
     expectedHints: hints,
-    matchedLinkTags: linkHrefs,
-    matchedStyleSheets: sheetHrefs,
+    matchedLinkTags: matchedLinkHrefs,
+    matchedStyleSheets: matchedSheetHrefs,
+    samples,
     probe
   });
 }
