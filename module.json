@@ -37,6 +37,8 @@
     ]
   },
   "esmodules": [
+    "scripts/settings.js",
+    "scripts/init-module.js",
     "scripts/debug.js",
     "scripts/ru-width.js"
   ],

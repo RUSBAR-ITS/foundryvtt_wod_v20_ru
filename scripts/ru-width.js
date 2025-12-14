@@ -1,17 +1,24 @@
 /* eslint-disable no-console */
 
 /**
- * RU width adaptation for WoD20 sheets.
- * Goal: make RU behave like DE by adding `langRU` class to the sheet root element.
+ * RU SHEET WIDTH PATCH
  *
- * The WoD20 system uses language marker classes (langDE/langES/...) on the sheet element
- * and responsive.css targets those classes to set both the window width and the inner layout width.
- *
- * We do NOT override system files. We only add an extra class at render-time.
+ * - Adds langRU class to WoD20 actor sheets when Foundry UI language is ru.
+ * - Mirrors the system's language-class approach (langDE, langFR, etc).
+ * - This file MUST NOT be noisy unless debugLogging setting is enabled.
  */
 
+const MOD_ID = "foundryvtt_wod_v20_ru";
 const TAG = "[wod-v20-ru][ru-width]";
 const LANG_CLASS = "langRU";
+
+function isDebug() {
+  try {
+    return !!game.settings.get(MOD_ID, "debugLogging");
+  } catch {
+    return false;
+  }
+}
 
 function now() {
   try {
@@ -22,69 +29,118 @@ function now() {
   }
 }
 
-function info(...args) { console.info(`${TAG} ${now()}`, ...args); }
-function debug(...args) { console.debug(`${TAG} ${now()}`, ...args); }
-function warn(...args) { console.warn(`${TAG} ${now()}`, ...args); }
-
-function isRu() {
-  const gl = game?.i18n?.lang;
-  const hl = document?.documentElement?.lang;
-  return gl === "ru" || hl === "ru";
+function logInfo(...args) {
+  if (!isDebug()) return;
+  console.info(`${TAG} ${now()}`, ...args);
 }
 
-function getSheetRootElement(app, html) {
-  // For V1 ActorSheet, app.element[0] is typically the <form> element with class 'wod-sheet'.
+function logDebug(...args) {
+  if (!isDebug()) return;
+  console.debug(`${TAG} ${now()}`, ...args);
+}
+
+function logWarn(...args) {
+  if (!isDebug()) return;
+  console.warn(`${TAG} ${now()}`, ...args);
+}
+
+function safe(fn, fallback = undefined) {
+  try {
+    return fn();
+  } catch (e) {
+    logWarn("safe() caught", e);
+    return fallback;
+  }
+}
+
+function getLang() {
+  // Prefer game.i18n.lang once initialized; fallback to <html lang>.
+  return safe(() => game.i18n?.lang, document.documentElement?.lang) ?? document.documentElement?.lang ?? "en";
+}
+
+function getRootElement(app, html) {
+  // V1 sheets: app.element is a jQuery object
   return app?.element?.[0] ?? html?.[0] ?? null;
 }
 
-function applyLangClass(app, html) {
-  const ru = isRu();
-  const el = getSheetRootElement(app, html);
+function toClassString(el) {
+  if (!el) return "";
+  return Array.from(el.classList).join(" ");
+}
 
-  debug("renderActorSheet:", app?.constructor?.name, "title=", app?.title, "ru=", ru);
-
-  if (!ru) return;
-  if (!el) {
-    warn("No sheet root element found; cannot apply", LANG_CLASS);
-    return;
-  }
-
-  const before = Array.from(el.classList);
-  const had = el.classList.contains(LANG_CLASS);
-  el.classList.add(LANG_CLASS);
-  const after = Array.from(el.classList);
-
-  info("Applied", LANG_CLASS, "to sheet root.",
-       "had=", had,
-       "classes(before)=", before,
-       "classes(after)=", after,
-       "inlineStyle=", el.getAttribute("style"));
-
-  // Additional visibility: report current computed widths of key nodes.
+function computed(el, prop) {
   try {
-    const cs = getComputedStyle(el);
-    info("Computed sheet width:", cs.width, "minWidth:", cs.minWidth, "maxWidth:", cs.maxWidth);
-
-    const inner = el.querySelector?.(".sheet-inner-area");
-    if (inner) {
-      const cis = getComputedStyle(inner);
-      info("Computed inner width:", cis.width, "minWidth:", cis.minWidth, "maxWidth:", cis.maxWidth);
-    } else {
-      warn("No .sheet-inner-area found inside sheet root.");
-    }
-  } catch (e) {
-    warn("Failed to read computed styles:", e);
+    if (!el) return null;
+    return getComputedStyle(el).getPropertyValue(prop);
+  } catch {
+    return null;
   }
 }
 
-Hooks.once("init", () => {
-  info("init | game.i18n.lang=", game?.i18n?.lang, "| html.lang=", document?.documentElement?.lang);
-});
+function snapshot(app, root) {
+  if (!isDebug()) return;
 
-Hooks.once("ready", () => {
-  info("ready | RU mode =", isRu());
-});
+  const inner = root?.querySelector?.(".sheet-inner-area") ?? null;
+  const content = root?.querySelector?.(".window-content") ?? null;
+
+  logDebug("Sheet snapshot:", {
+    sheetClass: app?.constructor?.name,
+    title: safe(() => app?.title),
+    appId: safe(() => app?.appId),
+    actorName: safe(() => app?.actor?.name),
+    actorType: safe(() => app?.actor?.type),
+    rootClasses: toClassString(root),
+    rootStyleAttr: safe(() => root?.getAttribute?.("style")),
+    computed: {
+      rootWidth: computed(root, "width"),
+      rootMinWidth: computed(root, "min-width"),
+      contentWidth: computed(content, "width"),
+      innerWidth: computed(inner, "width"),
+      innerMinWidth: computed(inner, "min-width")
+    },
+    nodes: {
+      root: !!root,
+      windowContent: !!content,
+      sheetInnerArea: !!inner
+    }
+  });
+}
 
 Hooks.on("renderActorSheet", (app, html) => {
-  applyLangClass(app, html);
+  const lang = getLang();
+  const shouldApply = lang === "ru";
+
+  const root = getRootElement(app, html);
+  if (!root) {
+    logWarn("renderActorSheet: no root element found", { app });
+    return;
+  }
+
+  const hadClass = root.classList.contains(LANG_CLASS);
+
+  // Apply/remove language class
+  if (shouldApply) root.classList.add(LANG_CLASS);
+  else root.classList.remove(LANG_CLASS);
+
+  const hasClass = root.classList.contains(LANG_CLASS);
+
+  // Strict, readable one-liner (only in debug)
+  logInfo(
+    "Applied language class:",
+    {
+      lang,
+      shouldApply,
+      hadClass,
+      hasClass,
+      sheetClass: app?.constructor?.name,
+      title: safe(() => app?.title),
+      appId: safe(() => app?.appId),
+      actor: safe(() => app?.actor?.name),
+      actorType: safe(() => app?.actor?.type),
+      rootClasses: toClassString(root)
+    }
+  );
+
+  // Rich snapshot (only in debug)
+  snapshot(app, root);
 });

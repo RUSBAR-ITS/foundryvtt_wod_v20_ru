@@ -1,0 +1,10 @@
+{
+  "foundryvtt_wod_v20_ru": {
+    "settings": {
+      "debugLogging": {
+        "name": "Enable Debug Logging",
+        "hint": "When enabled, the module outputs very verbose diagnostics to the browser console."
+      }
+    }
+  }
+}
