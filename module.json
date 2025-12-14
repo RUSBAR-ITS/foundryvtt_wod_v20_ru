@@ -37,7 +37,8 @@
     ]
   },
   "esmodules": [
-    "scripts/debug.js"
+    "scripts/debug.js",
+    "scripts/ru-width.js"
   ],
   "styles": [
     "styles/ru-sheets.css"

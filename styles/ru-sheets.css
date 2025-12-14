@@ -1,21 +1,82 @@
 /**
- * RU-only layout overrides for WoD20 system sheets.
- * Loaded by Foundry when this module is enabled.
+ * RU-only responsive overrides for WoD20 sheets.
+ * Make RU behave like DE by reusing the same layout dimensions.
  *
- * Notes:
- * - We scope everything to Russian UI language via html[lang="ru"].
- * - We target the Application window element for Actor sheets in this system.
- *   WoD20 adds "wod20" and "wod-sheet" to sheet application classes.
+ * This file assumes the module's JS adds `langRU` class to the sheet root element for RU language.
  */
 
-html[lang="ru"] .app.window-app.wod20.wod-sheet {
-  /* Increase overall sheet window width for longer Russian labels. */
-  width: 1400px;
-  min-width: 1400px;
+.langRU.wod-sheet:not(.minimized) {
+  min-width: 1100px;
+  width: 1100px;
+  min-height: 900px;
 }
 
-/* Optional: keep content from feeling too cramped on wider window. */
-html[lang="ru"] .app.window-app.wod20.wod-sheet .window-content {
-  /* Let inner layout use available space without forcing overflow. */
-  overflow: auto;
+.langRU.wod-sheet .sheet-inner-area {
+  width: 990px;
+}
+
+/* Core */
+.langRU.wod-sheet .ability-headlineWidth {
+  width: 60%;
+}
+
+.langRU.werewolf .ability-headlineWidth,
+.langRU.demon .ability-headlineWidth,
+.langRU.mage .ability-headlineWidth,
+.langRU.vampire .ability-headlineWidth,
+.langRU.hunter .ability-headlineWidth,
+.langRU.mortal .ability-headlineWidth {
+  width: 60%;
+}
+
+.langRU.changeling .health-headlineWidth {
+  width: 60%;
+}
+
+/* Item lists / drag rows (copied from langDE ruleset intent) */
+.wod20.langRU .combat-natural-itemlist .width-abilitybox,
+.wod20.langRU .combat-melee-itemlist .width-abilitybox,
+.wod20.langRU .combat-ranged-itemlist .width-abilitybox,
+.wod20.langRU .combat-armor-itemlist .width-abilitybox,
+.wod20.langRU .power-itemlist .width-abilitybox,
+.langRU .wod20-drag-row .width-abilitybox {
+  width: 22%;
+}
+
+.wod20.langRU .gear-itemlist .width-abilitybox {
+  width: 30%;
+}
+
+.wod20.langRU .combat-natural-itemlist .width-valuebox,
+.wod20.langRU .combat-melee-itemlist .width-valuebox,
+.wod20.langRU .combat-ranged-itemlist .width-valuebox,
+.wod20.langRU .combat-armor-itemlist .width-valuebox,
+.wod20.langRU .gear-itemlist .width-valuebox,
+.wod20.langRU .feature-itemlist .width-valuebox,
+.langRU .wod20-drag-row .width-valuebox {
+  width: 15%;
+}
+
+.wod20.langRU .effect-itemlist .item-row .width-mediumbox {
+  width: 20%;
+}
+
+.langRU.wod-sheet .power-dicebox {
+  width: 45%;
+}
+
+.langRU.wod-sheet .power-row .power-iconbox {
+  width: 10%;
+}
+
+.langRU.aretecasting-dialog .dialog-label {
+  width: 28%;
+}
+
+.langRU .dialog-casting-type-label {
+  width: 30%;
+}
+
+.langRU .comboboxRow {
+  width: 60%;
 }
