@@ -13,6 +13,9 @@
  * - Add ONLY:
  *   - row height control (Attributes + Abilities)
  *   - label width control (Attributes + Abilities), including supernatural variants
+ *   - core stats controls (top offset, path width constraint)
+ *   - path banner "single block" rendering (fit-to-text)
+ *   - experience spacing (gap between Health and Experience)
  */
 
 /* ============================================================
@@ -31,15 +34,7 @@
 
 /* ============================================================
  * 1) Attributes Section
- * ============================================================
- *
- * Row wrapper in markup:
- * - `<div class="attribute-rowheight attributes"> ... </div>`
- *
- * Attribute name label:
- * - uses `.ability-headlineWidth` (system template convention)
- * - may also have `.supernaturalAttribute` for special cases
- */
+ * ============================================================ */
 
 .langRU.wod20 .attribute-rowheight {
   height: var(--wodru-attr-row-height);
@@ -55,23 +50,12 @@
 
 /* ============================================================
  * 2) Abilities Section
- * ============================================================
- *
- * IMPORTANT:
- * - Ability rows in the system markup do NOT use `.ability-rowheight`.
- * - The reliable structure is:
- *   - columns: `.ability-statArea` (each column is ~33%)
- *   - each row inside the column is a `.clearareaBox` wrapper
- *
- * We scope via `.ability-statArea` so we don't affect other `.clearareaBox` blocks.
- */
+ * ============================================================ */
 
-/* Row height for abilities (targets the actual row wrapper) */
 .langRU.wod20 .ability-statArea .clearareaBox {
   height: var(--wodru-ability-row-height);
 }
 
-/* Ability name label width (same class name, but scoped to Abilities Section) */
 .langRU.wod20 .ability-statArea .clearareaBox .ability-headlineWidth {
   width: var(--wodru-ability-label-width);
 }
@@ -82,42 +66,65 @@
 
 /* ============================================================
  * 3) Core Stats Section (Vampire core tab) - RU-only additions
- * ============================================================
- *
- * 3.1) Top offset control:
- * - We add spacing ABOVE the whole Core Stats Section.
- *
- * How we target it:
- * - In vampire-sheet core stats, the section includes a `.clearareaBox` with inline `style="display: flex;"`
- *   which holds the 3 columns (Virtues / Path+WP+BP / Health+XP).
- *
- * Notes:
- * - This selector is intentionally narrow: `.tab.core` + `.sheet-area` + flex clearareaBox.
- * - If later we find another `.clearareaBox[style*="display: flex"]` inside core, we can refine further.
- */
-.langRU.wod20 .tab.core .sheet-area > .clearareaBox[style*="display: flex"] {
-  margin-top: var(--wodru-corestats-top-offset);
-}
+ * ============================================================ */
 
-/*
- * 3.2) Path/Humanity width constraint (standard max-width + auto margins):
- * - Path headline DOM (you already captured):
- *   `<div class="sheet-headline sheet-banner-small ... vrollable" data-type="Mortal" data-key="path" ...>`
- *
- * We constrain BOTH:
- * - the headline itself (so the decorative banner looks centered)
- * - the container `.sheet-boxcontainer.path` (so dots/track align with the headline)
- *
- * This is RU-only and precise due to `[data-key="path"]` + `.path`.
- */
-.langRU.wod20 .sheet-headline.sheet-banner-small[data-key="path"] {
-  max-width: var(--wodru-path-max-width);
-  margin-left: auto;
-  margin-right: auto;
+.langRU.wod20 .tab.core .clearareaBox[style*="display: flex"] {
+  margin-top: var(--wodru-corestats-top-offset);
 }
 
 .langRU.wod20 .sheet-boxcontainer.path {
   max-width: var(--wodru-path-max-width);
   margin-left: auto;
   margin-right: auto;
+}
+
+.langRU.wod20 .sheet-headline.sheet-banner-small[data-key="path"] {
+  max-width: var(--wodru-path-max-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================================
+ * 4) Path banner: render as a single block around text (fit-to-text)
+ * ============================================================ */
+
+.langRU.wod20 .sheet-headline.sheet-banner-small[data-key="path"] {
+  background: none !important;
+  text-align: center;
+}
+
+.langRU.wod20 .sheet-headline.sheet-banner-small[data-key="path"] > .sheet-banner-text {
+  display: inline-block;
+  padding: var(--wodru-path-banner-padding-y) var(--wodru-path-banner-padding-x);
+  border-radius: var(--wodru-path-banner-radius);
+
+  /*
+   * Use an absolute system asset path to avoid 404 when loaded from a module stylesheet.
+   * This fixes the V20Banner_small.png errors in the console.
+   */
+   
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  text-align: center;
+}
+
+/* ============================================================
+ * 5) Experience spacing (gap between Health and Experience)
+ * ============================================================
+ *
+ * Target EXACT element (your pasted HTML):
+ * - `.sheet-headline.headlineGroup.splatFont` which CONTAINS `.experienceValue`
+ *
+ * Why `:has(...)`:
+ * - There is no unique class on the parent block for experience.
+ * - We need to identify the correct parent without touching other headlineGroup blocks.
+ *
+ * NOTE:
+ * - Experience parent has inline style `margin-top: -4px`.
+ * - We override it via `!important`.
+ */
+.langRU.wod20 .tab.core .sheet-headline.headlineGroup.splatFont:has(.experienceValue) {
+  margin-top: var(--wodru-experience-top-gap) !important;
 }
