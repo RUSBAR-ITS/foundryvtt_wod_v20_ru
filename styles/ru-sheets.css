@@ -10,8 +10,8 @@
 
 html[lang="ru"] .app.window-app.wod20.wod-sheet {
   /* Increase overall sheet window width for longer Russian labels. */
-  width: 920px;
-  min-width: 920px;
+  width: 1400px;
+  min-width: 1400px;
 }
 
 /* Optional: keep content from feeling too cramped on wider window. */
