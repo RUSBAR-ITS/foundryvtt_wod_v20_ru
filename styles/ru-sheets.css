@@ -7,20 +7,75 @@
  * IMPORTANT:
  * - All tunable layout numbers are sourced from CSS custom properties defined in styles/ru-vars.css
  *   so we have a single source of truth.
+ *
+ * Scope of this patch:
+ * - Keep your original geometry rules unchanged.
+ * - Add ONLY:
+ *   - row height control (Attributes + Abilities)
+ *   - label width control (Attributes + Abilities), including supernatural variants
  */
 
 /* ============================================================
- * 0) Base sheet geometry (window + inner layout)
+ * 0) Base sheet geometry (unchanged)
  * ========================================================== */
 
 .langRU.wod-sheet:not(.minimized) {
-  /* Outer Foundry window sizing for RU sheets */
   min-width: var(--wodru-sheet-min-width);
   width: var(--wodru-sheet-width, var(--wodru-sheet-min-width));
   min-height: var(--wodru-sheet-min-height);
 }
 
 .langRU.wod-sheet .sheet-inner-area {
-  /* Inner tab/layout width (critical: inner layout does NOT auto-follow window width) */
   width: var(--wodru-inner-width);
+}
+
+/* ============================================================
+ * 1) Attributes Section
+ * ============================================================
+ *
+ * Row wrapper in markup:
+ * - `<div class="attribute-rowheight attributes"> ... </div>`
+ *
+ * Attribute name label:
+ * - uses `.ability-headlineWidth` (system template convention)
+ * - may also have `.supernaturalAttribute` for special cases
+ */
+
+.langRU.wod20 .attribute-rowheight {
+  height: var(--wodru-attr-row-height);
+}
+
+.langRU.wod20 .attribute-rowheight .ability-headlineWidth {
+  width: var(--wodru-attr-label-width);
+}
+
+.langRU.wod20 .attribute-rowheight .supernaturalAttribute.ability-headlineWidth {
+  width: var(--wodru-attr-label-width-supernatural);
+}
+
+/* ============================================================
+ * 2) Abilities Section
+ * ============================================================
+ *
+ * IMPORTANT:
+ * - Ability rows in the system markup do NOT use `.ability-rowheight`.
+ * - The reliable structure is:
+ *   - columns: `.ability-statArea` (each column is ~33%)
+ *   - each row inside the column is a `.clearareaBox` wrapper
+ *
+ * We scope via `.ability-statArea` so we don't affect other `.clearareaBox` blocks.
+ */
+
+/* Row height for abilities (targets the actual row wrapper) */
+.langRU.wod20 .ability-statArea .clearareaBox {
+  height: var(--wodru-ability-row-height);
+}
+
+/* Ability name label width (same class name, but scoped to Abilities Section) */
+.langRU.wod20 .ability-statArea .clearareaBox .ability-headlineWidth {
+  width: var(--wodru-ability-label-width);
+}
+
+.langRU.wod20 .ability-statArea .clearareaBox .supernaturalAttribute.ability-headlineWidth {
+  width: var(--wodru-ability-label-width-supernatural);
 }

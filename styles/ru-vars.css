@@ -4,18 +4,48 @@
  * This file contains ONLY tunable numbers as CSS custom properties.
  * `ru-sheets.css` maps these numbers onto specific UI structures/selectors.
  *
- * Conventions:
- * - Use % for label/value split inside 1/3-column blocks (Attributes/Abilities are 3-column layouts).
- * - Keep icon widths in px (icons are intrinsically fixed-size).
- * - Prefer stable, predictable behavior over "magic" auto widths.
+ * IMPORTANT:
+ * - RU-only behavior is enforced by selectors in `ru-sheets.css` (scoped under `.langRU`).
+ * - These variables existing in `:root` does NOT affect other languages unless `.langRU` rules apply.
  */
 
 :root {
   /* ============================================================
    * Base sheet geometry (RU behaves like DE)
    * ========================================================== */
-  --wodru-sheet-min-width: 1400px;
-  --wodru-sheet-width: 1400px; /* optional; can be removed to rely on min-width only */
+  --wodru-sheet-min-width: 1300px;
+  --wodru-sheet-width: 1300px; /* optional; can be removed to rely on min-width only */
   --wodru-sheet-min-height: 900px;
-  --wodru-inner-width: 1290px;
+  --wodru-inner-width: 1240px;
+
+  /* ============================================================
+   * Core tab: Attributes Section (Vampire + all splats)
+   * ============================================================
+   * Used by:
+   * - Actor Sheet -> Core tab -> Attributes Section
+   *
+   * Row height:
+   * - Applies to `.attribute-rowheight` (one row per attribute).
+   *
+   * Label width:
+   * - Attribute name labels in the system templates reuse `.ability-headlineWidth`.
+   * - We override width ONLY inside Attributes rows.
+   */
+  --wodru-attr-row-height: 19px;
+  --wodru-attr-label-width: 50%;
+  --wodru-attr-label-width-supernatural: 50%;
+
+  /* ============================================================
+   * Core tab: Abilities Section (Vampire + all splats)
+   * ============================================================
+   * Used by:
+   * - Actor Sheet -> Core tab -> Abilities Section
+   *
+   * IMPORTANT:
+   * - Ability rows in the system markup do NOT use `.ability-rowheight`.
+   * - Therefore we target the real row wrappers in CSS (see ru-sheets.css).
+   */
+  --wodru-ability-row-height: 19px;
+  --wodru-ability-label-width: 50%;
+  --wodru-ability-label-width-supernatural: 50%;
 }
