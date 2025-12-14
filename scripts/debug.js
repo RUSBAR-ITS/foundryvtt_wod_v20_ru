@@ -1,27 +1,23 @@
 /* eslint-disable no-console */
 
 /**
- * VERY VERBOSE DEBUG LOGGER (gated by setting)
+ * VERY VERBOSE DEBUG LOGGER (gated by module setting)
  *
- * This logger is extremely noisy and should only run when:
- *   game.settings.get(MOD_ID, "debugLogging") === true
+ * Fixes:
+ * - Register debug hooks early enough to capture init/setup/ready.
+ * - Make saved logs readable: do not rely on console object expansion.
  *
- * Improvements for readability:
- * - Structured logs with consistent tags
- * - Always include class strings (not Array(n))
- * - "Important-only" snapshots per rendered window
+ * Design:
+ * - We always register Hooks.once("init") and inside it decide whether debug is enabled.
+ * - If enabled at init time, we immediately log init-state and register the rest (setup/ready/render/etc).
+ * - If disabled, we only print a single short status line at ready.
+ *
+ * Note:
+ * - This module targets Foundry V13, system sheets may be V1 and produce core warnings (not ours).
  */
 
 const MOD_ID = "foundryvtt_wod_v20_ru";
 const TAG = "[wod-v20-ru][debug]";
-
-function isDebug() {
-  try {
-    return !!game.settings.get(MOD_ID, "debugLogging");
-  } catch {
-    return false;
-  }
-}
 
 function now() {
   try {
@@ -32,185 +28,188 @@ function now() {
   }
 }
 
-function info(...args) {
-  if (!isDebug()) return;
-  console.info(`${TAG} ${now()}`, ...args);
-}
-
-function debug(...args) {
-  if (!isDebug()) return;
-  console.debug(`${TAG} ${now()}`, ...args);
-}
-
-function warn(...args) {
-  if (!isDebug()) return;
-  console.warn(`${TAG} ${now()}`, ...args);
-}
-
-function error(...args) {
-  if (!isDebug()) return;
-  console.error(`${TAG} ${now()}`, ...args);
-}
-
-function group(title, fn) {
-  if (!isDebug()) return;
-  console.groupCollapsed(`${TAG} ${now()} ${title}`);
+function enabled() {
+  // Safe: settings are registered on init by settings.js (loaded before this file).
   try {
-    fn();
-  } finally {
-    console.groupEnd();
+    return !!game.settings.get(MOD_ID, "debugLogging");
+  } catch {
+    return false;
   }
+}
+
+function log(level, msg, data) {
+  if (!enabled()) return;
+
+  const prefix = `${TAG} ${now()} ${msg}`;
+  if (data === undefined) {
+    console[level](prefix);
+    return;
+  }
+
+  // Make sure saved logs are readable: print a JSON string.
+  let json = "";
+  try {
+    json = JSON.stringify(data);
+  } catch {
+    json = String(data);
+  }
+  console[level](`${prefix} ${json}`);
+}
+
+function info(msg, data) {
+  log("info", msg, data);
+}
+
+function debug(msg, data) {
+  log("debug", msg, data);
+}
+
+function warn(msg, data) {
+  log("warn", msg, data);
+}
+
+function error(msg, data) {
+  log("error", msg, data);
 }
 
 function safe(fn, fallback = undefined) {
   try {
     return fn();
   } catch (e) {
-    warn("safe() caught", e);
+    warn("safe() caught", { err: String(e) });
     return fallback;
   }
 }
 
 function classString(el) {
   if (!el) return "";
-  return Array.from(el.classList).join(" ");
+  try {
+    return Array.from(el.classList).join(" ");
+  } catch {
+    return "";
+  }
 }
 
 function dumpCoreState(phase) {
-  group(`Core state (${phase})`, () => {
-    info({
-      foundry: {
-        version: safe(() => game.version),
-        release: safe(() => game.release)
-      },
-      system: {
-        id: safe(() => game.system?.id),
-        version: safe(() => game.system?.version),
-        title: safe(() => game.system?.title)
-      },
-      world: {
-        id: safe(() => game.world?.id),
-        title: safe(() => game.world?.title)
-      },
-      user: {
-        id: safe(() => game.user?.id),
-        name: safe(() => game.user?.name),
-        isGM: safe(() => game.user?.isGM)
-      },
-      i18n: {
-        gameLang: safe(() => game.i18n?.lang),
-        htmlLang: safe(() => document.documentElement?.lang),
-        htmlClasses: safe(() => Array.from(document.documentElement.classList).join(" "))
-      },
-      module: {
-        id: MOD_ID,
-        active: safe(() => game.modules?.get(MOD_ID)?.active),
-        version: safe(() => game.modules?.get(MOD_ID)?.version),
-        styles: safe(() => game.modules?.get(MOD_ID)?.styles),
-        esmodules: safe(() => game.modules?.get(MOD_ID)?.esmodules)
-      },
-      debugLogging: isDebug()
-    });
+  info(`Core state (${phase})`, {
+    foundry: {
+      version: safe(() => game.version),
+      release: safe(() => game.release)
+    },
+    system: {
+      id: safe(() => game.system?.id),
+      version: safe(() => game.system?.version),
+      title: safe(() => game.system?.title)
+    },
+    world: {
+      id: safe(() => game.world?.id),
+      title: safe(() => game.world?.title)
+    },
+    user: {
+      id: safe(() => game.user?.id),
+      name: safe(() => game.user?.name),
+      isGM: safe(() => game.user?.isGM)
+    },
+    i18n: {
+      gameLang: safe(() => game.i18n?.lang),
+      htmlLang: safe(() => document.documentElement?.lang),
+      htmlClasses: safe(() => classString(document.documentElement))
+    },
+    module: {
+      id: MOD_ID,
+      active: safe(() => game.modules?.get(MOD_ID)?.active),
+      version: safe(() => game.modules?.get(MOD_ID)?.version),
+      styles: safe(() => game.modules?.get(MOD_ID)?.styles),
+      esmodules: safe(() => game.modules?.get(MOD_ID)?.esmodules)
+    },
+    debugLogging: enabled()
   });
 }
 
 function cssSanityCheck() {
-  group("CSS sanity check", () => {
-    const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
-    const matchedSheets = [];
+  const matchedStyleSheets = [];
+  const matchedLinks = [];
 
-    for (const s of sheets) {
-      const href = s?.href ?? "";
-      if (href.includes(`/modules/${MOD_ID}/`) || href.includes("ru-sheets.css")) matchedSheets.push(href);
-    }
+  const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
+  for (const s of sheets) {
+    const href = s?.href ?? "";
+    if (href.includes(`/modules/${MOD_ID}/`) || href.includes("ru-sheets.css")) matchedStyleSheets.push(href);
+  }
 
-    const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
-    const matchedLinks = links
-      .map((l) => l.href)
-      .filter((h) => h.includes(`/modules/${MOD_ID}/`) || h.includes("ru-sheets.css"));
+  const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
+  for (const l of links) {
+    const href = l?.href ?? "";
+    if (href.includes(`/modules/${MOD_ID}/`) || href.includes("ru-sheets.css")) matchedLinks.push(href);
+  }
 
-    info({
-      matchedStyleSheets: matchedSheets,
-      matchedLinkTags: matchedLinks
-    });
-  });
+  info("CSS sanity check", { matchedStyleSheets, matchedLinks });
 }
 
 function patchTemplateLoaders() {
-  group("Template loader patch", () => {
-    const originalGetTemplate = globalThis.getTemplate;
-    if (typeof originalGetTemplate === "function") {
-      globalThis.getTemplate = async function patchedGetTemplate(path, ...rest) {
-        debug("getTemplate:", path);
-        return originalGetTemplate.call(this, path, ...rest);
-      };
-      info("Patched getTemplate()");
-    } else {
-      warn("getTemplate() not found; skipping patch");
-    }
+  // Optional but very useful during debugging.
+  const originalGetTemplate = globalThis.getTemplate;
+  if (typeof originalGetTemplate === "function") {
+    globalThis.getTemplate = async function patchedGetTemplate(path, ...rest) {
+      debug("getTemplate", { path });
+      return originalGetTemplate.call(this, path, ...rest);
+    };
+    info("Patched getTemplate");
+  } else {
+    warn("getTemplate not found");
+  }
 
-    const originalLoadTemplates = globalThis.loadTemplates;
-    if (typeof originalLoadTemplates === "function") {
-      globalThis.loadTemplates = async function patchedLoadTemplates(paths, ...rest) {
-        try {
-          if (Array.isArray(paths)) for (const p of paths) debug("loadTemplates:", p);
-          else debug("loadTemplates:", String(paths));
-        } catch (e) {
-          warn("loadTemplates logging failed", e);
-        }
-        return originalLoadTemplates.call(this, paths, ...rest);
-      };
-      info("Patched loadTemplates()");
-    } else {
-      warn("loadTemplates() not found; skipping patch");
-    }
-  });
+  const originalLoadTemplates = globalThis.loadTemplates;
+  if (typeof originalLoadTemplates === "function") {
+    globalThis.loadTemplates = async function patchedLoadTemplates(paths, ...rest) {
+      try {
+        if (Array.isArray(paths)) debug("loadTemplates", { count: paths.length });
+        else debug("loadTemplates", { paths: String(paths) });
+      } catch (e) {
+        warn("loadTemplates logging failed", { err: String(e) });
+      }
+      return originalLoadTemplates.call(this, paths, ...rest);
+    };
+    info("Patched loadTemplates");
+  } else {
+    warn("loadTemplates not found");
+  }
 }
 
 function dumpRender(app, html) {
   const el = app?.element?.[0] ?? html?.[0] ?? null;
+  const inner = el?.querySelector?.(".sheet-inner-area") ?? null;
 
-  group(`Render ${app?.constructor?.name ?? "Unknown"} | "${safe(() => app?.title)}"`, () => {
-    info({
-      app: {
-        class: app?.constructor?.name,
-        appId: safe(() => app?.appId),
-        title: safe(() => app?.title),
-        position: safe(() => app?.position),
-        optionsClasses: safe(() => app?.options?.classes)
-      },
-      element: {
-        id: safe(() => el?.id),
-        classString: classString(el),
-        styleAttr: safe(() => el?.getAttribute?.("style"))
-      }
-    });
-
-    // Optional extra nodes for sheets
-    const inner = el?.querySelector?.(".sheet-inner-area") ?? null;
-    if (inner) {
-      info({
-        sheetInnerArea: {
+  info("Render", {
+    app: {
+      class: app?.constructor?.name,
+      appId: safe(() => app?.appId),
+      title: safe(() => app?.title),
+      template: safe(() => app?.template),
+      optionsClasses: safe(() => app?.options?.classes)
+    },
+    element: {
+      id: safe(() => el?.id),
+      classString: classString(el),
+      styleAttr: safe(() => el?.getAttribute?.("style"))
+    },
+    inner: inner
+      ? {
           classString: classString(inner),
           computedWidth: safe(() => getComputedStyle(inner).width)
         }
-      });
-    }
+      : null
   });
 }
 
 function registerDebugHooks() {
-  // Lifecycle
-  Hooks.once("init", () => {
-    info("Hooks.once(init)");
-    dumpCoreState("init");
-    patchTemplateLoaders();
-  });
+  // We are already inside init when this is called (see Hooks.once("init") below).
 
+  // i18n init
   Hooks.on("i18nInit", () => {
     info("Hooks.on(i18nInit)", { lang: safe(() => game.i18n?.lang) });
   });
 
+  // setup / ready
   Hooks.once("setup", () => {
     info("Hooks.once(setup)");
     dumpCoreState("setup");
@@ -229,23 +228,30 @@ function registerDebugHooks() {
   Hooks.on("renderDialog", (app, html) => dumpRender(app, html));
   Hooks.on("renderSettings", (app, html) => dumpRender(app, html));
 
-  // Errors
+  // Errors (if fired)
   Hooks.on("error", (location, err) => {
-    error("Hooks.on(error)", { location, err });
+    error("Hooks.on(error)", { location, err: String(err) });
   });
 
   info("Debug hooks registered");
 }
 
-/**
- * We register a minimal watcher hook always, to show when debug mode toggles.
- * The noisy debug hooks are only registered once debug is enabled on startup.
- *
- * (We can later support live enable/disable without reload, but for now: enable -> reload.)
- */
-Hooks.once("ready", () => {
-  const enabled = isDebug();
-  console.info(`[wod-v20-ru][debug] ${now()} Debug logging is ${enabled ? "ENABLED" : "DISABLED"} (toggle in module settings).`);
+// Always register init: inside we decide whether to enable the noisy hooks.
+Hooks.once("init", () => {
+  const on = enabled();
 
-  if (enabled) registerDebugHooks();
+  // Always print one line at init if debug enabled (readable in saved log).
+  if (on) {
+    info("Debug logging ENABLED at init");
+    dumpCoreState("init");
+    patchTemplateLoaders();
+    registerDebugHooks();
+  }
+});
+
+// Always print a single status line at ready (even if debug disabled) so user sees the mode.
+// This is intentionally minimal.
+Hooks.once("ready", () => {
+  const on = enabled();
+  console.info(`${TAG} ${now()} Debug logging is ${on ? "ENABLED" : "DISABLED"} (toggle in module settings).`);
 });

@@ -4,21 +4,14 @@
  * RU SHEET WIDTH PATCH
  *
  * - Adds langRU class to WoD20 actor sheets when Foundry UI language is ru.
- * - Mirrors the system's language-class approach (langDE, langFR, etc).
- * - This file MUST NOT be noisy unless debugLogging setting is enabled.
+ * - Logs are readable in saved console exports:
+ *   - One-line summary (always when debug enabled)
+ *   - JSON details (always when debug enabled)
  */
 
 const MOD_ID = "foundryvtt_wod_v20_ru";
 const TAG = "[wod-v20-ru][ru-width]";
 const LANG_CLASS = "langRU";
-
-function isDebug() {
-  try {
-    return !!game.settings.get(MOD_ID, "debugLogging");
-  } catch {
-    return false;
-  }
-}
 
 function now() {
   try {
@@ -29,43 +22,64 @@ function now() {
   }
 }
 
-function logInfo(...args) {
-  if (!isDebug()) return;
-  console.info(`${TAG} ${now()}`, ...args);
+function enabled() {
+  try {
+    return !!game.settings.get(MOD_ID, "debugLogging");
+  } catch {
+    return false;
+  }
 }
 
-function logDebug(...args) {
-  if (!isDebug()) return;
-  console.debug(`${TAG} ${now()}`, ...args);
+function info(msg, data) {
+  if (!enabled()) return;
+  if (data === undefined) {
+    console.info(`${TAG} ${now()} ${msg}`);
+    return;
+  }
+  let json = "";
+  try {
+    json = JSON.stringify(data);
+  } catch {
+    json = String(data);
+  }
+  console.info(`${TAG} ${now()} ${msg} ${json}`);
 }
 
-function logWarn(...args) {
-  if (!isDebug()) return;
-  console.warn(`${TAG} ${now()}`, ...args);
+function warn(msg, data) {
+  if (!enabled()) return;
+  let json = "";
+  try {
+    json = data === undefined ? "" : JSON.stringify(data);
+  } catch {
+    json = String(data);
+  }
+  console.warn(`${TAG} ${now()} ${msg}${json ? " " + json : ""}`);
 }
 
 function safe(fn, fallback = undefined) {
   try {
     return fn();
   } catch (e) {
-    logWarn("safe() caught", e);
+    warn("safe() caught", { err: String(e) });
     return fallback;
   }
 }
 
 function getLang() {
-  // Prefer game.i18n.lang once initialized; fallback to <html lang>.
   return safe(() => game.i18n?.lang, document.documentElement?.lang) ?? document.documentElement?.lang ?? "en";
 }
 
 function getRootElement(app, html) {
-  // V1 sheets: app.element is a jQuery object
   return app?.element?.[0] ?? html?.[0] ?? null;
 }
 
-function toClassString(el) {
+function classString(el) {
   if (!el) return "";
-  return Array.from(el.classList).join(" ");
+  try {
+    return Array.from(el.classList).join(" ");
+  } catch {
+    return "";
+  }
 }
 
 function computed(el, prop) {
@@ -77,33 +91,47 @@ function computed(el, prop) {
   }
 }
 
-function snapshot(app, root) {
-  if (!isDebug()) return;
-
+function takeSnapshot(app, root) {
   const inner = root?.querySelector?.(".sheet-inner-area") ?? null;
   const content = root?.querySelector?.(".window-content") ?? null;
 
-  logDebug("Sheet snapshot:", {
+  return {
     sheetClass: app?.constructor?.name,
     title: safe(() => app?.title),
     appId: safe(() => app?.appId),
     actorName: safe(() => app?.actor?.name),
     actorType: safe(() => app?.actor?.type),
-    rootClasses: toClassString(root),
-    rootStyleAttr: safe(() => root?.getAttribute?.("style")),
-    computed: {
-      rootWidth: computed(root, "width"),
-      rootMinWidth: computed(root, "min-width"),
-      contentWidth: computed(content, "width"),
-      innerWidth: computed(inner, "width"),
-      innerMinWidth: computed(inner, "min-width")
+    root: {
+      classString: classString(root),
+      styleAttr: safe(() => root?.getAttribute?.("style")),
+      computed: {
+        width: computed(root, "width"),
+        minWidth: computed(root, "min-width"),
+        height: computed(root, "height"),
+        minHeight: computed(root, "min-height")
+      }
     },
+    windowContent: content
+      ? {
+          computed: {
+            width: computed(content, "width"),
+            overflow: computed(content, "overflow")
+          }
+        }
+      : null,
+    sheetInnerArea: inner
+      ? {
+          computed: {
+            width: computed(inner, "width"),
+            minWidth: computed(inner, "min-width")
+          }
+        }
+      : null,
     nodes: {
-      root: !!root,
-      windowContent: !!content,
-      sheetInnerArea: !!inner
+      hasWindowContent: !!content,
+      hasSheetInnerArea: !!inner
     }
-  });
+  };
 }
 
 Hooks.on("renderActorSheet", (app, html) => {
@@ -112,35 +140,47 @@ Hooks.on("renderActorSheet", (app, html) => {
 
   const root = getRootElement(app, html);
   if (!root) {
-    logWarn("renderActorSheet: no root element found", { app });
+    warn("renderActorSheet: no root element", { sheetClass: app?.constructor?.name, title: safe(() => app?.title) });
     return;
   }
 
-  const hadClass = root.classList.contains(LANG_CLASS);
+  const had = root.classList.contains(LANG_CLASS);
 
-  // Apply/remove language class
   if (shouldApply) root.classList.add(LANG_CLASS);
   else root.classList.remove(LANG_CLASS);
 
-  const hasClass = root.classList.contains(LANG_CLASS);
+  const has = root.classList.contains(LANG_CLASS);
 
-  // Strict, readable one-liner (only in debug)
-  logInfo(
-    "Applied language class:",
+  const snap = takeSnapshot(app, root);
+
+  // Readable one-liner for saved logs:
+  info(
+    "Applied language class",
     {
       lang,
       shouldApply,
-      hadClass,
-      hasClass,
-      sheetClass: app?.constructor?.name,
-      title: safe(() => app?.title),
-      appId: safe(() => app?.appId),
-      actor: safe(() => app?.actor?.name),
-      actorType: safe(() => app?.actor?.type),
-      rootClasses: toClassString(root)
+      had,
+      has,
+      sheetClass: snap.sheetClass,
+      title: snap.title,
+      appId: snap.appId,
+      actorName: snap.actorName,
+      actorType: snap.actorType,
+      rootWidth: snap.root.computed.width,
+      innerWidth: snap.sheetInnerArea?.computed?.width ?? null,
+      classes: snap.root.classString
     }
   );
 
-  // Rich snapshot (only in debug)
-  snapshot(app, root);
+  // Optional warning if inner area not found (helps when sheet differs)
+  if (shouldApply && !snap.nodes.hasSheetInnerArea) {
+    warn("No .sheet-inner-area found; CSS may need additional selectors", {
+      sheetClass: snap.sheetClass,
+      title: snap.title,
+      classes: snap.root.classString
+    });
+  }
+
+  // Full snapshot as JSON (still readable)
+  info("Sheet snapshot", snap);
 });
