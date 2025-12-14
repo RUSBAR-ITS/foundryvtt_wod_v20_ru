@@ -3,21 +3,27 @@
 /**
  * VERY VERBOSE DEBUG LOGGER (gated by module setting)
  *
+ * Goals:
+ * - Provide strict, readable diagnostics.
+ * - Make init-time failures actionable:
+ *   - Named hook functions (avoid Foundry showing '' as callback name)
+ *   - Step runner with BEGIN/OK/FAIL
+ *   - Full stack traces
+ *   - Global error/unhandledrejection handlers (debug mode only)
+ *
  * Includes:
- * - CSS sanity checks without false negatives:
- *   - link/styleSheet discovery (best-effort)
- *   - computed-style probe check (authoritative)
- *   - expected values are sourced from CSS custom properties (no JS hardcode)
+ * - CSS sanity checks via probe (authoritative)
+ *   - Expected values are sourced from CSS custom properties (no JS hardcode)
  *
  * - Template loader patch WITHOUT deprecated globals:
  *   - Prefer foundry.applications.handlebars.getTemplate/loadTemplates (V13+)
  *   - Fallback to global getTemplate/loadTemplates only if namespaced is missing
- *
- * Saved logs are readable: all structured data is JSON-stringified.
  */
 
 const MOD_ID = "foundryvtt_wod_v20_ru";
 const TAG = "[wod-v20-ru][debug]";
+
+/* ---------------- basics ---------------- */
 
 function now() {
   try {
@@ -36,6 +42,19 @@ function enabled() {
   }
 }
 
+function toJson(data) {
+  if (data === undefined) return "";
+  try {
+    return JSON.stringify(data);
+  } catch {
+    try {
+      return String(data);
+    } catch {
+      return "[unstringifiable]";
+    }
+  }
+}
+
 function log(level, msg, data) {
   if (!enabled()) return;
 
@@ -44,14 +63,7 @@ function log(level, msg, data) {
     console[level](prefix);
     return;
   }
-
-  let json = "";
-  try {
-    json = JSON.stringify(data);
-  } catch {
-    json = String(data);
-  }
-  console[level](`${prefix} ${json}`);
+  console[level](`${prefix} ${toJson(data)}`);
 }
 
 function info(msg, data) {
@@ -74,7 +86,7 @@ function safe(fn, fallback = undefined) {
   try {
     return fn();
   } catch (e) {
-    warn("safe() caught", { err: String(e) });
+    warn("safe() caught", { err: String(e), stack: e?.stack ?? null });
     return fallback;
   }
 }
@@ -87,6 +99,82 @@ function classString(el) {
     return "";
   }
 }
+
+/* ---------------- strict step runner ---------------- */
+
+let __stepSeq = 0;
+
+async function runStep(name, fn) {
+  const id = ++__stepSeq;
+  const start = safe(() => globalThis.performance?.now?.() ?? null, null);
+
+  info(`STEP BEGIN #${id} ${name}`);
+
+  try {
+    const res = await fn();
+    const end = safe(() => globalThis.performance?.now?.() ?? null, null);
+    const dur = start !== null && end !== null ? Number(end - start).toFixed(1) : null;
+    info(`STEP OK    #${id} ${name}`, { durMs: dur });
+    return res;
+  } catch (e) {
+    const end = safe(() => globalThis.performance?.now?.() ?? null, null);
+    const dur = start !== null && end !== null ? Number(end - start).toFixed(1) : null;
+
+    error(`STEP FAIL  #${id} ${name}`, {
+      durMs: dur,
+      err: String(e),
+      stack: e?.stack ?? null
+    });
+
+    // rethrow so outer init handler can also see it (optional)
+    throw e;
+  }
+}
+
+/* ---------------- global error hooks (debug-only) ---------------- */
+
+let __globalErrorHooksInstalled = false;
+
+function installGlobalErrorHooks() {
+  if (__globalErrorHooksInstalled) return;
+  __globalErrorHooksInstalled = true;
+
+  // window.onerror
+  globalThis.addEventListener?.("error", (ev) => {
+    if (!enabled()) return;
+    try {
+      const e = ev?.error;
+      error("window.error", {
+        message: ev?.message ?? null,
+        filename: ev?.filename ?? null,
+        lineno: ev?.lineno ?? null,
+        colno: ev?.colno ?? null,
+        err: e ? String(e) : null,
+        stack: e?.stack ?? null
+      });
+    } catch (ex) {
+      console.error(`${TAG} ${now()} window.error handler failed`, ex);
+    }
+  });
+
+  // unhandledrejection
+  globalThis.addEventListener?.("unhandledrejection", (ev) => {
+    if (!enabled()) return;
+    try {
+      const reason = ev?.reason;
+      error("window.unhandledrejection", {
+        reason: reason ? String(reason) : null,
+        stack: reason?.stack ?? null
+      });
+    } catch (ex) {
+      console.error(`${TAG} ${now()} unhandledrejection handler failed`, ex);
+    }
+  });
+
+  info("Global error hooks installed");
+}
+
+/* ---------------- core state dump ---------------- */
 
 function dumpCoreState(phase) {
   info(`Core state (${phase})`, {
@@ -200,7 +288,6 @@ function cssProbeCheck() {
 function cssSanityCheck() {
   const expected = expectedStyleUrls();
 
-  // 1) Link tags
   const linkHrefs = [];
   const links = safe(() => Array.from(document.querySelectorAll('link[rel="stylesheet"]')), []);
   for (const l of links) {
@@ -210,7 +297,6 @@ function cssSanityCheck() {
     }
   }
 
-  // 2) document.styleSheets hrefs (can be empty/null in some cases)
   const sheetHrefs = [];
   const sheets = safe(() => Array.from(document.styleSheets ?? []), []);
   for (const s of sheets) {
@@ -220,7 +306,6 @@ function cssSanityCheck() {
     }
   }
 
-  // 3) Authoritative computed-style probe
   const probe = safe(() => cssProbeCheck(), null);
 
   info("CSS sanity check", {
@@ -233,10 +318,6 @@ function cssSanityCheck() {
 
 /* ---------------- Template loader patch (no deprecated globals) ---------------- */
 
-/**
- * Locate namespaced Handlebars API in Foundry V13+:
- * foundry.applications.handlebars.{getTemplate,loadTemplates}
- */
 function getHandlebarsApi() {
   const api = safe(() => globalThis.foundry?.applications?.handlebars, null);
   if (!api) return null;
@@ -274,7 +355,7 @@ function patchTemplateFns(target, label) {
         if (Array.isArray(paths)) debug("loadTemplates", { label, count: paths.length });
         else debug("loadTemplates", { label, paths: String(paths) });
       } catch (e) {
-        warn("loadTemplates logging failed", { label, err: String(e) });
+        warn("loadTemplates logging failed", { label, err: String(e), stack: e?.stack ?? null });
       }
       return original.call(this, paths, ...rest);
     };
@@ -294,7 +375,7 @@ function patchTemplateLoaders() {
     return;
   }
 
-  // Fallback for older cores only — may be deprecated there, but kept as best-effort.
+  // Fallback for older cores only — best-effort.
   const globals = {
     getTemplate: globalThis.getTemplate,
     loadTemplates: globalThis.loadTemplates
@@ -361,26 +442,49 @@ function registerDebugHooks() {
   Hooks.on("renderDialog", (app, html) => dumpRender(app, html));
   Hooks.on("renderSettings", (app, html) => dumpRender(app, html));
 
-  Hooks.on("error", (location, err) => {
-    error("Hooks.on(error)", { location, err: String(err) });
+  Hooks.on("error", (location, errObj) => {
+    error("Hooks.on(error)", {
+      location,
+      err: errObj ? String(errObj) : null,
+      stack: errObj?.stack ?? null
+    });
   });
 
   info("Debug hooks registered");
 }
 
-/* ---------------- Lifecycle ---------------- */
+/* ---------------- Lifecycle (named callbacks) ---------------- */
 
-Hooks.once("init", () => {
+async function onInitDebug() {
   const on = enabled();
-  if (on) {
-    info("Debug logging ENABLED at init");
-    dumpCoreState("init");
-    patchTemplateLoaders();
-    registerDebugHooks();
-  }
-});
+  if (!on) return;
 
-Hooks.once("ready", () => {
+  info("Debug logging ENABLED at init");
+
+  // Install global error hooks ASAP to catch init-time async errors.
+  await runStep("installGlobalErrorHooks", async () => {
+    installGlobalErrorHooks();
+  });
+
+  await runStep("dumpCoreState(init)", async () => {
+    dumpCoreState("init");
+  });
+
+  await runStep("patchTemplateLoaders", async () => {
+    patchTemplateLoaders();
+  });
+
+  await runStep("registerDebugHooks", async () => {
+    registerDebugHooks();
+  });
+
+  info("Init debug flow completed OK");
+}
+
+function onReadyBanner() {
   const on = enabled();
   console.info(`${TAG} ${now()} Debug logging is ${on ? "ENABLED" : "DISABLED"} (toggle in module settings).`);
-});
+}
+
+Hooks.once("init", onInitDebug);
+Hooks.once("ready", onReadyBanner);
