@@ -48,4 +48,31 @@
   --wodru-ability-row-height: 19px;
   --wodru-ability-label-width: 50%;
   --wodru-ability-label-width-supernatural: 50%;
+
+  /* ============================================================
+   * Core tab: Core Stats Section (Vampire primary target)
+   * ============================================================
+   * Used by:
+   * - Vampire sheet -> Core tab -> Core Stats Section (3 columns):
+   *   1) Virtues
+   *   2) Path/Willpower/Bloodpool
+   *   3) Health + Experience
+   *
+   * 1) Top offset:
+   * - Adds spacing ABOVE the whole Core Stats Section block.
+   * - Helps visually separate it from Abilities Section above.
+   */
+  --wodru-corestats-top-offset: 20px;
+
+  /*
+   * 2) Path/Humanity width constraint:
+   * - Path headline is rendered as:
+   *   `div.sheet-headline.sheet-banner-small ... data-key="path" data-type="Mortal" ...`
+   * - On some layouts it visually looks off-center compared to other "constrained" blocks.
+   * - Standard fix is to constrain the block width and center it with auto margins.
+   *
+   * Note:
+   * - This is keyed by `data-key="path"` in CSS, so it stays precise.
+   */
+  --wodru-path-max-width: 240px;
 }
