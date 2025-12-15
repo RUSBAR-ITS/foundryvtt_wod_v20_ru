@@ -1,0 +1,129 @@
+/* ============================================================
+ * Disciplines / Powers tab typography (RU)
+ *
+ * Four typography groups:
+ * 1) Main powers rows
+ * 2) Child powers rows
+ * 3) Description body text (tooltipText)
+ * 4) Description headers (headlineList)
+ *
+ * Scope: RU only (.langRU)
+ * ========================================================== */
+
+.langRU.wod20 {
+  /* ==========================================================
+   * 1) Main powers (disciplines / paths / rituals headers)
+   * Applies to ALL columns in mainpower row.
+   * ======================================================== */
+
+  .item-row-area.mainpower-row .dragrow,
+  .item-row-area.mainpower-row > .iconBox {
+    font-size: var(--wodru-powers-main-font-size);
+    font-weight: var(--wodru-powers-main-font-weight);
+  }
+
+  .item-row-area.mainpower-row .width-namebox {
+    font-size: var(--wodru-powers-main-font-size);
+    font-weight: var(--wodru-powers-main-font-weight);
+  }
+
+  /* ==========================================================
+   * 2) Child powers rows
+   * Applies to ALL columns in child power row.
+   * ======================================================== */
+
+  .item-row-area.power-row .dragrow,
+  .item-row-area.power-row .iconBox {
+    font-size: var(--wodru-powers-child-font-size);
+    font-weight: var(--wodru-powers-child-font-weight);
+  }
+
+  .item-row-area.power-row .width-namebox {
+    font-size: var(--wodru-powers-child-font-size);
+    font-weight: var(--wodru-powers-child-font-weight);
+  }
+
+  /* ----------------------------------------------------------
+   * 2b) Unsorted / unlisted powers (NOT attached to a main power)
+   *
+   * System renders them as:
+   *   .unsorted-area .area-box .row
+   * with the name inside:
+   *   .width-namebox.headlineNormal.vrollable
+   *
+   * We apply the SAME typography as for normal child powers.
+   * -------------------------------------------------------- */
+
+  .unsorted-area .area-box .row,
+  .unsorted-area .area-box .row .width-namebox {
+    font-size: var(--wodru-powers-child-font-size);
+    font-weight: var(--wodru-powers-child-font-weight);
+  }
+
+  /* ==========================================================
+   * 3) Description body text
+   * System helper getToolTip_v2 renders body as `.tooltipText`.
+   * ======================================================== */
+
+  .description .tooltipText {
+    font-size: var(--wodru-powers-desc-font-size);
+    font-weight: var(--wodru-powers-desc-font-weight);
+  }
+
+  /* Keep nested elements consistent */
+  .description .tooltipText p,
+  .description .tooltipText li,
+  .description .tooltipText span,
+  .description .tooltipText div,
+  .description .tooltipText table {
+    font-size: var(--wodru-powers-desc-font-size);
+    font-weight: var(--wodru-powers-desc-font-weight);
+  }
+
+  /* ==========================================================
+   * 4) Description headers (Description / System / etc.)
+   * System helper getToolTip_v2 renders headers as `.headlineList`.
+   * ======================================================== */
+
+  .description .headlineList {
+    font-size: var(--wodru-powers-desc-head-font-size);
+    font-weight: var(--wodru-powers-desc-head-font-weight);
+  }
+
+  /* If some parts still use headings, keep them aligned too */
+  .description h1,
+  .description h2,
+  .description h3,
+  .description h4 {
+    font-size: var(--wodru-powers-desc-head-font-size);
+    font-weight: var(--wodru-powers-desc-head-font-weight);
+  }
+
+  /* ============================================================
+ * Disciplines / Powers tab typography (RU)
+ *
+ * This file currently focuses on styling the "unsorted powers" warning banners:
+ * - wod.power.unsorteddisciplines
+ * - wod.power.unsortedpaths
+ *
+ * Scope: RU only (.langRU)
+ * ========================================================== */
+
+  /* Unsorted warnings are rendered as:
+   * <div class="headlineNormal info-box">...</div>
+   * inside: <div class="sheet-area unsorted-area ...">
+   *
+   * We keep the selector tight to avoid affecting other info-boxes.
+   */
+  .sheet-area.unsorted-area > .headlineNormal.info-box {
+    font-size: var(--wodru-powers-unsorted-banner-font-size);
+    font-weight: var(--wodru-powers-unsorted-banner-font-weight);
+    color: var(--wodru-powers-unsorted-banner-color);
+
+    background: var(--wodru-powers-unsorted-banner-bg);
+    border-color: var(--wodru-powers-unsorted-banner-border-color);
+
+    /* Helpful for warning banners readability */
+    text-align: center;
+  }
+}

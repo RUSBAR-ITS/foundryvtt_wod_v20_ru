@@ -1,0 +1,143 @@
+/**
+ * RU: Disciplines / Powers tab layout overrides.
+ *
+ * Goals:
+ * - Unified column layout for all Powers tables:
+ *   main powers, child powers, and unsorted (unassigned) powers.
+ * - Allow long names to wrap into multiple lines.
+ * - Rows must grow vertically without overlapping neighbors.
+ * - Last column (icons/actions) takes remaining width.
+ * - Scope strictly to RU language via `.langRU`.
+ *
+ * IMPORTANT:
+ * - This file only maps variables to existing system markup.
+ * - Variable definitions live in `styles/ru-vars.css`.
+ */
+
+.langRU.wod20 {
+  /* ==========================================================
+   * MULTILINE SAFETY — GLOBAL
+   * ======================================================== */
+
+  .item-row-area.mainpower-row,
+  .item-row-area.power-row {
+    height: auto;
+  }
+
+  .item-row-area.mainpower-row .power-itemlist,
+  .item-row-area.power-row .power-itemlist {
+    height: auto;
+    min-height: 26px;
+  }
+
+  .item-row-area.mainpower-row .dragrow,
+  .item-row-area.power-row .dragrow {
+    align-items: flex-start;
+  }
+
+  /* ==========================================================
+   * TEXT WRAP — NAME COLUMNS (ALL POWERS)
+   * ======================================================== */
+
+  .item-row-area.mainpower-row .width-namebox,
+  .item-row-area.power-row .width-namebox,
+  .unsorted-area .area-box .row .width-namebox {
+    white-space: normal;
+    overflow: visible;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  /* ==========================================================
+   * MAIN POWERS (mainpower-row)
+   * ======================================================== */
+
+  .item-row-area.mainpower-row .dragrow > .width-iconbox {
+    width: var(--wodru-powers-main-col-drag);
+    flex: 0 0 var(--wodru-powers-main-col-drag);
+  }
+
+  .item-row-area.mainpower-row .dragrow > .width-namebox {
+    width: var(--wodru-powers-main-col-name);
+    flex: 0 0 var(--wodru-powers-main-col-name);
+  }
+
+  .item-row-area.mainpower-row .dragrow > .resource-value {
+    width: var(--wodru-powers-main-col-dots);
+    flex: 0 0 var(--wodru-powers-main-col-dots);
+  }
+
+  .item-row-area.mainpower-row > .iconBox {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* ==========================================================
+   * CHILD POWERS (power-row)
+   * ======================================================== */
+
+  .item-row-area.power-row .dragrow > .width-iconbox {
+    width: var(--wodru-powers-child-col-drag);
+    flex: 0 0 var(--wodru-powers-child-col-drag);
+  }
+
+  .item-row-area.power-row .dragrow > .item-activeBox {
+    width: var(--wodru-powers-child-col-active);
+    flex: 0 0 var(--wodru-powers-child-col-active);
+  }
+
+  .item-row-area.power-row .dragrow > .width-namebox {
+    width: var(--wodru-powers-child-col-name);
+    flex: 0 0 var(--wodru-powers-child-col-name);
+  }
+
+  .item-row-area.power-row .dragrow > .width-abilitybox,
+  .item-row-area.power-row .dragrow > .width-smallbox {
+    text-align: center;
+  }
+
+  .item-row-area.power-row .dragrow > .width-abilitybox:nth-child(4) {
+    width: var(--wodru-powers-child-col-attr1);
+    flex: 0 0 var(--wodru-powers-child-col-attr1);
+  }
+
+  .item-row-area.power-row .dragrow > .width-abilitybox:nth-child(5) {
+    width: var(--wodru-powers-child-col-attr2);
+    flex: 0 0 var(--wodru-powers-child-col-attr2);
+  }
+
+  .item-row-area.power-row .dragrow > .width-smallbox:nth-child(6) {
+    width: var(--wodru-powers-child-col-diff);
+    flex: 0 0 var(--wodru-powers-child-col-diff);
+  }
+
+  .item-row-area.power-row .dragrow > .iconBox {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* ==========================================================
+   * UNSORTED / UNASSIGNED POWERS
+   * ======================================================== */
+
+  .unsorted-area .area-box .row {
+    display: flex;
+    align-items: flex-start;
+    height: auto;
+  }
+
+  .unsorted-area .area-box .row .width-namebox {
+    width: var(--wodru-powers-child-col-name);
+    flex: 0 0 var(--wodru-powers-child-col-name);
+  }
+
+  .unsorted-area .area-box .row .iconBox {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}

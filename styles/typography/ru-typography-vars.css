@@ -111,4 +111,33 @@
    * ========================================================== */
   /* Locked mode fallback (when editor is not shown) */
   --wodru-bio-locked-textarea-font-size: 14px;
+
+  /* ============================================================
+   * Disciplines / Powers tab typography
+   * ========================================================== */
+
+  /* Main powers rows */
+  --wodru-powers-main-font-size: 20px;
+  --wodru-powers-main-font-weight: 400;
+
+  /* Child powers rows */
+  --wodru-powers-child-font-size: 16px;
+  --wodru-powers-child-font-weight: 400;
+
+  /* Description body text */
+  --wodru-powers-desc-font-size: 14px;
+  --wodru-powers-desc-font-weight: 400;
+
+  /* Description headers (Description / System / etc.) */
+  --wodru-powers-desc-head-font-size: 15px;
+  --wodru-powers-desc-head-font-weight: 600;
+
+  /* ============================================================
+   * Powers tab: Unsorted banner ("wod.power.unsorteddisciplines", "wod.power.unsortedpaths")
+   * ========================================================== */
+  --wodru-powers-unsorted-banner-font-size: 14px;
+  --wodru-powers-unsorted-banner-font-weight: 700;
+  --wodru-powers-unsorted-banner-color: #ffb000;
+  --wodru-powers-unsorted-banner-bg: #000000;
+  --wodru-powers-unsorted-banner-border-color: #ffb000;
 }

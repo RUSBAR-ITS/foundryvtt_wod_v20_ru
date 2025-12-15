@@ -105,4 +105,20 @@
    * ========================================================== */
   --wodru-bio-field-height: 40px; /* set to 34-40px if needed */
   --wodru-bio-field-gap: 10px;
+
+    /* ============================================================
+   * Disciplines / Powers tab: per-column widths
+   * ========================================================== */
+  --wodru-powers-main-col-drag: 25px;
+  --wodru-powers-main-col-name: 350px;
+  --wodru-powers-main-col-dots: 150px;
+
+  --wodru-powers-child-col-drag: 15px;
+  --wodru-powers-child-col-active: 30px;
+  --wodru-powers-child-col-name: 350px;
+  --wodru-powers-child-col-attr1: 200px;
+  --wodru-powers-child-col-attr2: 200px;
+  --wodru-powers-child-col-diff: 100px;
+
 }
+
