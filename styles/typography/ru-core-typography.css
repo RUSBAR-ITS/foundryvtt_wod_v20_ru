@@ -36,6 +36,33 @@
 }
 
 /* ============================================================
+ * Row alignment (labels + dots) WITHOUT layout changes
+ * - No flex changes, no width/flow side effects
+ * - Align label baseline and dot block visually
+ * - Optional fine tune via --ru-core-dots-offset-y (default 0px)
+ * ============================================================ */
+.langRU .tab.core label.headlineNormal,
+.langRU .tab.core label.ability-headlineWidth,
+.langRU .tab.core label.attribute-headlineWidth {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.langRU .tab.core .attribute-statArea .resource-value,
+.langRU .tab.core .ability-statArea .resource-value {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: var(--ru-core-label-line-height);
+  position: relative;
+  top: var(--ru-core-dots-offset-y, 0px);
+}
+
+.langRU .tab.core .attribute-statArea .resource-value .resource-value-step,
+.langRU .tab.core .ability-statArea .resource-value .resource-value-step {
+  vertical-align: middle;
+}
+
+/* ============================================================
  * Attribute / Ability / Virtue LABELS
  * (override system label sizes)
  * ============================================================ */

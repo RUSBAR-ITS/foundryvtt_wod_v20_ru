@@ -31,6 +31,9 @@
   --ru-core-value-font-weight: 400;
   --ru-core-value-line-height: 1.25;
 
+  /* Row alignment Optional fine tune */
+  --ru-core-dots-offset-y: 2px; 
+
   /* ============================================================
    * Column group headers (Attributes/Abilities: Physical/Social/Mental, etc.)
    * ============================================================ */
