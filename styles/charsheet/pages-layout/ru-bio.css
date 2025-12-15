@@ -1,24 +1,21 @@
 /**
- * RU Bio tab patches (field height control, prevents overlaps).
+ * RU Bio tab layout patches (field sizing, prevents overlaps).
  * Code/comments intentionally in English.
  */
 
-/* 1) Make Bio rows taller (container row) */
+/* 1) Bio row sizing (container row) */
 .langRU.wod20 .tab.bio .bioInformationArea {
   height: var(--wodru-bio-field-height);
   line-height: normal; /* important: don't vertically-center the floating label */
   margin-top: var(--wodru-bio-field-gap);
 }
 
-/* 2) Keep inputs/selects aligned with the row height */
+/* 2) Inputs/selects must match the row height (layout only) */
 .langRU.wod20 .tab.bio input.sheet-infoValues,
 .langRU.wod20 .tab.bio select.sheet-infoValues,
 .langRU.wod20 .tab.bio .floating-label-group input,
 .langRU.wod20 .tab.bio .floating-label-group select {
   height: var(--wodru-bio-field-height);
-  line-height: calc(var(--wodru-bio-field-height) - 2px); /* keeps value vertically stable */
-  padding-top: 0;  /* will be adjusted by label rules below if needed */
-  padding-bottom: 0;
 }
 
 /*

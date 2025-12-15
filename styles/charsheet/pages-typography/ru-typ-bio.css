@@ -29,7 +29,7 @@
  * Bio tab: vertical positioning
  * - empty label: centered
  * - active label: top
- * - value: bottom (via padding)
+ * - value: lower inside the control (via padding)
  * ========================================================== */
 
 /* 1) Empty/default floating label position -> centered */
@@ -59,13 +59,12 @@
   line-height: normal; /* avoid line-height fighting the padding */
 }
 
-/* Active (filled) floating label must sit at the top */
-.langRU.wod20 .tab.bio .floating-label-group input:focus ~ .floating-label,
-.langRU.wod20 .tab.bio .floating-label-group input:disabled ~ .floating-label,
-.langRU.wod20 .tab.bio .floating-label-group input:not(:focus):valid ~ .floating-label,
-.langRU.wod20 .tab.bio .floating-label-group select:focus ~ .floating-label,
-.langRU.wod20 .tab.bio .floating-label-group select:disabled ~ .floating-label,
-.langRU.wod20 .tab.bio .floating-label-group select:not(:focus):valid ~ .floating-label {
-  top: 2px !important;     /* anchor to top */
-  line-height: 1 !important;
+/* ============================================================
+ * Bio tab: editor blocks font sizing (appearance/background/tips)
+ * Based on Foundry {{editor}} output: .editor-content[data-edit="..."]
+ * ========================================================== */
+
+/* Locked mode: those blocks are plain div.headlineNormal.textarea */
+.langRU.wod20 .tab.bio .headlineNormal.textarea {
+  font-size: var(--wodru-bio-locked-textarea-font-size);
 }

@@ -104,4 +104,11 @@
   /* Value text baseline control (simulate bottom alignment via padding) */
   --wodru-bio-value-padding-top: 12px;
   --wodru-bio-value-padding-bottom: 0px;
+
+  /* ============================================================
+   * Bio tab: prosemirror editor blocks (appearance/background/tips)
+   * System fields: system.appearance, system.background, system.roleplaytip
+   * ========================================================== */
+  /* Locked mode fallback (when editor is not shown) */
+  --wodru-bio-locked-textarea-font-size: 14px;
 }
