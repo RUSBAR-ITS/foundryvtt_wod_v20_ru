@@ -1,0 +1,71 @@
+/* ============================================================
+ * Bio tab typography control for floating-label fields
+ * ========================================================== */
+
+/* A) Placeholder-like label (empty / default state) */
+.langRU.wod20 .tab.bio .floating-label-group .floating-label {
+  font-size: var(--wodru-bio-field-label-size);
+}
+
+/* B) Active/filled label state (system makes it tiny = 7px; we override) */
+.langRU.wod20 .tab.bio .floating-label-group input:focus ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group input:disabled ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group input:not(:focus):valid ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:focus ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:disabled ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:not(:focus):valid ~ .floating-label {
+  font-size: var(--wodru-bio-field-label-active-size);
+}
+
+/* C) Value text inside inputs/selects */
+.langRU.wod20 .tab.bio input.sheet-infoValues,
+.langRU.wod20 .tab.bio select.sheet-infoValues,
+.langRU.wod20 .tab.bio .floating-label-group input,
+.langRU.wod20 .tab.bio .floating-label-group select {
+  font-size: var(--wodru-bio-field-value-size);
+}
+
+/* ============================================================
+ * Bio tab: vertical positioning
+ * - empty label: centered
+ * - active label: top
+ * - value: bottom (via padding)
+ * ========================================================== */
+
+/* 1) Empty/default floating label position -> centered */
+.langRU.wod20 .tab.bio .floating-label-group .floating-label {
+  top: var(--wodru-bio-label-empty-top);
+  transform: translateY(var(--wodru-bio-label-empty-translateY));
+}
+
+/* 2) Active/filled label position -> top */
+.langRU.wod20 .tab.bio .floating-label-group input:focus ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group input:disabled ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group input:not(:focus):valid ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:focus ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:disabled ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:not(:focus):valid ~ .floating-label {
+  top: var(--wodru-bio-label-active-top);
+  transform: translateY(var(--wodru-bio-label-active-translateY));
+}
+
+/* 3) Value text -> push down inside input/select using padding */
+.langRU.wod20 .tab.bio input.sheet-infoValues,
+.langRU.wod20 .tab.bio select.sheet-infoValues,
+.langRU.wod20 .tab.bio .floating-label-group input,
+.langRU.wod20 .tab.bio .floating-label-group select {
+  padding-top: var(--wodru-bio-value-padding-top);
+  padding-bottom: var(--wodru-bio-value-padding-bottom);
+  line-height: normal; /* avoid line-height fighting the padding */
+}
+
+/* Active (filled) floating label must sit at the top */
+.langRU.wod20 .tab.bio .floating-label-group input:focus ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group input:disabled ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group input:not(:focus):valid ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:focus ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:disabled ~ .floating-label,
+.langRU.wod20 .tab.bio .floating-label-group select:not(:focus):valid ~ .floating-label {
+  top: 2px !important;     /* anchor to top */
+  line-height: 1 !important;
+}

@@ -84,4 +84,24 @@
 
   /* Optional: keep system-like muted tone, but controllable for RU */
   --ru-core-info-color: #7e7e7e;
+
+  /* ============================================================
+   * Bio tab: floating-label typography
+   * ========================================================== */
+  --wodru-bio-field-label-size: 16px;        /* gray placeholder label (empty) */
+  --wodru-bio-field-label-active-size: 12px;  /* small label when filled/valid */
+  --wodru-bio-field-value-size: 16px;        /* input/select value text */
+
+  /* ============================================================
+   * Bio tab: vertical positioning
+   * ========================================================== */
+  --wodru-bio-label-empty-top: 50%;
+  --wodru-bio-label-empty-translateY: -50%;
+
+  --wodru-bio-label-active-top: 2px;          /* label when filled/active -> near top */
+  --wodru-bio-label-active-translateY: 0%;
+
+  /* Value text baseline control (simulate bottom alignment via padding) */
+  --wodru-bio-value-padding-top: 12px;
+  --wodru-bio-value-padding-bottom: 0px;
 }

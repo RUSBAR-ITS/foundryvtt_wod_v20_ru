@@ -99,4 +99,10 @@
    * We target the parent by detecting `.experienceValue` and override inline margin-top.
    */
   --wodru-experience-top-gap: 15px;
+
+  /* ============================================================
+   * Bio tab: field sizing (floating-label inputs/selects)
+   * ========================================================== */
+  --wodru-bio-field-height: 40px; /* set to 34-40px if needed */
+  --wodru-bio-field-gap: 10px;
 }
