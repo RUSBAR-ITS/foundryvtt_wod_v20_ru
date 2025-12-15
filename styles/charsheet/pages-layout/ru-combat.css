@@ -1,0 +1,285 @@
+/**
+ * RU: Combat tab layout overrides.
+ *
+ * Responsibilities:
+ * - Per-column width control for Combat tables.
+ * - Header alignment compensation (no drag column in headers).
+ * - Proper multi-line text support and word wrapping.
+ *
+ * Scope:
+ * - RU-only via `.langRU`.
+ */
+
+.langRU.wod20 {
+  /* ==========================================================
+   * Header alignment compensation
+   * ======================================================== */
+
+  .headlineRow.combat-natural-itemlist,
+  .headlineRow.combat-melee-itemlist,
+  .headlineRow.combat-ranged-itemlist,
+  .headlineRow.combat-armor-itemlist {
+    padding-left: var(--wodru-combat-col-drag);
+    box-sizing: border-box;
+  }
+
+  /* ==========================================================
+   * Shared flex sanity (CRITICAL for multiline support)
+   * ======================================================== */
+
+  /* Allow flex items to shrink and wrap correctly */
+  .combat-natural-itemlist > *,
+  .combat-melee-itemlist > *,
+  .combat-ranged-itemlist > *,
+  .combat-armor-itemlist > *,
+  .item-row-area.combat-natural-itemlist .dragrow > *,
+  .item-row-area.combat-melee-itemlist .dragrow > *,
+  .item-row-area.combat-ranged-itemlist .dragrow > *,
+  .item-row-area.combat-armor-itemlist .dragrow > * {
+    min-width: 0;
+  }
+
+  /* Rows must grow vertically with content */
+  .item-row-area.combat-natural-itemlist .dragrow,
+  .item-row-area.combat-melee-itemlist .dragrow,
+  .item-row-area.combat-ranged-itemlist .dragrow,
+  .item-row-area.combat-armor-itemlist .dragrow,
+  .headlineRow.combat-natural-itemlist,
+  .headlineRow.combat-melee-itemlist,
+  .headlineRow.combat-ranged-itemlist,
+  .headlineRow.combat-armor-itemlist {
+    align-items: flex-start;
+  }
+
+  /* ==========================================================
+   * Text wrapping rules (TEXTUAL columns only)
+   * ======================================================== */
+
+  /* Name & ability columns — multiline allowed */
+  .combat-natural-itemlist .width-namebox,
+  .combat-melee-itemlist .width-namebox,
+  .combat-ranged-itemlist .width-namebox,
+  .combat-armor-itemlist .width-namebox,
+  .combat-natural-itemlist .width-abilitybox,
+  .combat-melee-itemlist .width-abilitybox,
+  .combat-ranged-itemlist .width-abilitybox {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+
+  /* Header text should wrap the same way */
+  .headlineRow.combat-natural-itemlist .width-namebox,
+  .headlineRow.combat-melee-itemlist .width-namebox,
+  .headlineRow.combat-ranged-itemlist .width-namebox,
+  .headlineRow.combat-armor-itemlist .width-namebox,
+  .headlineRow.combat-natural-itemlist .width-abilitybox,
+  .headlineRow.combat-melee-itemlist .width-abilitybox,
+  .headlineRow.combat-ranged-itemlist .width-abilitybox {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+
+  /* Numeric columns stay single-line */
+  .combat-natural-itemlist .width-smallbox,
+  .combat-melee-itemlist .width-smallbox,
+  .combat-ranged-itemlist .width-smallbox,
+  .combat-armor-itemlist .width-smallbox,
+  .combat-natural-itemlist .width-valuebox,
+  .combat-melee-itemlist .width-valuebox,
+  .combat-ranged-itemlist .width-valuebox,
+  .combat-armor-itemlist .width-valuebox {
+    white-space: nowrap;
+  }
+
+  /* ==========================================================
+   * Shared helpers
+   * ======================================================== */
+
+  /* Drag handle column */
+  .item-row-area.combat-natural-itemlist .dragrow > .width-iconbox,
+  .item-row-area.combat-melee-itemlist .dragrow > .width-iconbox,
+  .item-row-area.combat-ranged-itemlist .dragrow > .width-iconbox,
+  .item-row-area.combat-armor-itemlist .dragrow > .width-iconbox,
+  .item-row-area.combat-natural-itemlist .dragrow > .width-iconbox-empty,
+  .item-row-area.combat-melee-itemlist .dragrow > .width-iconbox-empty,
+  .item-row-area.combat-ranged-itemlist .dragrow > .width-iconbox-empty,
+  .item-row-area.combat-armor-itemlist .dragrow > .width-iconbox-empty {
+    width: var(--wodru-combat-col-drag);
+    flex: 0 0 var(--wodru-combat-col-drag);
+  }
+
+  /* Last column (icons/actions) — fluid */
+  .item-row-area.combat-natural-itemlist .iconBox,
+  .item-row-area.combat-melee-itemlist .iconBox,
+  .item-row-area.combat-ranged-itemlist .iconBox,
+  .item-row-area.combat-armor-itemlist .iconBox {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* ==========================================================
+   * Natural weapons
+   * ======================================================== */
+
+  .combat-natural-itemlist .width-namebox {
+    width: var(--wodru-combat-natural-col-name);
+    flex: 0 0 var(--wodru-combat-natural-col-name);
+  }
+
+  .combat-natural-itemlist .width-smallbox {
+    width: var(--wodru-combat-natural-col-attr);
+    flex: 0 0 var(--wodru-combat-natural-col-attr);
+  }
+
+  .headlineRow.combat-natural-itemlist > .width-smallbox:last-of-type,
+  .item-row-area.combat-natural-itemlist .dragrow > .width-smallbox:last-of-type {
+    width: var(--wodru-combat-natural-col-dmg);
+    flex: 0 0 var(--wodru-combat-natural-col-dmg);
+  }
+
+  .combat-natural-itemlist .width-abilitybox {
+    width: var(--wodru-combat-natural-col-ability);
+    flex: 0 0 var(--wodru-combat-natural-col-ability);
+  }
+
+  .combat-natural-itemlist .width-valuebox {
+    width: var(--wodru-combat-natural-col-acc);
+    flex: 0 0 var(--wodru-combat-natural-col-acc);
+  }
+
+  .headlineRow.combat-natural-itemlist > .width-valuebox:last-of-type,
+  .item-row-area.combat-natural-itemlist .dragrow > .width-valuebox:last-of-type {
+    width: var(--wodru-combat-natural-col-diff);
+    flex: 0 0 var(--wodru-combat-natural-col-diff);
+  }
+
+  /* ==========================================================
+   * Melee weapons
+   * ======================================================== */
+
+  .combat-melee-itemlist .width-namebox {
+    width: var(--wodru-combat-melee-col-name);
+    flex: 0 0 var(--wodru-combat-melee-col-name);
+  }
+
+  .combat-melee-itemlist .width-smallbox {
+    width: var(--wodru-combat-melee-col-attr);
+    flex: 0 0 var(--wodru-combat-melee-col-attr);
+  }
+
+  .headlineRow.combat-melee-itemlist > .width-smallbox:last-of-type,
+  .item-row-area.combat-melee-itemlist .dragrow > .width-smallbox:last-of-type {
+    width: var(--wodru-combat-melee-col-dmg);
+    flex: 0 0 var(--wodru-combat-melee-col-dmg);
+  }
+
+  .combat-melee-itemlist .width-abilitybox {
+    width: var(--wodru-combat-melee-col-ability);
+    flex: 0 0 var(--wodru-combat-melee-col-ability);
+  }
+
+  .combat-melee-itemlist .width-valuebox {
+    width: var(--wodru-combat-melee-col-acc);
+    flex: 0 0 var(--wodru-combat-melee-col-acc);
+  }
+
+  .headlineRow.combat-melee-itemlist > .width-valuebox:last-of-type,
+  .item-row-area.combat-melee-itemlist .dragrow > .width-valuebox:last-of-type {
+    width: var(--wodru-combat-melee-col-conceal);
+    flex: 0 0 var(--wodru-combat-melee-col-conceal);
+  }
+
+  .headlineRow.combat-melee-itemlist > .width-valuebox:nth-last-of-type(2),
+  .item-row-area.combat-melee-itemlist .dragrow > .width-valuebox:nth-last-of-type(2) {
+    width: var(--wodru-combat-melee-col-diff);
+    flex: 0 0 var(--wodru-combat-melee-col-diff);
+  }
+
+  .combat-melee-itemlist .width-mediumbox {
+    width: var(--wodru-combat-melee-col-grip);
+    flex: 0 0 var(--wodru-combat-melee-col-grip);
+  }
+
+  /* ==========================================================
+   * Ranged weapons
+   * ======================================================== */
+
+  .combat-ranged-itemlist .width-namebox {
+    width: var(--wodru-combat-ranged-col-name);
+    flex: 0 0 var(--wodru-combat-ranged-col-name);
+  }
+
+  .combat-ranged-itemlist .width-smallbox {
+    width: var(--wodru-combat-ranged-col-attr);
+    flex: 0 0 var(--wodru-combat-ranged-col-attr);
+  }
+
+  .headlineRow.combat-ranged-itemlist > .width-smallbox:last-of-type,
+  .item-row-area.combat-ranged-itemlist .dragrow > .width-smallbox:last-of-type {
+    width: var(--wodru-combat-ranged-col-clip);
+    flex: 0 0 var(--wodru-combat-ranged-col-clip);
+  }
+
+  .combat-ranged-itemlist .width-abilitybox {
+    width: var(--wodru-combat-ranged-col-ability);
+    flex: 0 0 var(--wodru-combat-ranged-col-ability);
+  }
+
+  .combat-ranged-itemlist .width-valuebox {
+    width: var(--wodru-combat-ranged-col-acc);
+    flex: 0 0 var(--wodru-combat-ranged-col-acc);
+  }
+
+  .headlineRow.combat-ranged-itemlist > .width-valuebox:nth-last-of-type(4),
+  .item-row-area.combat-ranged-itemlist .dragrow > .width-valuebox:nth-last-of-type(4) {
+    width: var(--wodru-combat-ranged-col-diff);
+    flex: 0 0 var(--wodru-combat-ranged-col-diff);
+  }
+
+  .headlineRow.combat-ranged-itemlist > .width-valuebox:nth-last-of-type(3),
+  .item-row-area.combat-ranged-itemlist .dragrow > .width-valuebox:nth-last-of-type(3) {
+    width: var(--wodru-combat-ranged-col-dmg);
+    flex: 0 0 var(--wodru-combat-ranged-col-dmg);
+  }
+
+  .headlineRow.combat-ranged-itemlist > .width-valuebox:nth-last-of-type(2),
+  .item-row-area.combat-ranged-itemlist .dragrow > .width-valuebox:nth-last-of-type(2) {
+    width: var(--wodru-combat-ranged-col-range);
+    flex: 0 0 var(--wodru-combat-ranged-col-range);
+  }
+
+  .headlineRow.combat-ranged-itemlist > .width-valuebox:last-of-type,
+  .item-row-area.combat-ranged-itemlist .dragrow > .width-valuebox:last-of-type {
+    width: var(--wodru-combat-ranged-col-rate);
+    flex: 0 0 var(--wodru-combat-ranged-col-rate);
+  }
+
+  /* ==========================================================
+   * Armor
+   * ======================================================== */
+
+  .combat-armor-itemlist .width-namebox {
+    width: var(--wodru-combat-armor-col-name);
+    flex: 0 0 var(--wodru-combat-armor-col-name);
+  }
+
+  .combat-armor-itemlist .width-valuebox {
+    width: var(--wodru-combat-armor-col-soak);
+    flex: 0 0 var(--wodru-combat-armor-col-soak);
+  }
+
+  .combat-armor-itemlist .width-smallbox {
+    width: var(--wodru-combat-armor-col-dexpen);
+    flex: 0 0 var(--wodru-combat-armor-col-dexpen);
+  }
+
+  .combat-armor-itemlist .width-valuebox.form-box {
+    width: var(--wodru-combat-armor-col-form);
+    flex: 0 0 var(--wodru-combat-armor-col-form);
+  }
+}

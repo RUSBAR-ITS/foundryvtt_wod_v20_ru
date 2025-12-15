@@ -89,6 +89,16 @@ export function error(msg, data) {
 }
 
 /**
+ * Namespaced debug logger.
+ *
+ * Example:
+ *   debugNs("combat", "hook entered", { actorId: "..." });
+ */
+export function debugNs(ns, msg, data) {
+  debug(`[${ns}] ${msg}`, data);
+}
+
+/**
  * Execute a function and return fallback on error.
  * This is heavily used in logging to avoid "debugger broke the app" situations.
  */

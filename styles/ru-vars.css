@@ -120,5 +120,48 @@
   --wodru-powers-child-col-attr2: 200px;
   --wodru-powers-child-col-diff: 100px;
 
+  /* ============================================================
+   * Combat tab: per-column widths
+   * NOTE: last column (icon/actions) is fluid and takes remaining space.
+   * ========================================================== */
+
+  /* Shared */
+  --wodru-combat-col-drag: 25px;
+
+  /* Natural weapons */
+  --wodru-combat-natural-col-name: 200px;
+  --wodru-combat-natural-col-attr: 110px;
+  --wodru-combat-natural-col-ability: 150px;
+  --wodru-combat-natural-col-acc: 100px;
+  --wodru-combat-natural-col-diff: 100px;
+  --wodru-combat-natural-col-dmg: 100px;
+
+  /* Melee weapons */
+  --wodru-combat-melee-col-name: 200px;
+  --wodru-combat-melee-col-attr: 200px;
+  --wodru-combat-melee-col-ability: 200px;
+  --wodru-combat-melee-col-acc: 100px;
+  --wodru-combat-melee-col-diff: 100px;
+  --wodru-combat-melee-col-dmg: 100px;
+  --wodru-combat-melee-col-conceal: 100px;
+  --wodru-combat-melee-col-grip: 100px;
+
+  /* Ranged weapons */
+  --wodru-combat-ranged-col-name: 200px;
+  --wodru-combat-ranged-col-attr: 200px;
+  --wodru-combat-ranged-col-ability: 200px;
+  --wodru-combat-ranged-col-acc: 100px;
+  --wodru-combat-ranged-col-diff: 100px;
+  --wodru-combat-ranged-col-dmg: 100px;
+  --wodru-combat-ranged-col-range: 100px;
+  --wodru-combat-ranged-col-rate: 100px;
+  --wodru-combat-ranged-col-clip: 100px;
+
+  /* Armor */
+  --wodru-combat-armor-col-name: 200px;
+  --wodru-combat-armor-col-soak: 150px;
+  --wodru-combat-armor-col-dexpen: 150px;
+  --wodru-combat-armor-col-form: 150px;
+
 }
 

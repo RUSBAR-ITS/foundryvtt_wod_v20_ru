@@ -140,4 +140,20 @@
   --wodru-powers-unsorted-banner-color: #ffb000;
   --wodru-powers-unsorted-banner-bg: #000000;
   --wodru-powers-unsorted-banner-border-color: #ffb000;
+
+  /* ============================================================
+   * Combat tab typography (3 groups)
+   * ========================================================== */
+
+  /* 1) Table header rows (section title + column labels) */
+  --wodru-combat-header-font-size: 16px;
+  --wodru-combat-header-font-weight: 400;
+
+  /* 2) Item names (weapon/armor name column) */
+  --wodru-combat-itemname-font-size: 16px;
+  --wodru-combat-itemname-font-weight: 400;
+
+  /* 3) Everything else (all non-name cells in rows) */
+  --wodru-combat-body-font-size: 14px;
+  --wodru-combat-body-font-weight: 400;
 }

@@ -1,0 +1,79 @@
+/* ============================================================
+ * Combat tab typography (RU)
+ *
+ * Three typography groups:
+ * 1) Table headers (section title + column labels)
+ * 2) Item names (weapon/armor name column)
+ * 3) Everything else in tables (all remaining cells)
+ *
+ * Requirement:
+ * - Each group class contains exactly two properties:
+ *   - font-size
+ *   - font-weight
+ *
+ * Scope: RU only (.langRU)
+ * ========================================================== */
+
+.langRU.wod20 {
+  /* ==========================================================
+   * 1) Header typography class
+   * ======================================================== */
+
+  .wodru-combat-font-header {
+    font-size: var(--wodru-combat-header-font-size);
+    font-weight: var(--wodru-combat-header-font-weight);
+  }
+
+  /* ==========================================================
+   * 2) Item name typography class
+   * ======================================================== */
+
+  .wodru-combat-font-itemname {
+    font-size: var(--wodru-combat-itemname-font-size);
+    font-weight: var(--wodru-combat-itemname-font-weight);
+  }
+
+  /* ==========================================================
+   * 3) Body typography class
+   * ======================================================== */
+
+  .wodru-combat-font-body {
+    font-size: var(--wodru-combat-body-font-size);
+    font-weight: var(--wodru-combat-body-font-weight);
+  }
+
+  /* ==========================================================
+   * Apply typography to system markup (no template changes)
+   * ======================================================== */
+
+  /* Headers: section title + column labels */
+  .headlineRow.combat-natural-itemlist,
+  .headlineRow.combat-melee-itemlist,
+  .headlineRow.combat-ranged-itemlist,
+  .headlineRow.combat-armor-itemlist {
+    font-size: var(--wodru-combat-header-font-size);
+    font-weight: var(--wodru-combat-header-font-weight);
+  }
+
+  /* Body: all non-header rows (all cells by default) */
+  .item-row-area.combat-natural-itemlist .dragrow,
+  .item-row-area.combat-melee-itemlist .dragrow,
+  .item-row-area.combat-ranged-itemlist .dragrow,
+  .item-row-area.combat-armor-itemlist .dragrow,
+  .item-row-area.combat-natural-itemlist .iconBox,
+  .item-row-area.combat-melee-itemlist .iconBox,
+  .item-row-area.combat-ranged-itemlist .iconBox,
+  .item-row-area.combat-armor-itemlist .iconBox {
+    font-size: var(--wodru-combat-body-font-size);
+    font-weight: var(--wodru-combat-body-font-weight);
+  }
+
+  /* Item names override body typography */
+  .item-row-area.combat-natural-itemlist .dragrow .width-namebox,
+  .item-row-area.combat-melee-itemlist .dragrow .width-namebox,
+  .item-row-area.combat-ranged-itemlist .dragrow .width-namebox,
+  .item-row-area.combat-armor-itemlist .dragrow .width-namebox {
+    font-size: var(--wodru-combat-itemname-font-size);
+    font-weight: var(--wodru-combat-itemname-font-weight);
+  }
+}

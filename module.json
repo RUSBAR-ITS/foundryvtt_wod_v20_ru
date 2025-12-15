@@ -40,17 +40,20 @@
     "scripts/settings.js",
     "scripts/init-module.js",
     "scripts/debug.js",
-    "scripts/ru-width.js"
+    "scripts/ru-width.js",
+    "scripts/hooks/combat-fulltext.js"
   ],
   "styles": [
     "styles/ru-vars.css",
     "styles/ru-sheets.css",
     "styles/charsheet/pages-layout/ru-disciplines.css",
+    "styles/charsheet/pages-layout/ru-combat.css",
     "styles/charsheet/pages-layout/ru-bio.css",
     "styles/typography/ru-fonts.css",
     "styles/typography/ru-typography-vars.css",
     "styles/typography/ru-core-typography.css",
     "styles/charsheet/pages-typography/ru-typ-bio.css",
-    "styles/charsheet/pages-typography/ru-typ-disciplines.css"
+    "styles/charsheet/pages-typography/ru-typ-disciplines.css",
+    "styles/charsheet/pages-typography/ru-typ-combat.css"
   ]
 }
