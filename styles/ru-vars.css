@@ -31,9 +31,9 @@
    * - Attribute name labels in the system templates reuse `.ability-headlineWidth`.
    * - We override width ONLY inside Attributes rows.
    */
-  --wodru-attr-row-height: 19px;
-  --wodru-attr-label-width: 50%;
-  --wodru-attr-label-width-supernatural: 50%;
+  --wodru-attr-row-height: 22px;
+  --wodru-attr-label-width: 55%;
+  --wodru-attr-label-width-supernatural: 55%;
 
   /* ============================================================
    * Core tab: Abilities Section (Vampire + all splats)
@@ -45,7 +45,7 @@
    * - Ability rows in the system markup do NOT use `.ability-rowheight`.
    * - Therefore we target the real row wrappers in CSS (see ru-sheets.css).
    */
-  --wodru-ability-row-height: 19px;
+  --wodru-ability-row-height: 22px;
   --wodru-ability-label-width: 50%;
   --wodru-ability-label-width-supernatural: 50%;
 

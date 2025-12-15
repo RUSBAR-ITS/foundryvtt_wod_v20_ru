@@ -36,13 +36,6 @@
 }
 
 /* ============================================================
- * Resource dots alignment
- * ============================================================ */
-.langRU.wod20 .resource-counter .resource-value-step {
-  vertical-align: middle !important;
-}
-
-/* ============================================================
  * Attribute / Ability / Virtue LABELS
  * (override system label sizes)
  * ============================================================ */
@@ -93,9 +86,9 @@
 /* ============================================================
  * Experience label ("Experience") — text above the value
  * ============================================================ */
-.langRU .tab.core .clearareaBox.sheet-headline.headlineGroup.splatFont .item-row > div:first-child {
+.langRU .tab.core .healthBox .sheet-headline.headlineGroup > div > .sheet-banner-small .sheet-banner-text {
   font-family: var(--main-font);
-  font-size: var(--ru-core-experience-label-font-size) !important; 
+  font-size: var(--ru-core-experience-label-font-size) !important;
   font-weight: var(--ru-core-experience-label-font-weight);
   line-height: 1.1;
 }
