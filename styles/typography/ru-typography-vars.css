@@ -173,4 +173,29 @@
   /* Movement reference block (bottom movement helper) */
   --wodru-typo-combat-movement-size: 14px;
   --wodru-typo-combat-movement-weight: 400;
+
+  /* ============================================================
+  * Gear tab typography
+  * Each class contains font-size + font-weight.
+  * ============================================================ */
+
+  /* 1) Locked gear text (first box) */
+  --wodru-typo-gear-locked-size: 14px;
+  --wodru-typo-gear-locked-weight: 400;
+
+  /* 2) Money amount (input value) */
+  --wodru-typo-gear-money-amount-size: 16px;
+  --wodru-typo-gear-money-amount-weight: 400;
+
+  /* 3) Money location (floating label) */
+  --wodru-typo-gear-money-label-size: 12px;
+  --wodru-typo-gear-money-label-weight: 400;
+
+  /* 4) Items table headers */
+  --wodru-typo-gear-items-head-size: 16px;
+  --wodru-typo-gear-items-head-weight: 600;
+
+  /* 5) Items table cells (except drag + actions icon column) */
+  --wodru-typo-gear-items-cell-size: 14px;
+  --wodru-typo-gear-items-cell-weight: 400;
 }

@@ -49,11 +49,13 @@
     "styles/charsheet/pages-layout/ru-disciplines.css",
     "styles/charsheet/pages-layout/ru-combat.css",
     "styles/charsheet/pages-layout/ru-bio.css",
+    "styles/charsheet/pages-layout/ru-gear.css",
     "styles/typography/ru-fonts.css",
     "styles/typography/ru-typography-vars.css",
     "styles/typography/ru-core-typography.css",
     "styles/charsheet/pages-typography/ru-typ-bio.css",
     "styles/charsheet/pages-typography/ru-typ-disciplines.css",
-    "styles/charsheet/pages-typography/ru-typ-combat.css"
+    "styles/charsheet/pages-typography/ru-typ-combat.css",
+    "styles/charsheet/pages-typography/ru-typ-gear.css"
   ]
 }

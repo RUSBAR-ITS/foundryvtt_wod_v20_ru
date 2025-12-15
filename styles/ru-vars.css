@@ -174,5 +174,45 @@
   --wodru-combat-movement-col-label-right: 270px;
   --wodru-combat-movement-col-value-right: 50px; /* you can set auto-like via a large value or switch to flex later */
 
+  /* ============================================================
+   * Gear tab: Money block (two floating-label inputs)
+   * ============================================================
+   * Goal:
+   * - Make money fields tunable like Bio fields, but with explicit
+   *   positioning for BOTH texts inside the field:
+   *     - amount (input value) => bottom-left
+   *     - location label (floating label) => top-left
+   *
+   * IMPORTANT:
+   * - These values are applied ONLY under `.langRU` selectors in ru-gear.css.
+   * - Each field has exactly 3 tunables:
+   *     1) height
+   *     2) amount padding (top/right/bottom/left) -> anchors value to bottom-left
+   *     3) label inset (top/right/bottom/left)   -> anchors label to top-left
+   */
+
+  /* Carried */
+  --wodru-gear-money-carried-height: 40px;
+  --wodru-gear-money-carried-amount-padding: 14px 0 2px 7px;
+  --wodru-gear-money-carried-label-inset: 2px auto auto 5px;
+
+  /* Bank */
+  --wodru-gear-money-bank-height: 40px;
+  --wodru-gear-money-bank-amount-padding: 14px 0 2px 7px;
+  --wodru-gear-money-bank-label-inset: 2px auto auto 5px;
+
+  /* ============================================================
+   * Gear tab: Items table (Other items) column widths
+   * NOTE:
+   * - Last actions/icons column `.iconBox` must remain fluid (do not touch).
+   * - These variables control only fixed columns inside `.gear-itemlist`.
+   * ============================================================ */
+
+  --wodru-gear-items-col-icon: 15px;    /* `.width-iconbox` (drag/icon) */
+  --wodru-gear-items-col-name: 200px;   /* `.width-namebox` */
+  --wodru-gear-items-col-type: 200px;   /* `.width-mediumbox` */
+  --wodru-gear-items-col-dice: 400px;    /* `.width-abilitybox` */
+  --wodru-gear-items-col-diff: 100px;    /* `.width-valuebox` */
+
 }
 

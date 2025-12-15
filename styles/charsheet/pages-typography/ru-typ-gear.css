@@ -1,0 +1,73 @@
+/**
+ * RU Gear tab typography.
+ * Classes below contain font-size + font-weight (as requested).
+ * They are also applied to the actual Gear UI via selectors (RU-only).
+ */
+
+/* ============================================================
+ * Typography classes (reusable)
+ * ============================================================ */
+
+.wodru-font-gear-locked {
+  font-size: var(--wodru-typo-gear-locked-size);
+  font-weight: var(--wodru-typo-gear-locked-weight);
+}
+
+.wodru-font-gear-money-amount {
+  font-size: var(--wodru-typo-gear-money-amount-size);
+  font-weight: var(--wodru-typo-gear-money-amount-weight);
+}
+
+.wodru-font-gear-money-label {
+  font-size: var(--wodru-typo-gear-money-label-size);
+  font-weight: var(--wodru-typo-gear-money-label-weight);
+}
+
+.wodru-font-gear-items-head {
+  font-size: var(--wodru-typo-gear-items-head-size);
+  font-weight: var(--wodru-typo-gear-items-head-weight);
+}
+
+.wodru-font-gear-items-cell {
+  font-size: var(--wodru-typo-gear-items-cell-size);
+  font-weight: var(--wodru-typo-gear-items-cell-weight);
+}
+
+/* ============================================================
+ * Bind classes to actual Gear markup (RU-only)
+ * ============================================================ */
+
+/* 1) Locked gear text (first box) */
+.langRU.wod20 .tab.gear .sheet-gearArea.headlineNormal.textarea {
+  font-size: var(--wodru-typo-gear-locked-size);
+  font-weight: var(--wodru-typo-gear-locked-weight);
+}
+
+/* 2) Money amount (input value) */
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"]
+.area-box > .bioInformationArea.floating-label-group.half input.sheet-infoValues {
+  font-size: var(--wodru-typo-gear-money-amount-size);
+  font-weight: var(--wodru-typo-gear-money-amount-weight);
+}
+
+/* 3) Money location (floating label) */
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"]
+.area-box > .bioInformationArea.floating-label-group.half .floating-label {
+  font-size: var(--wodru-typo-gear-money-label-size);
+  font-weight: var(--wodru-typo-gear-money-label-weight);
+}
+
+/* 4) Items table headers */
+.langRU.wod20 .tab.gear .headlineRow.headlineList.splatFont.gear-itemlist {
+  font-size: var(--wodru-typo-gear-items-head-size);
+  font-weight: var(--wodru-typo-gear-items-head-weight);
+}
+
+/* 5) Items table cells (exclude drag column `.width-iconbox` and actions `.iconBox`) */
+.langRU.wod20 .tab.gear .dragrow.headlineNormal.gear-itemlist .width-namebox,
+.langRU.wod20 .tab.gear .dragrow.headlineNormal.gear-itemlist .width-mediumbox,
+.langRU.wod20 .tab.gear .dragrow.headlineNormal.gear-itemlist .width-abilitybox,
+.langRU.wod20 .tab.gear .dragrow.headlineNormal.gear-itemlist .width-valuebox {
+  font-size: var(--wodru-typo-gear-items-cell-size);
+  font-weight: var(--wodru-typo-gear-items-cell-weight);
+}

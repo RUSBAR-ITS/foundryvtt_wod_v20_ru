@@ -1,0 +1,150 @@
+/**
+ * RU Gear tab layout patches.
+ * Code/comments intentionally in English.
+ *
+ * Current scope: Gear -> Money block (two floating-label inputs).
+ *
+ * Requirements:
+ * - Each money field must be tunable via exactly 3 variables:
+ *   1) field height
+ *   2) amount padding (anchors input value to bottom-left)
+ *   3) label inset  (anchors floating label to top-left)
+ *
+ * Notes:
+ * - System sets `.bioInformationArea { height: 30px; line-height: 30px; }`
+ *   so we must override wrapper sizing per-field.
+ * - The money block on Gear tab contains exactly two `.bioInformationArea`
+ *   elements in order: carried first, bank second.
+ */
+
+/* Money block scope: the only Gear `.sheet-area` with inline `flex-flow: row nowrap` */
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"] .area-box > .bioInformationArea.floating-label-group.half:nth-of-type(1) {
+  height: var(--wodru-gear-money-carried-height);
+  line-height: normal;
+}
+
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"] .area-box > .bioInformationArea.floating-label-group.half:nth-of-type(2) {
+  height: var(--wodru-gear-money-bank-height);
+  line-height: normal;
+}
+
+/* Input sizing + bottom-left anchoring via padding */
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"] .area-box > .bioInformationArea.floating-label-group.half:nth-of-type(1) input.sheet-infoValues {
+  height: var(--wodru-gear-money-carried-height);
+  padding: var(--wodru-gear-money-carried-amount-padding);
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"] .area-box > .bioInformationArea.floating-label-group.half:nth-of-type(2) input.sheet-infoValues {
+  height: var(--wodru-gear-money-bank-height);
+  padding: var(--wodru-gear-money-bank-amount-padding);
+  box-sizing: border-box;
+  text-align: left;
+}
+
+/* Label top-left anchoring */
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"] .area-box > .bioInformationArea.floating-label-group.half .floating-label {
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transition: none;
+}
+
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"] .area-box > .bioInformationArea.floating-label-group.half:nth-of-type(1) .floating-label {
+  inset: var(--wodru-gear-money-carried-label-inset) !important;
+}
+
+.langRU.wod20 .tab.gear .sheet-area.flex-columns[style*="flex-flow: row nowrap"] .area-box > .bioInformationArea.floating-label-group.half:nth-of-type(2) .floating-label {
+  inset: var(--wodru-gear-money-bank-label-inset) !important;
+}
+
+/* ============================================================
+ * Gear -> Items table (Other items)
+ * Requirements:
+ * - Tunable widths for ALL fixed columns (except `.iconBox`)
+ * - Header labels centered
+ * - Item name: multiline + wrap, left aligned
+ * - Other cells centered
+ * - `.iconBox` untouched (width + alignment from system)
+ * ============================================================ */
+
+/* Fixed column widths (apply to both header + rows where present) */
+.langRU.wod20 .tab.gear .gear-itemlist .width-namebox {
+  width: var(--wodru-gear-items-col-name);
+  max-width: var(--wodru-gear-items-col-name);
+  flex: 0 0 var(--wodru-gear-items-col-name);
+}
+
+.langRU.wod20 .tab.gear .gear-itemlist .width-mediumbox {
+  width: var(--wodru-gear-items-col-type);
+  max-width: var(--wodru-gear-items-col-type);
+  flex: 0 0 var(--wodru-gear-items-col-type);
+}
+
+.langRU.wod20 .tab.gear .gear-itemlist .width-abilitybox {
+  width: var(--wodru-gear-items-col-dice);
+  max-width: var(--wodru-gear-items-col-dice);
+  flex: 0 0 var(--wodru-gear-items-col-dice);
+}
+
+.langRU.wod20 .tab.gear .gear-itemlist .width-valuebox {
+  width: var(--wodru-gear-items-col-diff);
+  max-width: var(--wodru-gear-items-col-diff);
+  flex: 0 0 var(--wodru-gear-items-col-diff);
+}
+
+/* Row-only: left drag/icon column */
+.langRU.wod20 .tab.gear .dragrow.gear-itemlist .width-iconbox {
+  width: var(--wodru-gear-items-col-icon);
+  max-width: var(--wodru-gear-items-col-icon);
+  flex: 0 0 var(--wodru-gear-items-col-icon);
+}
+
+/* Header: center all labels */
+.langRU.wod20 .tab.gear .headlineRow.gear-itemlist > div {
+  text-align: center;
+}
+
+/* Header alignment compensation (same approach as Combat):
+ * rows have `.width-iconbox`, header doesn't -> shift header by icon width
+ */
+.langRU.wod20 .tab.gear .headlineRow.gear-itemlist {
+  padding-left: var(--wodru-gear-items-col-icon);
+  box-sizing: border-box;
+}
+
+/* Rows: default center for non-name columns */
+.langRU.wod20 .tab.gear .dragrow.gear-itemlist .width-mediumbox,
+.langRU.wod20 .tab.gear .dragrow.gear-itemlist .width-abilitybox,
+.langRU.wod20 .tab.gear .dragrow.gear-itemlist .width-valuebox {
+  text-align: center;
+}
+
+/* --- FIX: allow wrapping in Gear -> Other items name column --- */
+/* System forces nowrap on item rows; override it only for Gear items table */
+.langRU.wod20 .tab.gear .item-row-area.gear-itemlist {
+  white-space: normal !important;
+  align-items: flex-start;
+}
+
+/* System also forces nowrap on `.dragrow`; override it for Gear items table */
+.langRU.wod20 .tab.gear .item-row-area.gear-itemlist .dragrow.gear-itemlist {
+  white-space: normal !important;
+  height: auto;
+  min-height: 20px; /* keep baseline row height similar to system */
+  align-items: flex-start; /* prevents vertical centering "squeezing" the block */
+}
+
+/* Name column: enable multiline wrapping + left align */
+.langRU.wod20 .tab.gear .item-row-area.gear-itemlist .dragrow.gear-itemlist .width-namebox {
+  text-align: left;
+  line-height: normal;
+  min-width: 0; /* critical for flex shrink + wrapping */
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
