@@ -156,4 +156,21 @@
   /* 3) Everything else (all non-name cells in rows) */
   --wodru-combat-body-font-size: 14px;
   --wodru-combat-body-font-weight: 400;
+
+  /* ============================================================
+   * Combat tab: Typography
+   * Each block uses only font-size + font-weight
+   * ========================================================== */
+
+  /* Conditions text (NOT the headline) */
+  --wodru-typo-combat-conditions-size: 16px;
+  --wodru-typo-combat-conditions-weight: 400;
+
+  /* Health penalty line (wod.health.penalty) */
+  --wodru-typo-combat-health-penalty-size: 14x;
+  --wodru-typo-combat-health-penalty-weight: 400;
+
+  /* Movement reference block (bottom movement helper) */
+  --wodru-typo-combat-movement-size: 14px;
+  --wodru-typo-combat-movement-weight: 400;
 }

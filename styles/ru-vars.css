@@ -163,5 +163,16 @@
   --wodru-combat-armor-col-dexpen: 150px;
   --wodru-combat-armor-col-form: 150px;
 
+  /* Conditions (Combat tab bottom-left block)
+   * Controls the width of the text field next to the checkbox.
+   */
+  --wodru-combat-conditions-text-width: 240px;
+
+  /* Movement reference table (Combat tab bottom) */
+  --wodru-combat-movement-col-label-left: 100px;
+  --wodru-combat-movement-col-value-left: 50px;
+  --wodru-combat-movement-col-label-right: 270px;
+  --wodru-combat-movement-col-value-right: 50px; /* you can set auto-like via a large value or switch to flex later */
+
 }
 

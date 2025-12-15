@@ -76,4 +76,27 @@
     font-size: var(--wodru-combat-itemname-font-size);
     font-weight: var(--wodru-combat-itemname-font-weight);
   }
+
+  /* ==========================================================
+   * Combat typography
+   * ======================================================== */
+  
+  /* A) Conditions: text labels (2nd column only) */
+  .combat-bottomarea .condition.clearareaBox > .condition-checkbox:nth-child(2) {
+    font-size: var(--wodru-typo-combat-conditions-size);
+    font-weight: var(--wodru-typo-combat-conditions-weight);
+  }
+  
+  /* B) Health: penalty line */
+  .combat-bottomhealth .information-area {
+    font-size: var(--wodru-typo-combat-health-penalty-size);
+    font-weight: var(--wodru-typo-combat-health-penalty-weight);
+  }
+  
+  /* C) Movement reference block */
+  .movementBox .headlineList,
+  .movementBox .headlineNormal {
+    font-size: var(--wodru-typo-combat-movement-size);
+    font-weight: var(--wodru-typo-combat-movement-weight);
+  }
 }

@@ -404,4 +404,89 @@
     width: var(--wodru-combat-armor-col-form);
     flex: 0 0 var(--wodru-combat-armor-col-form);
   }
+
+  /* ==========================================================
+  * Combat bottom area: Conditions (text width control)
+  * System sets `.wod20 .condition { width: 150px; }` which blocks our sizing.
+  * We override it locally for Combat tab bottom area.
+  * ======================================================== */
+
+  /* Make the container use full width (system has 80%) */
+  .combat-bottomarea .info-box {
+    width: 100%;
+  }
+
+  /* Override system fixed width and switch row to flex for predictable "2 columns" */
+  .combat-bottomarea .condition.clearareaBox {
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  /* System uses float via `.pullLeft`; disable it here so flex works */
+  .combat-bottomarea .condition.clearareaBox > .condition-checkbox.pullLeft {
+    float: none !important;
+  }
+
+  /* 1st column: checkbox */
+  .combat-bottomarea .condition.clearareaBox > .condition-checkbox:nth-child(1) {
+    flex: 0 0 26px;
+  }
+
+  /* 2nd column: text label (your controlled width) */
+  .combat-bottomarea .condition.clearareaBox > .condition-checkbox:nth-child(2) {
+    flex: 0 0 var(--wodru-combat-conditions-text-width);
+    width: var(--wodru-combat-conditions-text-width);
+    max-width: var(--wodru-combat-conditions-text-width);
+    white-space: normal;
+    text-align: left;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* ==========================================================
+   * Combat bottom health: center the Health block (including headline)
+   * System uses inline `style="width: 100%;"` on `.healthBox`.
+   * ======================================================== */
+  
+  .combat-bottomhealth {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Override the inline width and float so it can be centered */
+  .combat-bottomhealth .healthBox.pullLeft {
+    float: none !important;
+    width: fit-content !important;
+  }
+  
+  /* Safety: keep the headline centered inside the health box */
+  .combat-bottomhealth .healthBox .sheet-headline {
+    text-align: center;
+  }
+
+  /* ==========================================================
+   * Combat bottom: Movement reference table (4 columns)
+   * System uses inline widths, so we must override with !important.
+   * ======================================================== */
+
+  /* Left column group (walk/jog/run/fly): label + value */
+  .movementBox > .headlineList[style*="width: 100px"] {
+    width: var(--wodru-combat-movement-col-label-left) !important;
+  }
+
+  .movementBox > .headlineNormal[style*="width: 50px"] {
+    width: var(--wodru-combat-movement-col-value-left) !important;
+  }
+
+  /* Right column group (vjump/hjump): label + value */
+  .movementBox > .headlineList[style*="width: 250px"] {
+    width: var(--wodru-combat-movement-col-label-right) !important;
+  }
+
+  /* Right values have no inline width in system, so set it normally */
+  .movementBox > .headlineList[style*="width: 250px"] + .headlineNormal {
+    width: var(--wodru-combat-movement-col-value-right);
+  }
+
 }
