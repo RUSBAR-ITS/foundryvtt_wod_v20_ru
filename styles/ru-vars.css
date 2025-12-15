@@ -33,7 +33,7 @@
    */
   --wodru-attr-row-height: 22px;
   --wodru-attr-label-width: 55%;
-  --wodru-attr-label-width-supernatural: 55%;
+  --wodru-attr-label-width-supernatural: 40%;
 
   /* ============================================================
    * Core tab: Abilities Section (Vampire + all splats)
@@ -46,8 +46,21 @@
    * - Therefore we target the real row wrappers in CSS (see ru-sheets.css).
    */
   --wodru-ability-row-height: 22px;
-  --wodru-ability-label-width: 50%;
+  --wodru-ability-label-width: 55%;
   --wodru-ability-label-width-supernatural: 50%;
+
+  /* ============================================================
+   * Core tab: spacing between group headers and their content
+   *
+   * In WoD20 system, attribute/ability group headers are rendered as:
+   * - `.attribute-statArea.headlineGroup` and `.ability-statArea.headlineGroup`
+   * inside a wrapper `.clearareaBox`.
+   *
+   * We control the vertical gap by applying `margin-bottom` to that
+   * specific `.clearareaBox` wrapper (RU-only).
+   * ============================================================ */
+  --wodru-core-attr-group-gap: 10px;
+  --wodru-core-ability-group-gap: 10px;
 
   /* ============================================================
    * Core tab: Core Stats Section (Vampire primary target)
@@ -85,5 +98,5 @@
    *
    * We target the parent by detecting `.experienceValue` and override inline margin-top.
    */
-  --wodru-experience-top-gap: 16px;
+  --wodru-experience-top-gap: 15px;
 }

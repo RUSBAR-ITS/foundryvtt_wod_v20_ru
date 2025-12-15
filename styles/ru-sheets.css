@@ -49,6 +49,52 @@
 }
 
 /* ============================================================
+ * 1a) Attributes (supernatural only): prevent dot block wrapping
+ * ============================================================
+ * System markup uses a float-based layout:
+ * - label: `pullLeft`
+ * - dots:  `pullRight resource-value`
+ *
+ * With >5 dots (supernatural) the right float may drop to the next line
+ * due to 1–2px rounding/scrollbar/padding differences.
+ *
+ * RU fix: switch ONLY supernatural attribute rows to a nowrap flex row.
+ */
+
+.langRU.wod20 .attribute-rowheight:has(.supernaturalAttribute.ability-headlineWidth) {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.langRU.wod20 .attribute-rowheight:has(.supernaturalAttribute.ability-headlineWidth) .pullLeft,
+.langRU.wod20 .attribute-rowheight:has(.supernaturalAttribute.ability-headlineWidth) .pullRight {
+  float: none !important;
+}
+
+.langRU.wod20 .attribute-rowheight:has(.supernaturalAttribute.ability-headlineWidth) .supernaturalAttribute.ability-headlineWidth {
+  flex: 0 0 var(--wodru-attr-label-width-supernatural);
+  max-width: var(--wodru-attr-label-width-supernatural);
+}
+
+.langRU.wod20 .attribute-rowheight:has(.supernaturalAttribute.ability-headlineWidth) .resource-value {
+  margin-left: auto;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* ============================================================
+ * Core tab (RU only): group header -> content spacing (ATTRIBUTES)
+ *
+ * WoD20 renders the group headers ("Physical / Social / Mental") inside
+ * a dedicated `.clearareaBox` wrapper containing `.attribute-statArea.headlineGroup`.
+ * We adjust the gap by setting `margin-bottom` on THAT wrapper.
+ * ============================================================ */
+.langRU.wod20 .tab.core .clearareaBox:has(.attribute-statArea.headlineGroup) {
+  margin-bottom: var(--wodru-core-attr-group-gap) !important;
+}
+
+/* ============================================================
  * 2) Abilities Section
  * ============================================================ */
 
@@ -62,6 +108,17 @@
 
 .langRU.wod20 .ability-statArea .clearareaBox .supernaturalAttribute.ability-headlineWidth {
   width: var(--wodru-ability-label-width-supernatural);
+}
+
+/* ============================================================
+ * Core tab (RU only): group header -> content spacing (ABILITIES)
+ *
+ * WoD20 renders the group headers ("Talents / Skills / Knowledges") inside
+ * a dedicated `.clearareaBox` wrapper containing `.ability-statArea.headlineGroup`.
+ * We adjust the gap by setting `margin-bottom` on THAT wrapper.
+ * ============================================================ */
+.langRU.wod20 .tab.core .clearareaBox:has(.ability-statArea.headlineGroup) {
+  margin-bottom: var(--wodru-core-ability-group-gap) !important;
 }
 
 /* ============================================================

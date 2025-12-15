@@ -55,4 +55,33 @@
   --ru-core-experience-font-weight: 700;
   --ru-core-experience-label-font-size: 26px;
   --ru-core-experience-label-font-weight: 700;
+
+  /* ============================================================
+   * Dots (supernatural attributes/abilities)
+   * ============================================================ */
+  --wodru-dot-size-supernatural: 14px;
+
+  /* ============================================================
+   * Core tab: virtues rows (labels only, no headline)
+   * ============================================================ */
+  --ru-core-virtue-label-font-size: 18px;
+  --ru-core-virtue-label-font-weight: 400;
+  --ru-core-virtue-label-line-height: 1.15;
+  --ru-core-virtue-letter-spacing: 0px;
+
+  /* Optional: fine tune dots vertical alignment for virtues only */
+  --ru-core-virtue-dots-offset-y: 0px;
+
+  /* ============================================================
+   * Core tab: information lines (e.g. "per turn", "health penalty")
+   * System uses `.information-area` with its own hardcoded font-size.
+   * These vars allow RU to override it consistently.
+   * ============================================================ */
+  --ru-core-info-font-size: 14px;
+  --ru-core-info-font-weight: 400;
+  --ru-core-info-line-height: 1.15;
+  --ru-core-info-letter-spacing: 0px;
+
+  /* Optional: keep system-like muted tone, but controllable for RU */
+  --ru-core-info-color: #7e7e7e;
 }

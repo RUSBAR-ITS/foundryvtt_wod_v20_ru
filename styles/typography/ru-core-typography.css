@@ -63,6 +63,15 @@
 }
 
 /* ============================================================
+ * Supernatural dots size (max > 5)
+ * ============================================================ */
+.langRU .tab.core .attribute-statArea .resource-value span.supernaturalAttribute.resource-value-step,
+.langRU .tab.core .ability-statArea .resource-value span.supernaturalAttribute.resource-value-step {
+  width: var(--wodru-dot-size-supernatural);
+  height: var(--wodru-dot-size-supernatural);
+}
+
+/* ============================================================
  * Attribute / Ability / Virtue LABELS
  * (override system label sizes)
  * ============================================================ */
@@ -118,4 +127,35 @@
   font-size: var(--ru-core-experience-label-font-size) !important;
   font-weight: var(--ru-core-experience-label-font-weight);
   line-height: 1.1;
+}
+
+/* ============================================================
+ * Virtues rows (core tab only): typography for row labels only
+ * - Targets ONLY virtue rows via data-name prefix `advantages.virtues.`
+ * - Does NOT touch the virtues headline/banner
+ * ============================================================ */
+.langRU .tab.core .sheet-boxcontainer:has(.resource-value[data-name^="advantages.virtues."]) .headlineNormal.ability-headlineWidth {
+  font-family: var(--main-font);
+  font-size: var(--ru-core-virtue-label-font-size);
+  font-weight: var(--ru-core-virtue-label-font-weight);
+  line-height: var(--ru-core-virtue-label-line-height);
+  letter-spacing: var(--ru-core-virtue-letter-spacing);
+}
+
+.langRU .tab.core .sheet-boxcontainer:has(.resource-value[data-name^="advantages.virtues."]) .resource-value {
+  position: relative;
+  top: var(--ru-core-virtue-dots-offset-y, 0px);
+}
+
+/* ============================================================
+ * Core tab: information lines (e.g. advantages per turn, health penalty)
+ * System forces `.information-area { font-size: 10px; }`, so we override it for RU.
+ * ============================================================ */
+.langRU .tab.core .information-area {
+  font-family: var(--main-font);
+  font-size: var(--ru-core-info-font-size);
+  font-weight: var(--ru-core-info-font-weight);
+  line-height: var(--ru-core-info-line-height);
+  letter-spacing: var(--ru-core-info-letter-spacing);
+  color: var(--ru-core-info-color);
 }
