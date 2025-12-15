@@ -132,29 +132,29 @@
   --wodru-combat-natural-col-name: 200px;
   --wodru-combat-natural-col-attr: 110px;
   --wodru-combat-natural-col-ability: 150px;
-  --wodru-combat-natural-col-acc: 100px;
-  --wodru-combat-natural-col-diff: 100px;
-  --wodru-combat-natural-col-dmg: 100px;
+  --wodru-combat-natural-col-acc: 80px;
+  --wodru-combat-natural-col-diff: 80px;
+  --wodru-combat-natural-col-dmg: 80px;
 
   /* Melee weapons */
   --wodru-combat-melee-col-name: 200px;
-  --wodru-combat-melee-col-attr: 200px;
-  --wodru-combat-melee-col-ability: 200px;
-  --wodru-combat-melee-col-acc: 100px;
-  --wodru-combat-melee-col-diff: 100px;
-  --wodru-combat-melee-col-dmg: 100px;
-  --wodru-combat-melee-col-conceal: 100px;
-  --wodru-combat-melee-col-grip: 100px;
+  --wodru-combat-melee-col-attr: 110px;
+  --wodru-combat-melee-col-ability: 150px;
+  --wodru-combat-melee-col-acc: 80px;
+  --wodru-combat-melee-col-diff: 80px;
+  --wodru-combat-melee-col-dmg: 80px;
+  --wodru-combat-melee-col-conceal: 85px;
+  --wodru-combat-melee-col-grip: 80px;
 
   /* Ranged weapons */
   --wodru-combat-ranged-col-name: 200px;
-  --wodru-combat-ranged-col-attr: 200px;
-  --wodru-combat-ranged-col-ability: 200px;
-  --wodru-combat-ranged-col-acc: 100px;
-  --wodru-combat-ranged-col-diff: 100px;
-  --wodru-combat-ranged-col-dmg: 100px;
+  --wodru-combat-ranged-col-attr: 110px;
+  --wodru-combat-ranged-col-ability: 150px;
+  --wodru-combat-ranged-col-acc: 80px;
+  --wodru-combat-ranged-col-diff: 80px;
+  --wodru-combat-ranged-col-dmg: 80px;
   --wodru-combat-ranged-col-range: 100px;
-  --wodru-combat-ranged-col-rate: 100px;
+  --wodru-combat-ranged-col-rate: 125px;
   --wodru-combat-ranged-col-clip: 100px;
 
   /* Armor */
