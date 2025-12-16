@@ -1,0 +1,109 @@
+/**
+ * RU: Typography for Settings -> Attributes tab.
+ * Only font-size + font-weight, no layout changes here.
+ *
+ * System template:
+ * - templates/actor/parts/settings_attribute.html
+ *
+ * System floating-label logic (wod.css):
+ * - .floating-label-group input:not(:focus):valid ~ .floating-label
+ * - .floating-label-group select:not(:focus):valid ~ .floating-label
+ */
+
+ /* ============================================================
+  * Attribute table: headers (first row only)
+  * ============================================================ */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area > .clearareaBox > .clearareaBox:first-child .headlineNormal.numberBox {
+  font-size: var(--wodru-typo-attr-table-head-size);
+  font-weight: var(--wodru-typo-attr-table-head-weight);
+}
+
+/* ============================================================
+ * Attribute table: body (labels + numeric cells)
+ * - labels: <label class="headlineNormal settings-leftwidth">
+ * - values: <input class="... sheet-infoValues numberBox">
+ * ============================================================ */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area > .clearareaBox > .clearareaBox:not(:first-child) label.headlineNormal.settings-leftwidth,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area > .clearareaBox > .clearareaBox:not(:first-child) input.sheet-infoValues.numberBox {
+  font-size: var(--wodru-typo-attr-table-body-size);
+  font-weight: var(--wodru-typo-attr-table-body-weight);
+}
+
+/* ============================================================
+ * Attribute table: reference/help text under the table
+ * - system uses: <div class="clearareaBox information-area">...</div>
+ * ============================================================ */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.clearareaBox.information-area {
+  font-size: var(--wodru-typo-attr-table-help-size);
+  font-weight: var(--wodru-typo-attr-table-help-weight);
+}
+
+/* ============================================================
+ * Block titles on Settings -> Attributes
+ * - system uses: <div class="headlineGroup splatFont">...</div>
+ * (Path, Selected Virtues, Frenzy Roll etc.)
+ * ============================================================ */
+
+.langRU.wod20 .tab.settings .tab.attributes .headlineGroup.splatFont {
+  font-size: var(--wodru-typo-settings-block-title-size);
+  font-weight: var(--wodru-typo-settings-block-title-weight);
+}
+
+/* ============================================================
+ * Floating fields: label typography (empty vs filled)
+ * - system determines "filled" via :valid (and also lifts label on :focus)
+ * ============================================================ */
+
+/* Empty (default) */
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group .floating-label {
+  font-size: var(--wodru-typo-floatfield-label-empty-size);
+  font-weight: var(--wodru-typo-floatfield-label-empty-weight);
+}
+
+/* Filled/active (match system behavior) */
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group input:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group input:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group input:not(:focus):valid ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group select:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group select:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group select:not(:focus):valid ~ .floating-label {
+  font-size: var(--wodru-typo-floatfield-label-filled-size);
+  font-weight: var(--wodru-typo-floatfield-label-filled-weight);
+}
+
+/* ============================================================
+ * Floating fields: value typography (inputs/selects)
+ * We scope to Settings -> Attributes only.
+ * ============================================================ */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group input.sheet-infoValues,
+.langRU.wod20 .tab.settings .tab.attributes
+.bioInformationArea.floating-label-group select.sheet-infoValues {
+  font-size: var(--wodru-typo-floatfield-value-size);
+  font-weight: var(--wodru-typo-floatfield-value-weight);
+}
+
+/* ============================================================
+ * Settings -> Attributes -> Virtues: value typography
+ * ========================================================== */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box .headlineGroup.splatFont + .clearareaBox .pullLeft.half :is(input, select).sheet-infoValues {
+  font-size: var(--wodru-typo-floatfield-value-size);
+  font-weight: var(--wodru-typo-floatfield-value-weight);
+}

@@ -1,0 +1,160 @@
+/**
+ * RU: Settings -> Attributes table layout controls.
+ *
+ * System template: templates/actor/parts/settings_attribute.html
+ * Important: system sets `.numberBox { width: 50px !important; }`
+ * So we override with higher specificity + !important.
+ */
+
+.langRU .tab.settings .tab.attributes .settings-leftwidth {
+  width: var(--wodru-settings-attr-label-col-width) !important;
+  min-width: var(--wodru-settings-attr-label-col-width) !important;
+  max-width: var(--wodru-settings-attr-label-col-width) !important;
+}
+
+/* Numeric columns: in system markup they are the elements with `.pullLeft.numberBox`
+   - header: <div class="pullLeft headlineNormal numberBox">...</div>
+   - rows:   <input class="pullLeft sheet-infoValues numberBox ...">
+*/
+.langRU .tab.settings .tab.attributes .clearareaBox .pullLeft.numberBox {
+  width: var(--wodru-settings-attr-num-col-width) !important;
+  min-width: var(--wodru-settings-attr-num-col-width) !important;
+  max-width: var(--wodru-settings-attr-num-col-width) !important;
+  box-sizing: border-box;
+}
+
+/* Center ONLY header labels of numeric columns (do NOT touch the left label column). */
+.langRU .tab.settings .tab.attributes .sheet-area > .clearareaBox > .clearareaBox:first-child .headlineNormal.numberBox {
+  text-align: center;
+}
+
+/**
+ * RU: Settings -> Attributes floating fields
+ * for selectpath + bearing + frenzybonus
+ *
+ * Mirrors Bio pattern:
+ * - empty label: centered
+ * - active/filled label: top
+ * - value: pushed down via padding inside control
+ *
+ * IMPORTANT:
+ * - System (wod.css) forces input/select height: 30px and active label top:-9px.
+ * - We override with !important inside our narrow scope.
+ */
+
+/* ============================================================
+ * Scope anchors (system settings_attribute.html):
+ * - Path:   .area-box[data-area="pathsetting"]
+ * - Bearing: immediate next sibling after pathsetting:
+ *           .area-box[data-area="pathsetting"] + .clearareaBox.area-box
+ * - Frenzy: .sheet-area[data-area="frenzysetting"]
+ * ========================================================== */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group {
+  position: relative;
+  height: var(--wodru-settings-floatfield-height) !important;
+  line-height: normal;
+}
+
+/* Control fills the wrapper (this is what fixes "big text still centered") */
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] input.sheet-infoValues,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] select.sheet-infoValues,
+
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box input.sheet-infoValues,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box select.sheet-infoValues,
+
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] input.sheet-infoValues,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] select.sheet-infoValues {
+  height: 100% !important; /* override system height: 30px */
+  box-sizing: border-box !important;
+  line-height: normal !important;
+
+  /* big text -> lower */
+  padding-top: var(--wodru-settings-value-padding-top) !important;
+  padding-bottom: var(--wodru-settings-value-padding-bottom) !important;
+
+  /* big text -> small left indent */
+  padding-left: var(--wodru-settings-value-left) !important;
+}
+
+/* ============================================================
+ * 1) EMPTY label -> centered (small text)
+ * ========================================================== */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group .floating-label {
+  left: var(--wodru-settings-label-left) !important;
+  right: auto !important;
+
+  /* override system "no top" default */
+  top: var(--wodru-settings-label-empty-top) !important;
+  transform: translateY(var(--wodru-settings-label-empty-translateY)) !important;
+
+  bottom: auto !important; /* override system active bottom: 0px when it leaks */
+}
+
+/* ============================================================
+ * 2) ACTIVE/FILLED label -> top (small text)
+ * Uses EXACT system conditions from wod.css (Bio pattern).
+ * ========================================================== */
+
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group input:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group input:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group input:not(:focus):valid ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group select:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group select:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] .floating-label-group select:not(:focus):valid ~ .floating-label,
+
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group input:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group input:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group input:not(:focus):valid ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group select:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group select:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.area-box[data-area="pathsetting"] + .clearareaBox.area-box .floating-label-group select:not(:focus):valid ~ .floating-label,
+
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group input:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group input:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group input:not(:focus):valid ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group select:focus ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group select:disabled ~ .floating-label,
+.langRU.wod20 .tab.settings .tab.attributes
+.sheet-area[data-area="frenzysetting"] .floating-label-group select:not(:focus):valid ~ .floating-label {
+  top: var(--wodru-settings-label-active-top) !important; /* override system top:-9px */
+  transform: translateY(var(--wodru-settings-label-active-translateY)) !important;
+
+  left: var(--wodru-settings-label-left) !important;
+  right: auto !important;
+  bottom: auto !important;
+}

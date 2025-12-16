@@ -246,5 +246,44 @@
   --wodru-effects-col-mod: 100px;
   --wodru-effects-col-active: 100px;
 
+  /* ============================================================
+   * Settings tab: Attributes table (all splats, including Vampire)
+   * ============================================================
+   * System markup:
+   * - header row uses: `.settings-leftwidth` + multiple `.numberBox`
+   * - data rows use the same containers with inputs inside `.numberBox`
+   *
+   * These variables control ONLY the Settings -> Attributes table.
+   * Mapping is done in `styles/charsheet/pages-layout/ru-settings-attr.css`.
+   */
+  --wodru-settings-attr-label-col-width: 150px;
+  --wodru-settings-attr-num-col-width: 80px;
+
+  /**
+  * RU: Settings -> Attributes floating fields vars (Path + Bearing + Frenzy Bonus)
+  * Layout/positioning tokens only.
+  */
+
+  /* Field height (wrapper + control) */
+  --wodru-settings-floatfield-height: 40px;
+
+  /* Label horizontal position (small text) */
+  --wodru-settings-label-left: 2px;
+
+  /* Value horizontal position (big text) */
+  --wodru-settings-value-left: 10px;
+
+  /* EMPTY label position (centered vertically) */
+  --wodru-settings-label-empty-top: 50%;
+  --wodru-settings-label-empty-translateY: -50%;
+
+  /* ACTIVE/FILLED label position (pinned to top) */
+  --wodru-settings-label-active-top: 2px;
+  --wodru-settings-label-active-translateY: 0;
+
+  /* Value vertical positioning (push big text down) */
+  --wodru-settings-value-padding-top: 15px;
+  --wodru-settings-value-padding-bottom: 2px;
+
 }
 

@@ -223,4 +223,33 @@
 
   --wodru-effects-body-font-size: 14px;
   --wodru-effects-body-font-weight: 400;
+
+  /* ============================================================
+   * Settings -> Attributes typography tokens (RU)
+   * Weight + font-size only (no layout).
+   * ============================================================ */
+
+  /* Attribute table */
+  --wodru-typo-attr-table-head-size: 16px;
+  --wodru-typo-attr-table-head-weight: 700;
+
+  --wodru-typo-attr-table-body-size: 16px;
+  --wodru-typo-attr-table-body-weight: 400;
+
+  --wodru-typo-attr-table-help-size: 14px;
+  --wodru-typo-attr-table-help-weight: 400;
+
+  /* Block titles (Path / Virtues / Frenzy roll modifier block) */
+  --wodru-typo-settings-block-title-size: 18px;
+  --wodru-typo-settings-block-title-weight: 700;
+
+  /* Floating fields (labels + values) */
+  --wodru-typo-floatfield-label-empty-size: 16px;
+  --wodru-typo-floatfield-label-empty-weight: 400;
+
+  --wodru-typo-floatfield-label-filled-size: 12px;
+  --wodru-typo-floatfield-label-filled-weight: 400;
+
+  --wodru-typo-floatfield-value-size: 16px;
+  --wodru-typo-floatfield-value-weight: 400;
 }
