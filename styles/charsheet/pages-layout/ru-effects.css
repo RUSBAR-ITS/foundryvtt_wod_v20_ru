@@ -1,0 +1,99 @@
+/**
+ * RU: Effects tab layout overrides.
+ *
+ * Responsibilities:
+ * - Per-column width control for the Effects list.
+ * - Header labels centered within their cells.
+ * - Rows:
+ *   - Origin/Name column: left aligned + multi-line wrapping for long text.
+ *   - Type column: centered + multi-line wrapping for long text.
+ *   - All other columns: centered.
+ *
+ * System constraints we must bypass:
+ * - Foundry_WoD20/css/wod.css sets `white-space: nowrap` on `.wod20 .item-row-area`,
+ *   which blocks any wrapping unless overridden on the target cell.
+ *
+ * Scope:
+ * - RU-only via `.langRU`.
+ * - Effects tab only: `.tab.effect .effect-itemlist`.
+ */
+
+/* ==========================================================
+ * Column widths (applies to BOTH header and row cells)
+ * ======================================================== */
+
+/* 1) Origin / Name */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row > .width-namebox {
+  flex: 0 0 var(--wodru-effects-col-origin);
+  min-width: var(--wodru-effects-col-origin);
+  max-width: var(--wodru-effects-col-origin);
+}
+
+/* 2) Type */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row > .width-abilitybox {
+  flex: 0 0 var(--wodru-effects-col-type);
+  min-width: var(--wodru-effects-col-type);
+  max-width: var(--wodru-effects-col-type);
+}
+
+/* 3) Area */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row > .width-mediumbox {
+  flex: 0 0 var(--wodru-effects-col-area);
+  min-width: var(--wodru-effects-col-area);
+  max-width: var(--wodru-effects-col-area);
+}
+
+/* 4) Modifier (system markup uses `.width-valuebox`) */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row > .width-valuebox:nth-child(4) {
+  flex: 0 0 var(--wodru-effects-col-mod);
+  min-width: var(--wodru-effects-col-mod);
+  max-width: var(--wodru-effects-col-mod);
+}
+
+/* 5) Active (system markup uses `.width-valuebox`) */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row > .width-valuebox:nth-child(5) {
+  flex: 0 0 var(--wodru-effects-col-active);
+  min-width: var(--wodru-effects-col-active);
+  max-width: var(--wodru-effects-col-active);
+}
+
+/* ==========================================================
+ * Header alignment
+ * ======================================================== */
+
+.langRU.wod20 .tab.effect .effect-itemlist .headlineRow > div {
+  text-align: center;
+}
+
+/* ==========================================================
+ * Row alignment + wrapping
+ * ======================================================== */
+
+/* Origin / Name: left aligned + wrapping */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row-area > .width-namebox {
+  text-align: left;
+
+  /* Override system `nowrap` */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  line-height: 1.15;
+}
+
+/* Type: centered + wrapping */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row-area > .width-abilitybox {
+  text-align: center;
+
+  /* Override system `nowrap` */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  line-height: 1.15;
+}
+
+/* All other cells: centered, single-line remains acceptable */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row-area > div:not(.width-namebox):not(.width-abilitybox) {
+  text-align: center;
+}

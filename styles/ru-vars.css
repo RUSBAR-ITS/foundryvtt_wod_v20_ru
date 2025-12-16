@@ -225,6 +225,26 @@
   --wodru-notes-col-type: 150px;
   --wodru-notes-col-level: 150px;
 
+  /* ============================================================
+   * Effects tab: per-column widths (Effect list)
+   *
+   * System defaults (wod.css):
+   * - Name/Origin: 300px
+   * - Type:        200px
+   * - Area:        100px
+   * - Modifier:     75px
+   * - Active:       75px
+   *
+   * IMPORTANT:
+   * - In system markup both "Modifier" and "Active" columns share `.width-valuebox`,
+   *   so RU overrides must target them by position (4th and 5th column).
+   * ========================================================== */
+
+  --wodru-effects-col-origin: 400px;
+  --wodru-effects-col-type: 300px;
+  --wodru-effects-col-area: 200px;
+  --wodru-effects-col-mod: 100px;
+  --wodru-effects-col-active: 100px;
 
 }
 

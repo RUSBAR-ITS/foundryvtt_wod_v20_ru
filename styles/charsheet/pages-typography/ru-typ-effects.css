@@ -1,0 +1,31 @@
+/**
+ * RU: Effects tab typography.
+ *
+ * Typography scope in this module:
+ * - Fonts / font-size / font-weight only.
+ *
+ * Applies TWO typography presets:
+ * - Header preset: table header row text (headline cells)
+ * - Body preset: row text in columns 1, 2, 3, 4 (Origin/Name, Type, Area, Modifier)
+ *
+ * RU-only via `.langRU`.
+ * Effects tab only: `.tab.effect .effect-itemlist`.
+ */
+
+/* Header typography
+ * NOTE: System sets font-size/weight on `.headlineList`, so we must override there.
+ */
+.langRU.wod20 .tab.effect .effect-itemlist .headlineRow .headlineList,
+.langRU.wod20 .tab.effect .effect-itemlist .headlineRow > div {
+  font-size: var(--wodru-effects-header-font-size);
+  font-weight: var(--wodru-effects-header-font-weight);
+}
+
+/* Body typography (cols 1-4 only) */
+.langRU.wod20 .tab.effect .effect-itemlist .item-row-area > .width-namebox,
+.langRU.wod20 .tab.effect .effect-itemlist .item-row-area > .width-abilitybox,
+.langRU.wod20 .tab.effect .effect-itemlist .item-row-area > .width-mediumbox,
+.langRU.wod20 .tab.effect .effect-itemlist .item-row-area > .width-valuebox:nth-child(4) {
+  font-size: var(--wodru-effects-body-font-size);
+  font-weight: var(--wodru-effects-body-font-weight);
+}

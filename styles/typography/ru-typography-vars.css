@@ -211,4 +211,16 @@
 
   --wodru-typo-notes-body-size: 14px;
   --wodru-typo-notes-body-weight: 400;
+
+  /* ============================================================
+   * Effects tab typography presets
+   * - Header: table header row
+   * - Body: rows, columns 1-4
+   * ========================================================== */
+
+  --wodru-effects-header-font-size: 16px;
+  --wodru-effects-header-font-weight: 700;
+
+  --wodru-effects-body-font-size: 14px;
+  --wodru-effects-body-font-weight: 400;
 }
