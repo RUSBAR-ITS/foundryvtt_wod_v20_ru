@@ -1,0 +1,67 @@
+/**
+ * RU: Settings -> Abilities headings alignment.
+ *
+ * Goal: keep Talents / Skills / Knowledges headings perfectly aligned above their columns.
+ *
+ * System templates:
+ *  - templates/actor/parts/settings.html
+ *  - templates/actor/parts/settings_abilities.html
+ *
+ * In system markup, the 3 headings are rendered in a separate row:
+ *   .sheet-area.flex-columns
+ *     > .clearareaBox
+ *         > .clearareaBox   <-- headings row (3x .ability-statArea)
+ *
+ * We turn that headings row into a flex container, so it follows the same 3-column grid
+ * as the actual abilities columns below.
+ *
+ * NOTE (dark theme):
+ * System dark theme styles set .sheet-banner-small to display:inline-block and max-width:250px,
+ * which visually breaks the 3-column alignment for these headings. We override that *only* for
+ * Settings -> Abilities headings.
+ */
+
+.langRU .tab.settings .tab.abilities .sheet-area.flex-columns > .clearareaBox > .clearareaBox {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Headings: 3 equal columns. */
+.langRU .tab.settings .tab.abilities .sheet-area.flex-columns > .clearareaBox > .clearareaBox > .ability-statArea {
+  float: none !important;
+  width: auto !important;
+  flex: 0 0 33.3333%;
+  box-sizing: border-box;
+}
+
+/* Dark theme: allow the banner background element to stretch to the full column width. */
+.langRU.dark-theme.wod-sheet .tab.settings .tab.abilities .sheet-area.flex-columns > .clearareaBox > .clearareaBox > .ability-statArea.sheet-banner-small {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Primary abilities table: keep the visibility toggle ("eye") aligned to the right edge of the column. */
+.langRU .tab.settings .tab.abilities .clearareaBox.row > .settings-ability-altnamefiller {
+  /* System uses a fixed width; make it flexible so the switch can be right-aligned consistently. */
+  flex: 1 1 auto;
+  width: auto !important;
+}
+
+.langRU .tab.settings .tab.abilities .clearareaBox.row > .switch {
+  margin-left: auto;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+  /* Keep a consistent "icon column" width so the row of icons looks perfectly vertical. */
+  min-width: 26px;
+}
+
+/* Primary Abilities big box: configurable top padding (distance from the box top edge). */
+.langRU .tab.settings .tab.abilities .sheet-area.flex-columns:has(.sheet-banner-small) > .clearareaBox {
+  padding-top: var(--wodru-settings-abilities-primary-pad-top);
+}

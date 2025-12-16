@@ -252,4 +252,14 @@
 
   --wodru-typo-floatfield-value-size: 16px;
   --wodru-typo-floatfield-value-weight: 400;
+
+  /* Settings -> Abilities typography */
+  --wodru-typo-settings-abilities-secondary-title-size: 24px;
+  --wodru-typo-settings-abilities-secondary-title-weight: 700;
+
+  --wodru-typo-settings-abilities-column-title-size: 20px;
+  --wodru-typo-settings-abilities-column-title-weight: 700;
+
+  --wodru-typo-settings-abilities-name-size: 16px;
+  --wodru-typo-settings-abilities-name-weight: 400;
 }

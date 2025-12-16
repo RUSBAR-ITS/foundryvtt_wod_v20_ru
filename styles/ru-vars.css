@@ -285,5 +285,8 @@
   --wodru-settings-value-padding-top: 15px;
   --wodru-settings-value-padding-bottom: 2px;
 
+  /* Padding top for abilities settings */
+  --wodru-settings-abilities-primary-pad-top: 10px;
+
 }
 

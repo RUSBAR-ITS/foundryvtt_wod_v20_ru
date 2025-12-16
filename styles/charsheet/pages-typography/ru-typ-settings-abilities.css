@@ -1,0 +1,77 @@
+/**
+ * RU typography: Settings -> Abilities
+ *
+ * Three typography presets (size + weight):
+ * 1) Secondary Abilities big section title
+ * 2) Column titles (Talents/Skills/Knowledges) in BOTH tables
+ * 3) Ability names in BOTH tables
+ */
+
+/* ---------------------------- */
+/* 1) Secondary Abilities banner */
+/* ---------------------------- */
+
+/* Apply typography to both the banner container and its inner text span,
+   because system markup/themes may style either. */
+.langRU .tab.settings .tab.abilities .sheet-headline.sheet-banner {
+  font-size: var(--wodru-typo-settings-abilities-secondary-title-size);
+  font-weight: var(--wodru-typo-settings-abilities-secondary-title-weight);
+}
+
+.langRU .tab.settings .tab.abilities .sheet-headline.sheet-banner .sheet-banner-text {
+  font-size: var(--wodru-typo-settings-abilities-secondary-title-size);
+  font-weight: var(--wodru-typo-settings-abilities-secondary-title-weight);
+}
+
+
+/* --------------------------------------------- */
+/* 2) Column titles (Talents/Skills/Knowledges)   */
+/* --------------------------------------------- */
+
+/* 2a) PRIMARY table column titles:
+   In primary block they use sheet-banner-small + sheet-banner-text. */
+.langRU .tab.settings .tab.abilities .sheet-area.flex-columns
+  > .clearareaBox > .clearareaBox
+  > .ability-statArea.headlineGroup.sheet-banner-small .sheet-banner-text {
+  font-size: var(--wodru-typo-settings-abilities-column-title-size);
+  font-weight: var(--wodru-typo-settings-abilities-column-title-weight);
+}
+
+/* 2b) SECONDARY table column titles:
+   After the "Secondary Abilities" banner, system uses headlineGroup blocks as column headers.
+   Sometimes the text is direct (no sheet-banner-text span), sometimes wrapped.
+   So we style the header block itself AND any sheet-banner-text inside it. */
+.langRU .tab.settings .tab.abilities .sheet-headline.sheet-banner
+  ~ .clearareaBox .ability-statArea.headlineGroup {
+  font-size: var(--wodru-typo-settings-abilities-column-title-size);
+  font-weight: var(--wodru-typo-settings-abilities-column-title-weight);
+}
+
+.langRU .tab.settings .tab.abilities .sheet-headline.sheet-banner
+  ~ .clearareaBox .ability-statArea.headlineGroup .sheet-banner-text {
+  font-size: var(--wodru-typo-settings-abilities-column-title-size);
+  font-weight: var(--wodru-typo-settings-abilities-column-title-weight);
+}
+
+
+/* ------------------------------ */
+/* 3) Ability names (row labels)  */
+/* ------------------------------ */
+
+/* 3a) PRIMARY table ability names */
+.langRU .tab.settings .tab.abilities .settings-abilitylabel {
+  font-size: var(--wodru-typo-settings-abilities-name-size);
+  font-weight: var(--wodru-typo-settings-abilities-name-weight);
+}
+
+/* 3b) SECONDARY table ability names:
+   After secondary banner, rows are clearareaBox.row (display:flex).
+   The ability name is the first text cell in the row (headlineNormal), not the "switch" icon.
+   We target the first headlineNormal inside the row. */
+.langRU .tab.settings .tab.abilities .sheet-headline.sheet-banner
+  ~ .ability-statArea .clearareaBox.row > .headlineNormal:first-child,
+.langRU .tab.settings .tab.abilities .sheet-headline.sheet-banner
+  ~ .ability-statArea .clearareaBox.row > .pullLeft.headlineNormal:first-child {
+  font-size: var(--wodru-typo-settings-abilities-name-size);
+  font-weight: var(--wodru-typo-settings-abilities-name-weight);
+}
