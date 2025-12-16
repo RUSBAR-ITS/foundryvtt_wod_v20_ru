@@ -214,5 +214,17 @@
   --wodru-gear-items-col-dice: 400px;    /* `.width-abilitybox` */
   --wodru-gear-items-col-diff: 100px;    /* `.width-valuebox` */
 
+  /* ============================================================
+   * Notes tab: per-column widths (Notes / Feature list)
+   * NOTE: last column (icon/actions) is fluid and takes remaining space.
+   * ========================================================== */
+
+  --wodru-notes-col-grip: 15px;
+  --wodru-notes-col-active: 30px;
+  --wodru-notes-col-name: 350px;
+  --wodru-notes-col-type: 150px;
+  --wodru-notes-col-level: 150px;
+
+
 }
 

@@ -1,0 +1,71 @@
+/**
+ * RU: Notes tab typography overrides.
+ *
+ * Goal:
+ * - Use only TWO typography groups for this page:
+ *   1) Headings (all Notes table/list headers, including Experience)
+ *   2) Body text (Features cols 3/4/5; Experience name + amount)
+ *
+ * IMPORTANT:
+ * - This file controls typography ONLY (font-size + font-weight via vars).
+ * - Layout/wrapping/centering is handled by layout CSS (ru-notes.css etc.).
+ *
+ * Scope:
+ * - RU-only via `.langRU`.
+ * - Notes tab preferred selectors: `.tab[data-tab="note"]` and `.tab.note`.
+ * - Fallback to stable Notes structures if tab wrapper differs.
+ */
+
+.langRU.wod20 {
+  /* ==========================================================
+   * 1) HEADINGS: all headers on Notes page
+   * - Features list header: `.headlineRow.headlineList.splatFont.feature-itemlist .largeBox`
+   * - Experience block headers: `.headlineRow.splatFont .largeBox`
+   * ======================================================== */
+
+  .tab[data-tab="note"] .headlineRow.headlineList.splatFont.feature-itemlist .largeBox,
+  .tab.note .headlineRow.headlineList.splatFont.feature-itemlist .largeBox,
+  .headlineRow.headlineList.splatFont.feature-itemlist .largeBox,
+
+  .tab[data-tab="note"] .headlineRow.splatFont .largeBox,
+  .tab.note .headlineRow.splatFont .largeBox,
+  .notes-centerexperienceadd .headlineRow.splatFont .largeBox {
+    font-size: var(--wodru-typo-notes-head-size);
+    font-weight: var(--wodru-typo-notes-head-weight);
+  }
+
+  /* ==========================================================
+   * 2) BODY TEXT: Features table cols 3/4/5 + Experience rows
+   *
+   * Features rows:
+   * - 3rd cell: Name (largeBox)
+   * - 4th cell: Type (largeBox)
+   * - 5th cell: Level/Value (width-valuebox)
+   *
+   * Experience rows:
+   * - `.notes-experienceHeadline` = name/description
+   * - `.notes-valueBox` = amount (earned/spent/unspent)
+   * ======================================================== */
+
+  .tab[data-tab="note"] .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(3),
+  .tab[data-tab="note"] .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(4),
+  .tab[data-tab="note"] .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(5),
+
+  .tab.note .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(3),
+  .tab.note .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(4),
+  .tab.note .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(5),
+
+  .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(3),
+  .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(4),
+  .item-row-area.feature-itemlist .dragrow.feature-itemlist > div:nth-child(5),
+
+  .tab[data-tab="note"] .note-row .notes-experienceHeadline,
+  .tab[data-tab="note"] .note-row .notes-valueBox,
+  .tab.note .note-row .notes-experienceHeadline,
+  .tab.note .note-row .notes-valueBox,
+  .note-row .notes-experienceHeadline,
+  .note-row .notes-valueBox {
+    font-size: var(--wodru-typo-notes-body-size);
+    font-weight: var(--wodru-typo-notes-body-weight);
+  }
+}

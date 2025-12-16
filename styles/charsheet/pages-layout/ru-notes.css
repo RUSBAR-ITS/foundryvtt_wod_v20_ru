@@ -1,0 +1,191 @@
+/**
+ * RU: Notes tab layout overrides.
+ *
+ * Responsibilities:
+ * - Per-column width control for the Notes (Feature) list rows.
+ * - Guaranteed wrapping for long names inside a FIXED Name column width.
+ * - iconBox (icons/actions) is the ONLY fluid column and takes remaining width.
+ * - Alignment rules:
+ *   - Header label: centered
+ *   - Rows: Name column left; other data columns centered
+ *   - iconBox behavior/inner layout is not modified (only placement).
+ *
+ * System constraints we must bypass:
+ * - Foundry_WoD20/css/wod.css sets `white-space: nowrap` on:
+ *   - `.wod20 .item-row-area`
+ *   - `.wod20 .item-row-area .dragrow` and `.wod20-drag-row.dragrow`
+ *   This blocks any wrapping unless overridden at the correct level.
+ *
+ * Additionally, the system uses flex-based row layout. When hooks add text,
+ * the system's flex sizing may change, making column widths unstable.
+ * To make it deterministic, we convert the row to CSS Grid and flatten `.dragrow`
+ * via `display: contents`.
+ *
+ * Important:
+ * - DO NOT use :last-of-type / :nth-last-of-type for column picking.
+ * - We target by stable list classes: `.item-row-area.feature-itemlist`.
+ *
+ * Scope:
+ * - RU-only via `.langRU`.
+ * - Do NOT rely on `.tab.note` / `.tab.notes` naming.
+ */
+
+.langRU.wod20 {
+  /* ==========================================================
+   * Header: center the only header label (system renders a single label)
+   * ======================================================== */
+
+  .headlineRow.headlineList.feature-itemlist {
+    justify-content: center;
+  }
+
+  .headlineRow.headlineList.feature-itemlist > .largeBox {
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* ==========================================================
+   * Notes rows: deterministic grid layout
+   *
+   * DOM (per row):
+   * - .item-row-area.feature-itemlist
+   *   - .dragrow.headlineNormal.feature-itemlist
+   *       1) .width-iconbox
+   *       2) .item-activeBox
+   *       3) .largeBox (Name)
+   *       4) .largeBox (Type)
+   *       5) .width-valuebox (Level)
+   *   - .iconBox (icons/actions) -> must be the ONLY fluid column
+   * ======================================================== */
+
+  /* Allow wrapping at row level (system forces nowrap globally). */
+  .item-row-area.feature-itemlist {
+    white-space: normal !important;
+  }
+
+  /* Convert row to grid: last column is fluid (1fr) and belongs to iconBox. */
+  .item-row-area.feature-itemlist {
+    display: grid !important;
+    grid-template-columns:
+      var(--wodru-notes-col-grip)
+      var(--wodru-notes-col-active)
+      var(--wodru-notes-col-name)
+      var(--wodru-notes-col-type)
+      var(--wodru-notes-col-level)
+      1fr;
+    align-items: center; /* vertical centering for all cells */
+    column-gap: 0;
+  }
+
+  /*
+   * Flatten dragrow so its 5 children become grid items.
+   * This removes flex sizing side effects entirely.
+   */
+  .item-row-area.feature-itemlist .dragrow.feature-itemlist,
+  .item-row-area.feature-itemlist .wod20-drag-row.dragrow {
+    display: contents !important;
+    white-space: normal !important;
+  }
+
+  /* Place iconBox into the last (fluid) column. */
+  .item-row-area.feature-itemlist > .iconBox {
+    grid-column: 6;
+    min-width: 0;
+  }
+
+  /* Baseline: ensure cells can shrink/wrap properly */
+  .item-row-area.feature-itemlist .width-iconbox,
+  .item-row-area.feature-itemlist .item-activeBox,
+  .item-row-area.feature-itemlist .largeBox,
+  .item-row-area.feature-itemlist .width-valuebox,
+  .item-row-area.feature-itemlist > .iconBox {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  /*
+   * CRITICAL:
+   * System styles may set explicit widths/max-widths on `.largeBox` / `.width-valuebox`.
+   * In grid layout we want each cell to actually occupy the full width of its column.
+   */
+  .item-row-area.feature-itemlist .width-iconbox,
+  .item-row-area.feature-itemlist .item-activeBox,
+  .item-row-area.feature-itemlist .largeBox,
+  .item-row-area.feature-itemlist .width-valuebox {
+    width: 100% !important;
+    max-width: none !important;
+    justify-self: stretch !important;
+  }
+
+  /* ==========================================================
+   * Per-cell placement, alignment & wrapping rules
+   * ======================================================== */
+
+  /* Grip (col 1) */
+  .item-row-area.feature-itemlist .width-iconbox {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Active (col 2) */
+  .item-row-area.feature-itemlist .item-activeBox {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Name (col 3): left aligned, must wrap */
+  .item-row-area.feature-itemlist .largeBox:nth-child(3) {
+    grid-column: 3;
+    text-align: left;
+
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.2;
+  }
+
+  /* Type (col 4): centered, wraps if needed, vertically centered */
+  .item-row-area.feature-itemlist .largeBox:nth-child(4) {
+    grid-column: 4;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.2;
+  }
+
+  /* Level (col 5): centered, wraps if needed, vertically centered */
+  .item-row-area.feature-itemlist .width-valuebox {
+    grid-column: 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.2;
+
+    height: auto !important;
+    min-height: 0;
+  }
+}

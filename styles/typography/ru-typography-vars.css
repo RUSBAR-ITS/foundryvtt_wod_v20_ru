@@ -198,4 +198,17 @@
   /* 5) Items table cells (except drag + actions icon column) */
   --wodru-typo-gear-items-cell-size: 14px;
   --wodru-typo-gear-items-cell-weight: 400;
+
+  /* ============================================================
+   * Notes tab typography (Features table + Experience lists)
+   * Two groups only:
+   * - Headings (table/list headers)
+   * - Body text (cells/rows content)
+   * ============================================================ */
+
+  --wodru-typo-notes-head-size: 16px;
+  --wodru-typo-notes-head-weight: 600;
+
+  --wodru-typo-notes-body-size: 14px;
+  --wodru-typo-notes-body-weight: 400;
 }
