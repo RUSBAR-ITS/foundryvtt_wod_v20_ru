@@ -11,15 +11,17 @@
  * Logging:
  * - Uses shared logger from scripts/logger/core.js
  * - All logs are gated by module debug setting
- * - Messages are prefixed logically with "RU-WIDTH"
+ * - Uses namespaced debug logger (debugNs)
  */
 
 import {
-  info,
   warn,
   safe,
-  classString
+  classString,
+  debugNs
 } from "./logger/core.js";
+
+const NS = "ru-width";
 
 const LANG_CLASS = "langRU";
 const LANG_CLASS_RE = /^lang[A-Z]{2}$/;
@@ -60,23 +62,17 @@ function computed(el, prop) {
 }
 
 /**
- * Collect a detailed snapshot of the sheet state.
- * Used purely for diagnostics/logging.
+ * Snapshot relevant classes/styles for debugging.
  */
-function takeSnapshot(app, root) {
+function snapshotSheet(app, root) {
   const inner = root?.querySelector?.(".sheet-inner-area") ?? null;
-  const content = root?.querySelector?.(".window-content") ?? null;
 
   return {
-    sheetClass: app?.constructor?.name,
-    title: safe(() => app?.title),
-    appId: safe(() => app?.appId),
-    actorName: safe(() => app?.actor?.name),
-    actorType: safe(() => app?.actor?.type),
-
+    title: app?.title ?? null,
+    sheetClass: app?.constructor?.name ?? null,
+    appId: app?.appId ?? null,
     root: {
       classString: classString(root),
-      styleAttr: safe(() => root?.getAttribute?.("style")),
       computed: {
         width: computed(root, "width"),
         minWidth: computed(root, "min-width"),
@@ -84,7 +80,6 @@ function takeSnapshot(app, root) {
         minHeight: computed(root, "min-height")
       }
     },
-
     sheetInnerArea: inner
       ? {
           computed: {
@@ -93,19 +88,15 @@ function takeSnapshot(app, root) {
           }
         }
       : null,
-
     nodes: {
-      hasWindowContent: !!content,
-      hasSheetInnerArea: !!inner
+      hasSheetInnerArea: Boolean(inner)
     }
   };
 }
 
 /**
- * Normalize language classes on the sheet root for RU.
- *
- * - Removes all langXX classes except langRU
- * - Ensures langRU is present
+ * Normalize language classes for RU.
+ * Removes any existing langXX (langEN/langDE/...) and applies langRU.
  */
 function normalizeLangClassesForRU(root) {
   const removed = [];
@@ -122,6 +113,39 @@ function normalizeLangClassesForRU(root) {
 }
 
 /**
+ * Ensure the global document language class is consistent with current Foundry language.
+ *
+ * Goal:
+ * - When language is "ru": enforce ONLY langRU among langXX classes on <html>.
+ * - When language is not "ru": remove langRU from <html> but do not touch any other classes.
+ */
+function syncDocumentLangClass() {
+  const lang = getLang();
+  const root = document.documentElement;
+  if (!root) return;
+
+  if (lang === "ru") {
+    const removed = normalizeLangClassesForRU(root);
+    if (removed.length) {
+      debugNs(NS, "normalized <html> language classes", { removed });
+    }
+  } else if (root.classList.contains(LANG_CLASS)) {
+    root.classList.remove(LANG_CLASS);
+    debugNs(NS, "removed langRU from <html> (non-RU language)", { lang });
+  }
+}
+
+// Keep global <html> language class in sync.
+Hooks.once("ready", () => {
+  syncDocumentLangClass();
+});
+
+// Some UI pieces render without ActorSheet hooks; keep <html> synced whenever apps render.
+Hooks.on("renderApplication", () => {
+  syncDocumentLangClass();
+});
+
+/**
  * Main hook: applied on every ActorSheet render.
  */
 Hooks.on("renderActorSheet", (app, html) => {
@@ -130,55 +154,42 @@ Hooks.on("renderActorSheet", (app, html) => {
 
   const root = getRootElement(app, html);
   if (!root) {
-    warn("RU-WIDTH: renderActorSheet without root element", {
-      sheetClass: app?.constructor?.name,
-      title: safe(() => app?.title)
+    warn("[ru-width] renderActorSheet without root element", {
+      sheetClass: app?.constructor?.name ?? null,
+      title: app?.title ?? null
     });
     return;
   }
 
-  const hadLangRU = root.classList.contains(LANG_CLASS);
-  const beforeClasses = classString(root);
+  // Always keep <html> in sync too (ActorSheet render is a safe additional sync point).
+  syncDocumentLangClass();
 
-  let removedLangClasses = [];
-  if (shouldApply) {
-    removedLangClasses = normalizeLangClassesForRU(root);
+  // Never touch non-RU sheets.
+  if (!shouldApply) return;
 
-    // RU always disables decorative splat fonts.
+  // Make sure sheet root has ONLY langRU among langXX.
+  const removed = normalizeLangClassesForRU(root);
+
+  // Disable splat fonts for RU readability.
+  if (!root.classList.contains(NO_SPLAT_CLASS)) {
     root.classList.add(NO_SPLAT_CLASS);
   }
 
-  const afterClasses = classString(root);
-  const hasLangRU = root.classList.contains(LANG_CLASS);
-  const hasNoSplatFont = root.classList.contains(NO_SPLAT_CLASS);
-
-  const snap = takeSnapshot(app, root);
-
-  info("RU-WIDTH: language class applied", {
-    lang,
-    shouldApply,
-    hadLangRU,
-    hasLangRU,
-    hasNoSplatFont,
-    removedLangClasses,
-    beforeClasses,
-    afterClasses,
-    sheetClass: snap.sheetClass,
-    title: snap.title,
-    appId: snap.appId,
-    actorName: snap.actorName,
-    actorType: snap.actorType,
-    rootWidth: snap.root.computed.width,
-    innerWidth: snap.sheetInnerArea?.computed?.width ?? null
+  debugNs(NS, "applied langRU normalization on ActorSheet", {
+    removed,
+    title: app?.title ?? null,
+    sheetClass: app?.constructor?.name ?? null
   });
 
+  const snap = snapshotSheet(app, root);
+
   if (shouldApply && !snap.nodes.hasSheetInnerArea) {
-    warn("RU-WIDTH: .sheet-inner-area not found", {
+    warn("[ru-width] .sheet-inner-area not found", {
       sheetClass: snap.sheetClass,
       title: snap.title,
       classes: snap.root.classString
     });
   }
 
-  info("RU-WIDTH: sheet snapshot", snap);
+  debugNs(NS, "sheet snapshot", snap);
 });

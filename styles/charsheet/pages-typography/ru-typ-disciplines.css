@@ -3,9 +3,15 @@
  *
  * Four typography groups:
  * 1) Main powers rows
- * 2) Child powers rows
+ * 2) Child powers rows (+ unsorted powers)
  * 3) Description body text (tooltipText)
  * 4) Description headers (headlineList)
+ *
+ * IMPORTANT:
+ * - Do NOT apply typography to icon-only columns:
+ *   - drag handle column (usually first)
+ *   - active checkbox column (usually second, child powers)
+ *   - action icons group column (usually last)
  *
  * Scope: RU only (.langRU)
  * ========================================================== */
@@ -13,32 +19,45 @@
 .langRU.wod20 {
   /* ==========================================================
    * 1) Main powers (disciplines / paths / rituals headers)
-   * Applies to ALL columns in mainpower row.
+   *
+   * NOTE:
+   * Previously typography was applied to `.dragrow` / `.iconBox`
+   * which affects icon-only columns. We now scope typography to
+   * text/value columns only.
    * ======================================================== */
 
-  .item-row-area.mainpower-row .dragrow,
-  .item-row-area.mainpower-row > .iconBox {
+  /* Main row: name column (text) */
+  .item-row-area.mainpower-row .width-namebox {
     font-size: var(--wodru-powers-main-font-size);
     font-weight: var(--wodru-powers-main-font-weight);
   }
 
-  .item-row-area.mainpower-row .width-namebox {
+  /* Main row: value/points column (text/values) */
+  .item-row-area.mainpower-row .resource-value {
     font-size: var(--wodru-powers-main-font-size);
     font-weight: var(--wodru-powers-main-font-weight);
   }
 
   /* ==========================================================
    * 2) Child powers rows
-   * Applies to ALL columns in child power row.
+   *
+   * NOTE:
+   * Previously typography was applied to `.dragrow` / `.iconBox`
+   * which affects icon-only columns (drag handle / checkbox /
+   * action icons). We now scope typography to text/value columns
+   * only.
    * ======================================================== */
 
-  .item-row-area.power-row .dragrow,
-  .item-row-area.power-row .iconBox {
+  /* Child row: name column (text) */
+  .item-row-area.power-row .width-namebox {
     font-size: var(--wodru-powers-child-font-size);
     font-weight: var(--wodru-powers-child-font-weight);
   }
 
-  .item-row-area.power-row .width-namebox {
+  /* Child row: common text/value columns (if present in template) */
+  .item-row-area.power-row .width-abilitybox,
+  .item-row-area.power-row .width-smallbox,
+  .item-row-area.power-row .resource-value {
     font-size: var(--wodru-powers-child-font-size);
     font-weight: var(--wodru-powers-child-font-weight);
   }
@@ -51,10 +70,10 @@
    * with the name inside:
    *   .width-namebox.headlineNormal.vrollable
    *
-   * We apply the SAME typography as for normal child powers.
+   * We apply the SAME typography as for normal child powers,
+   * but only to the name column to avoid any icon side effects.
    * -------------------------------------------------------- */
 
-  .unsorted-area .area-box .row,
   .unsorted-area .area-box .row .width-namebox {
     font-size: var(--wodru-powers-child-font-size);
     font-weight: var(--wodru-powers-child-font-weight);
@@ -99,22 +118,18 @@
     font-weight: var(--wodru-powers-desc-head-font-weight);
   }
 
-  /* ============================================================
- * Disciplines / Powers tab typography (RU)
- *
- * This file currently focuses on styling the "unsorted powers" warning banners:
- * - wod.power.unsorteddisciplines
- * - wod.power.unsortedpaths
- *
- * Scope: RU only (.langRU)
- * ========================================================== */
-
-  /* Unsorted warnings are rendered as:
+  /* ==========================================================
+   * Unsorted powers warning banners:
+   * - wod.power.unsorteddisciplines
+   * - wod.power.unsortedpaths
+   *
+   * Unsorted warnings are rendered as:
    * <div class="headlineNormal info-box">...</div>
    * inside: <div class="sheet-area unsorted-area ...">
    *
    * We keep the selector tight to avoid affecting other info-boxes.
-   */
+   * ======================================================== */
+
   .sheet-area.unsorted-area > .headlineNormal.info-box {
     font-size: var(--wodru-powers-unsorted-banner-font-size);
     font-weight: var(--wodru-powers-unsorted-banner-font-weight);

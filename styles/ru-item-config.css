@@ -1,0 +1,52 @@
+/* ============================================================
+ * Item configuration UI (RU)
+ *
+ * Purpose:
+ * - Make checkbox groups in item configuration sheets vertical:
+ *   - Ranged Weapon: mode checkboxes
+ *   - Armor: shapes/forms checkboxes
+ *
+ * Requirements:
+ * - The checkbox list MUST start on the next line under the heading label,
+ *   in the SAME column (not in the "neighbor column" after the label).
+ *
+ * Scope: RU only (.langRU)
+ * ========================================================== */
+
+.langRU .wod20 .wodru-checkbox-infobox {
+  /* Force a single stacked column (label on top, list below). */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.langRU .wod20 .wodru-checkbox-infobox > label {
+  /* Ensure the label consumes the full row and the list starts below it. */
+  display: block;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.langRU .wod20 .wodru-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  /* Make sure it behaves as full-width block in the same column. */
+  width: 100%;
+}
+
+.langRU .wod20 .wodru-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.langRU .wod20 .wodru-checkbox-row input[type="checkbox"] {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.langRU .wod20 .wodru-checkbox-label {
+  line-height: 1.2;
+}

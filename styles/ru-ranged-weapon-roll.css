@@ -1,0 +1,34 @@
+/* ============================================================
+ * Ranged weapon roll dialog (RU)
+ *
+ * Problem:
+ * - Fire mode buttons (.dialog-mode-button) have fixed height in the system:
+ *   .wod20 .dialog-mode-button { height: 34px; }
+ * - RU labels wrap into 2 lines, but the button background does not grow.
+ *
+ * Fix:
+ * - Remove fixed height and allow the button to grow with its text.
+ *
+ * Scope:
+ * - RU only (html.langRU)
+ * - Weapon roll dialog only (.wod20.wod-dialog.weapon-dialog)
+ * ========================================================== */
+
+html.langRU .wod20.wod-dialog.weapon-dialog .dialog-mode-button {
+  height: auto;
+  min-height: 34px;
+
+  /* Allow multi-line labels to wrap inside the button */
+  white-space: normal;
+
+  /* Keep label readable when wrapping */
+  line-height: 1.15;
+
+  /* Give vertical padding so two lines don't touch borders */
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  /* Keep alignment stable */
+  box-sizing: border-box;
+  text-align: center;
+}

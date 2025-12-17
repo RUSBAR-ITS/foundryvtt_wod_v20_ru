@@ -1,7 +1,7 @@
 {
   "id": "foundryvtt_wod_v20_ru",
   "title": "World of Darkness 20th Russian translation v.2.0",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -40,15 +40,19 @@
     "scripts/settings.js",
     "scripts/init-module.js",
     "scripts/debug.js",
+    "scripts/constants/movement.js",
     "scripts/ru-width.js",
     "scripts/hooks/combat-fulltext.js",
     "scripts/hooks/notes-level-any.js",
     "scripts/hooks/notes-rollable.js",
-    "scripts/hooks/movement-jump-quarter.js"
+    "scripts/hooks/movement-jump-quarter.js",
+    "scripts/hooks/item-config-checkboxes.js"
   ],
   "styles": [
     "styles/ru-vars.css",
     "styles/ru-sheets.css",
+    "styles/ru-item-config.css",
+    "styles/ru-ranged-weapon-roll.css",
     "styles/charsheet/pages-layout/ru-disciplines.css",
     "styles/charsheet/pages-layout/ru-combat.css",
     "styles/charsheet/pages-layout/ru-bio.css",
