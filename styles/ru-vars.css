@@ -288,5 +288,29 @@
   /* Padding top for abilities settings */
   --wodru-settings-abilities-primary-pad-top: 10px;
 
+  /**
+   * RU: Settings -> Combat -> Soak / Initiative / Health table columns.
+   * Widths are RU-specific.
+   */
+  /* Settings -> Combat: column widths */
+  --wodru-settings-soak-col-label: 150px;
+  --wodru-settings-soak-col-value: 50px;
+  --wodru-settings-soak-col-bonus: 60px;
+  --wodru-settings-soak-col-cansoak: 160px;
+
+  --wodru-settings-initiative-col-value: 70px;
+  --wodru-settings-initiative-col-bonus: 60px;
+  --wodru-settings-initiative-col-total: 60px;
+
+  --wodru-settings-health-col-label: 150px;
+  --wodru-settings-health-col-value: 70px;
+  --wodru-settings-health-col-total: 60px;
+  --wodru-settings-health-col-penalty: 60px;
+
+  /* RU: Settings -> Combat: numberBox fill */
+  --wodru-settings-numberbox-width: 100%;
+  --wodru-settings-numberbox-min-width: 0;
+  --wodru-settings-numberbox-max-width: none;
+
 }
 

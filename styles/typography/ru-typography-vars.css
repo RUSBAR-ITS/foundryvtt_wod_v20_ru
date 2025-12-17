@@ -262,4 +262,34 @@
 
   --wodru-typo-settings-abilities-name-size: 16px;
   --wodru-typo-settings-abilities-name-weight: 400;
+
+  /* ============================================================
+ * RU: Settings -> Combat typography tokens
+ * Used by: ru-typ-settings-combat.css
+ * ========================================================== */
+
+/* Big section titles: "Soak", "Initiative", "Health" */
+--wodru-typ-settings-combat-section-title-size: 20px;
+--wodru-typ-settings-combat-section-title-weight: 700;
+
+/* Table header row titles: "Value", "Bonus", "Total", "Penalty", "Can Soak" */
+--wodru-typ-settings-combat-table-head-size: 16px;
+--wodru-typ-settings-combat-table-head-weight: 400;
+
+/* Table body labels (left column) */
+--wodru-typ-settings-combat-row-label-size: 16px;
+--wodru-typ-settings-combat-row-label-weight: 400;
+
+/* Input values inside tables (numbers/text inside boxes) */
+--wodru-typ-settings-combat-input-size: 16px;
+--wodru-typ-settings-combat-input-weight: 400;
+
+/* "Yes/No" switch cells ("Yes/No") */
+--wodru-typ-settings-combat-switch-size: 16px;
+--wodru-typ-settings-combat-switch-weight: 400;
+
+/* Help/info text below big boxes */
+--wodru-typ-settings-combat-help-size: 12px;
+--wodru-typ-settings-combat-help-weight: 400;
+--wodru-typ-settings-combat-help-line-height: 1.15;
 }

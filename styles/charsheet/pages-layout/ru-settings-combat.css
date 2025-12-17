@@ -1,0 +1,269 @@
+/**
+ * RU: Settings -> Combat layout controls.
+ *
+ * CSS-only solution using :has() to scope styles to specific sections.
+ * We apply grid to inner rows only, without touching system templates.
+ *
+ * Sections are detected by:
+ * - Soak:       inputs with [data-source="soak"]
+ * - Initiative: inputs with [data-source="initiative"]
+ * - Health:     inputs with name starting with "system.health."
+ */
+
+/* ------------------------------------------------------------ */
+/* Shared helpers                                                */
+/* ------------------------------------------------------------ */
+
+/* Turn "rows" into grid rows, disable floats for grid children */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox > .clearareaBox > .pullLeft {
+  float: none !important;
+}
+
+/* ------------------------------------------------------------ */
+/* Soak (4 columns)                                              */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"]) > .clearareaBox {
+  display: grid;
+  grid-template-columns:
+    var(--wodru-settings-soak-col-label)
+    var(--wodru-settings-soak-col-value)
+    var(--wodru-settings-soak-col-bonus)
+    var(--wodru-settings-soak-col-cansoak);
+  align-items: center;
+}
+
+/* Let grid items stretch; do not clamp by width (except where we force absolute widths below) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"]) > .clearareaBox .settings-leftwidth,
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"]) > .clearareaBox .numberBox {
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+/* Soak: VALUE column (2nd cell) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"]) > .clearareaBox
+input.sheet-infoValues.numberBox:not(.inputdata) {
+  width: var(--wodru-settings-soak-col-value) !important;
+  min-width: var(--wodru-settings-soak-col-value) !important;
+  max-width: var(--wodru-settings-soak-col-value) !important;
+  box-sizing: border-box !important;
+}
+
+/* Soak: BONUS column (3rd cell) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"]) > .clearareaBox
+input.sheet-infoValues.numberBox.inputdata[data-source="soak"] {
+  width: var(--wodru-settings-soak-col-bonus) !important;
+  min-width: var(--wodru-settings-soak-col-bonus) !important;
+  max-width: var(--wodru-settings-soak-col-bonus) !important;
+  box-sizing: border-box !important;
+}
+
+/* Soak: CAN-SOAK column (4th cell) - rows (the switch is NOT a numberBox) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"]) > .clearareaBox
+div.switch.settings-leftwidth {
+  width: var(--wodru-settings-soak-col-cansoak) !important;
+  min-width: var(--wodru-settings-soak-col-cansoak) !important;
+  max-width: var(--wodru-settings-soak-col-cansoak) !important;
+  box-sizing: border-box !important;
+  justify-self: stretch;
+}
+
+/* ------------------------------------------------------------ */
+/* Initiative (3 columns)                                        */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"]) > .clearareaBox {
+  display: grid;
+  grid-template-columns:
+    var(--wodru-settings-initiative-col-value)
+    var(--wodru-settings-initiative-col-bonus)
+    var(--wodru-settings-initiative-col-total);
+  align-items: center;
+}
+
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"]) > .clearareaBox .settings-leftwidth,
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"]) > .clearareaBox .numberBox {
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+/* Initiative: VALUE column (1st cell) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"]) > .clearareaBox
+input.sheet-infoValues.numberBox:not(.inputdata):not([name="system.initiative.total"]) {
+  width: var(--wodru-settings-initiative-col-value) !important;
+  min-width: var(--wodru-settings-initiative-col-value) !important;
+  max-width: var(--wodru-settings-initiative-col-value) !important;
+  box-sizing: border-box !important;
+}
+
+/* Initiative: BONUS column (2nd cell) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"]) > .clearareaBox
+input.sheet-infoValues.numberBox.inputdata[data-source="initiative"] {
+  width: var(--wodru-settings-initiative-col-bonus) !important;
+  min-width: var(--wodru-settings-initiative-col-bonus) !important;
+  max-width: var(--wodru-settings-initiative-col-bonus) !important;
+  box-sizing: border-box !important;
+}
+
+/* Initiative: TOTAL column (3rd cell) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"]) > .clearareaBox
+input.sheet-infoValues.numberBox[name="system.initiative.total"] {
+  width: var(--wodru-settings-initiative-col-total) !important;
+  min-width: var(--wodru-settings-initiative-col-total) !important;
+  max-width: var(--wodru-settings-initiative-col-total) !important;
+  box-sizing: border-box !important;
+}
+
+/* ------------------------------------------------------------ */
+/* Health (4 columns)                                            */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."]) > .clearareaBox {
+  display: grid;
+  grid-template-columns:
+    var(--wodru-settings-health-col-label)
+    var(--wodru-settings-health-col-value)
+    var(--wodru-settings-health-col-total)
+    var(--wodru-settings-health-col-penalty);
+  align-items: center;
+}
+
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."]) > .clearareaBox .settings-leftwidth,
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."]) > .clearareaBox .numberBox {
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+/* Health: VALUE column (2nd cell) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."]) > .clearareaBox
+input.sheet-infoValues.numberBox[name^="system.health."][name$=".value"] {
+  width: var(--wodru-settings-health-col-value) !important;
+  min-width: var(--wodru-settings-health-col-value) !important;
+  max-width: var(--wodru-settings-health-col-value) !important;
+  box-sizing: border-box !important;
+}
+
+/* Health: TOTAL column (3rd cell)
+   IMPORTANT: in system template this input has NO name and NO .inputdata */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."]) > .clearareaBox
+input.sheet-infoValues.numberBox:not(.inputdata):not([name]) {
+  width: var(--wodru-settings-health-col-total) !important;
+  min-width: var(--wodru-settings-health-col-total) !important;
+  max-width: var(--wodru-settings-health-col-total) !important;
+  box-sizing: border-box !important;
+}
+
+/* Health: PENALTY column (4th cell) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."]) > .clearareaBox
+input.sheet-infoValues.numberBox[name^="system.health."][name$=".penalty"] {
+  width: var(--wodru-settings-health-col-penalty) !important;
+  min-width: var(--wodru-settings-health-col-penalty) !important;
+  max-width: var(--wodru-settings-health-col-penalty) !important;
+  box-sizing: border-box !important;
+}
+
+/* ------------------------------------------------------------ */
+/* Header alignment + header widths (center column titles)        */
+/* Key point: headers are DIV.numberBox, system forces 50px.      */
+/* So we must override their width with column vars (px) too.     */
+/* Header row in these blocks is the clearareaBox without <label> */
+/* ------------------------------------------------------------ */
+
+/* Soak header row: [1]=blank label, [2]=blank value, [3]=bonus, [4]=can-soak */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(2) {
+  width: var(--wodru-settings-soak-col-value) !important;
+  min-width: var(--wodru-settings-soak-col-value) !important;
+  max-width: var(--wodru-settings-soak-col-value) !important;
+}
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(3) {
+  width: var(--wodru-settings-soak-col-bonus) !important;
+  min-width: var(--wodru-settings-soak-col-bonus) !important;
+  max-width: var(--wodru-settings-soak-col-bonus) !important;
+  text-align: center !important;
+}
+
+/* Soak header: CAN-SOAK title cell is settings-leftwidth (not numberBox) */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="soak"])
+> .clearareaBox:not(:has(label)) > .pullLeft.settings-leftwidth:nth-child(4) {
+  width: var(--wodru-settings-soak-col-cansoak) !important;
+  min-width: var(--wodru-settings-soak-col-cansoak) !important;
+  max-width: var(--wodru-settings-soak-col-cansoak) !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+/* Initiative header row: [1]=value, [2]=bonus, [3]=total */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(1) {
+  width: var(--wodru-settings-initiative-col-value) !important;
+  min-width: var(--wodru-settings-initiative-col-value) !important;
+  max-width: var(--wodru-settings-initiative-col-value) !important;
+  text-align: center !important;
+}
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(2) {
+  width: var(--wodru-settings-initiative-col-bonus) !important;
+  min-width: var(--wodru-settings-initiative-col-bonus) !important;
+  max-width: var(--wodru-settings-initiative-col-bonus) !important;
+  text-align: center !important;
+}
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has([data-source="initiative"])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(3) {
+  width: var(--wodru-settings-initiative-col-total) !important;
+  min-width: var(--wodru-settings-initiative-col-total) !important;
+  max-width: var(--wodru-settings-initiative-col-total) !important;
+  text-align: center !important;
+}
+
+/* Health header row: [1]=label spacer (150px inline), [2]=value, [3]=total, [4]=penalty */
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(2) {
+  width: var(--wodru-settings-health-col-value) !important;
+  min-width: var(--wodru-settings-health-col-value) !important;
+  max-width: var(--wodru-settings-health-col-value) !important;
+  text-align: center !important;
+}
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(3) {
+  width: var(--wodru-settings-health-col-total) !important;
+  min-width: var(--wodru-settings-health-col-total) !important;
+  max-width: var(--wodru-settings-health-col-total) !important;
+  text-align: center !important;
+}
+.langRU.wod20 .tab.settings .tab.combat
+.sheet-area.flex-columns > .clearareaBox:has(input[name^="system.health."])
+> .clearareaBox:not(:has(label)) > .pullLeft.numberBox:nth-child(4) {
+  width: var(--wodru-settings-health-col-penalty) !important;
+  min-width: var(--wodru-settings-health-col-penalty) !important;
+  max-width: var(--wodru-settings-health-col-penalty) !important;
+  text-align: center !important;
+}

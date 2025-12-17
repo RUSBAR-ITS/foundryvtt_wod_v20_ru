@@ -56,6 +56,7 @@
     "styles/charsheet/pages-layout/ru-effects.css",
     "styles/charsheet/pages-layout/ru-settings-attr.css",
     "styles/charsheet/pages-layout/ru-settings-abilities.css",
+    "styles/charsheet/pages-layout/ru-settings-combat.css",
     "styles/typography/ru-fonts.css",
     "styles/typography/ru-typography-vars.css",
     "styles/typography/ru-core-typography.css",
@@ -66,6 +67,7 @@
     "styles/charsheet/pages-typography/ru-typ-notes.css",
     "styles/charsheet/pages-typography/ru-typ-effects.css",
     "styles/charsheet/pages-typography/ru-typ-settings-attr.css",
-    "styles/charsheet/pages-typography/ru-typ-settings-abilities.css"
+    "styles/charsheet/pages-typography/ru-typ-settings-abilities.css",
+    "styles/charsheet/pages-typography/ru-typ-settings-combat.css"
   ]
 }

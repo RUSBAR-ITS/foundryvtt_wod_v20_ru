@@ -1,0 +1,72 @@
+/**
+ * RU: Settings -> Combat typography controls.
+ *
+ * Scope: only Settings -> Combat tab.
+ * Goal: keep layout rules elsewhere; here we set font size/weight/line-height only.
+ *
+ * Anchors in system markup:
+ * - Section title: .headlineGroup.splatFont
+ * - Table headers: .headlineNormal.numberBox and some .headlineNormal.settings-leftwidth
+ * - Row labels: label.headlineNormal
+ * - Inputs: input.sheet-infoValues (including .numberBox)
+ * - Switch cells: .switch (usually also .bold + .splatFont)
+ * - Help/info: .information-area
+ */
+
+/* ------------------------------------------------------------ */
+/* 1) Big box titles (Soak / Initiative / Health)               */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat .headlineGroup.splatFont {
+  font-size: var(--wodru-typ-settings-combat-section-title-size) !important;
+  font-weight: var(--wodru-typ-settings-combat-section-title-weight) !important;
+}
+
+/* ------------------------------------------------------------ */
+/* 2) Table headers (row of column titles)                      */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat .headlineNormal.numberBox,
+.langRU.wod20 .tab.settings .tab.combat .headlineNormal.settings-leftwidth {
+  font-size: var(--wodru-typ-settings-combat-table-head-size) !important;
+  font-weight: var(--wodru-typ-settings-combat-table-head-weight) !important;
+}
+
+/* ------------------------------------------------------------ */
+/* 3) Table body: row labels (left column)                      */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat label.headlineNormal {
+  font-size: var(--wodru-typ-settings-combat-row-label-size) !important;
+  font-weight: var(--wodru-typ-settings-combat-row-label-weight) !important;
+}
+
+/* ------------------------------------------------------------ */
+/* 4) Values: inputs inside tables / boxes                      */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat input.sheet-infoValues {
+  font-size: var(--wodru-typ-settings-combat-input-size) !important;
+  font-weight: var(--wodru-typ-settings-combat-input-weight) !important;
+  line-height: normal !important;
+}
+
+/* ------------------------------------------------------------ */
+/* 5) Switch cells ("Yes/No")                                   */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat .switch {
+  font-size: var(--wodru-typ-settings-combat-switch-size) !important;
+  font-weight: var(--wodru-typ-settings-combat-switch-weight) !important;
+  line-height: normal !important;
+}
+
+/* ------------------------------------------------------------ */
+/* 6) Help/info under big boxes                                 */
+/* ------------------------------------------------------------ */
+
+.langRU.wod20 .tab.settings .tab.combat .information-area {
+  font-size: var(--wodru-typ-settings-combat-help-size) !important;
+  font-weight: var(--wodru-typ-settings-combat-help-weight) !important;
+  line-height: var(--wodru-typ-settings-combat-help-line-height) !important;
+}
