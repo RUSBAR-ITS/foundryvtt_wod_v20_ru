@@ -312,5 +312,24 @@
   --wodru-settings-numberbox-min-width: 0;
   --wodru-settings-numberbox-max-width: none;
 
+  /**
+   * RU: Settings -> Sheet Settings -> Graphics
+   *
+   * System template: templates/actor/parts/settings_sheet.html
+   * Markup uses float columns:
+   * - left label:  .pullLeft.headlineNormal.settings-leftwidth
+   * - right value: .pullLeft.switch.settings-leftwidth   (for the "Sheet font" toggle)
+   *
+   * These are pixel-perfect knobs for the two-column layout inside the "Graphics" box.
+   */
+  --wodru-settings-graphics-col-label: 250px;
+  --wodru-settings-graphics-col-value: 150px;
+
+  /**
+   * RU: Settings -> Sheet Settings -> Graphics
+   * Row height used for vertical centering in the two-column rows.
+   */
+  --wodru-settings-graphics-row-height: 30px;
+
 }
 

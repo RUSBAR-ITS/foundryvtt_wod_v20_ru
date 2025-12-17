@@ -536,7 +536,7 @@
                 "weakness": "Слабость",
                 "lowergeneration": "Младшее поколение",
                 "cleargeneration": "Сбросить временное поколение",
-                "kindredeast": "Родичи Востока",
+                "kindredeast": "Сородичи Востока",
                 "balance": "Равновесие",
                 "ponature": "Природа П'о",
                 "direction": "Направление",
@@ -755,10 +755,10 @@
                 "autumnpeople": "Осенние люди",
                 "enchanted": "Зачарованный",
                 "ghoul": "Гуль",
-                "kinfolk": "Родич",
+                "kinfolk": "Кинфолк",
                 "truefaith": "Истинная вера",
                 "orpheus": "Орфей",
-                "sorcerer": "Колдун"
+                "sorcerer": "Чародей"
             },
             "creature": {
                 "chimera": "Химера",
@@ -770,7 +770,7 @@
                 "samsa": "Самса",
                 "kerasi": "Кераси",
                 "yeren": "Йэжэнь",
-                "earthbound": "Прикованные к земле"
+                "earthbound": "Скованный"
             }
         },
         "attributes": {

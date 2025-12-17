@@ -1,0 +1,49 @@
+/**
+ * RU: Settings -> Sheet Settings ("Sheet settings" secondary tab) typography controls.
+ *
+ * Applies pixel-stable typography via variables from styles/ru-vars.css:
+ * 1) Large box titles (Sheettype / Era / Graphics)  -> .headlineGroup
+ * 2) Banner/button text in first two boxes          -> .dialog-three-button
+ * 3) "Table-like" rows in Graphics box              -> .headlineNormal, .sheet-infoValues, .switch
+ * 4) Hint text under boxes                          -> .information-area
+ */
+
+/* 1) Large box titles */
+.langRU .tab.settings .tab.sheetsetting .headlineGroup {
+  font-size: var(--wodru-typ-settings-sheet-title-size);
+  font-weight: var(--wodru-typ-settings-sheet-title-weight);
+}
+
+/* 2) Banner/button text in first two boxes (Sheettype + Era)
+   Graphics is currently the last .sheet-area.flex-columns block. */
+.langRU .tab.settings .tab.sheetsetting
+  .sheet-area.flex-columns:not(:last-of-type) .dialog-three-button {
+  font-size: var(--wodru-typ-settings-sheet-banner-size);
+  font-weight: var(--wodru-typ-settings-sheet-banner-weight);
+}
+
+/* 3) Graphics box: "table-like" rows typography (labels + values/controls) */
+.langRU .tab.settings .tab.sheetsetting .sheet-area.flex-columns:last-of-type
+  .headlineNormal {
+  font-size: var(--wodru-typ-settings-graphics-label-size);
+  font-weight: var(--wodru-typ-settings-graphics-label-weight);
+}
+
+.langRU .tab.settings .tab.sheetsetting .sheet-area.flex-columns:last-of-type
+  select.sheet-infoValues {
+  font-size: var(--wodru-typ-settings-graphics-value-size);
+  font-weight: var(--wodru-typ-settings-graphics-value-weight);
+}
+
+/* The "yes/no" toggle is a div; ensure it matches value typography as well */
+.langRU .tab.settings .tab.sheetsetting .sheet-area.flex-columns:last-of-type
+  .switch {
+  font-size: var(--wodru-typ-settings-graphics-value-size);
+  font-weight: var(--wodru-typ-settings-graphics-value-weight);
+}
+
+/* 4) Hint text under boxes */
+.langRU .tab.settings .tab.sheetsetting .information-area {
+  font-size: var(--wodru-typ-settings-sheet-hint-size);
+  font-weight: var(--wodru-typ-settings-sheet-hint-weight);
+}

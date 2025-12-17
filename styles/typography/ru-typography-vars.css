@@ -292,4 +292,35 @@
 --wodru-typ-settings-combat-help-size: 12px;
 --wodru-typ-settings-combat-help-weight: 400;
 --wodru-typ-settings-combat-help-line-height: 1.15;
+
+/**
+   * RU: Settings -> Sheet Settings -> Typography
+   *
+   * Controls font size/weight for:
+   * 1) Large box titles (Sheettype / Era / Graphics)  -> .headlineGroup
+   * 2) Banner/button text in first two boxes          -> .dialog-three-button
+   * 3) "Table-like" rows in Graphics box              -> .headlineNormal, .sheet-infoValues, .switch
+   * 4) Hint text under boxes                          -> .information-area
+   */
+
+  /* 1) Box titles (Sheettype / Era / Graphics) */
+  --wodru-typ-settings-sheet-title-size: 20px;
+  --wodru-typ-settings-sheet-title-weight: 700;
+
+  /* 2) Banner/button text (Sheettype / Era buttons) */
+  --wodru-typ-settings-sheet-banner-size: 16px;
+  --wodru-typ-settings-sheet-banner-weight: 400;
+
+  /* 3) Graphics rows: labels (left) */
+  --wodru-typ-settings-graphics-label-size: 14px;
+  --wodru-typ-settings-graphics-label-weight: 400;
+
+  /* 3) Graphics rows: values/controls (right) */
+  --wodru-typ-settings-graphics-value-size: 14px;
+  --wodru-typ-settings-graphics-value-weight: 400;
+
+  /* 4) Hint text (under boxes) */
+  --wodru-typ-settings-sheet-hint-size: 12px;
+  --wodru-typ-settings-sheet-hint-weight: 400;
+
 }
