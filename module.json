@@ -46,7 +46,8 @@
     "scripts/hooks/notes-level-any.js",
     "scripts/hooks/notes-rollable.js",
     "scripts/hooks/movement-jump-quarter.js",
-    "scripts/hooks/item-config-checkboxes.js"
+    "scripts/hooks/item-config-checkboxes.js",
+    "scripts/hooks/actor-sheet-default-position.js"
   ],
   "styles": [
     "styles/ru-vars.css",
