@@ -1,0 +1,28 @@
+/**
+ * RU: Settings -> Power tab typography patch
+ *
+ * System template (verified in system archive):
+ * - Foundry_WoD20/templates/actor/parts/settings_power.html
+ *
+ * Requirements:
+ * - Font class (size + weight) for the text of the whole table in this tab.
+ *
+ * Notes:
+ * - The visible table content is represented by .clearareaBox.row rows (label + switch).
+ * - We avoid matching by "for=" or full class lists because the system archive contains "...".
+ * - Typography vars live in styles/typography/ru-typography-vars.css:
+ *   - --wodru-typ-settings-power-table-size
+ *   - --wodru-typ-settings-power-table-weight
+ */
+
+.wodru-typ-settings-power-table {
+  font-size: var(--wodru-typ-settings-power-table-size);
+  font-weight: var(--wodru-typ-settings-power-table-weight);
+}
+
+/* Apply typography to the whole table (all rows and their contents) */
+.langRU .tab.power .clearareaBox.row,
+.langRU .tab.power .clearareaBox.row * {
+  font-size: var(--wodru-typ-settings-power-table-size);
+  font-weight: var(--wodru-typ-settings-power-table-weight);
+}

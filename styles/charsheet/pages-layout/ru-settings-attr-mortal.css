@@ -1,0 +1,156 @@
+/**
+ * RU: Settings -> Attributes
+ * Layout controls for:
+ * - settings.usedadvantages visibility list
+ * - bloodpool section
+ * - quintessence section
+ *
+ * System template:
+ * - Foundry_WoD20/templates/actor/parts/settings_attribute.html
+ *
+ * Notes:
+ * - The system uses inline widths on <label> (e.g. width: 150px). We override them with
+ *   higher specificity + !important.
+ * - All sizing values are driven by CSS variables defined in styles/ru-vars.css.
+ * - CSS-only, RU-only.
+ */
+
+/* ------------------------------------------------------------------------- */
+/* Used advantages (visibility list)                                          */
+/* ------------------------------------------------------------------------- */
+
+/* Rows in the visibility list are .clearareaBox.row containing a .switch[data-switchtype]. */
+.langRU .tab.settings .tab.attributes .clearareaBox.row:has(.switch[data-switchtype]) {
+  display: flex;
+  align-items: center;
+  column-gap: var(--wodru-settings-usedadv-row-gap);
+}
+
+/* Left column: label */
+.langRU .tab.settings .tab.attributes
+  .clearareaBox.row:has(.switch[data-switchtype])
+  > label.pullLeft.headlineNormal {
+  width: var(--wodru-settings-usedadv-label-col-width) !important;
+  min-width: var(--wodru-settings-usedadv-label-col-width) !important;
+  max-width: var(--wodru-settings-usedadv-label-col-width) !important;
+
+  /* Allow long RU strings to wrap without pushing the icon column */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+/* Right column: eye / eye-slash icon switch */
+.langRU .tab.settings .tab.attributes
+  .clearareaBox.row:has(.switch[data-switchtype])
+  > .switch[data-switchtype] {
+  width: var(--wodru-settings-usedadv-icon-col-width) !important;
+  min-width: var(--wodru-settings-usedadv-icon-col-width) !important;
+  max-width: var(--wodru-settings-usedadv-icon-col-width) !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Prevent float-based layout from interfering with flex */
+  float: none !important;
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Bloodpool section                                                         */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * Bloodpool section structure (system):
+ * .sheet-area
+ *   > .clearareaBox           [section container]
+ *     > .headlineGroup
+ *     > .clearareaBox         [row 1: label + input]
+ *     > .clearareaBox         [row 2: label + input]
+ *
+ * Important:
+ * - DO NOT apply flex to the outer ".clearareaBox" container, otherwise all rows collapse into one line.
+ */
+
+/* Apply row layout ONLY to the inner row boxes (second-level clearareaBox) */
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.bloodpool."])
+  > .clearareaBox
+  > .clearareaBox:has(> label.pullLeft, > input.sheet-infoValues) {
+  display: flex;
+  align-items: center;
+  column-gap: var(--wodru-settings-bloodpool-row-gap);
+}
+
+/* Bloodpool: label column */
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.bloodpool."])
+  > .clearareaBox
+  > .clearareaBox:has(> label.pullLeft, > input.sheet-infoValues)
+  > label.pullLeft.headlineNormal {
+  width: var(--wodru-settings-bloodpool-label-col-width) !important;
+  min-width: var(--wodru-settings-bloodpool-label-col-width) !important;
+  max-width: var(--wodru-settings-bloodpool-label-col-width) !important;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+/* Bloodpool: value box column */
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.bloodpool."])
+  > .clearareaBox
+  > .clearareaBox:has(> label.pullLeft, > input.sheet-infoValues)
+  > input.sheet-infoValues.numberBox {
+  width: var(--wodru-settings-bloodpool-value-col-width) !important;
+  min-width: var(--wodru-settings-bloodpool-value-col-width) !important;
+  max-width: var(--wodru-settings-bloodpool-value-col-width) !important;
+
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Quintessence section                                                      */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * Quintessence section has the same structure as Bloodpool.
+ * Apply row flex only to the inner row boxes.
+ */
+
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.quintessence."])
+  > .clearareaBox
+  > .clearareaBox:has(> label.pullLeft, > input.sheet-infoValues) {
+  display: flex;
+  align-items: center;
+  column-gap: var(--wodru-settings-quintessence-row-gap);
+}
+
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.quintessence."])
+  > .clearareaBox
+  > .clearareaBox:has(> label.pullLeft, > input.sheet-infoValues)
+  > label.pullLeft.headlineNormal {
+  width: var(--wodru-settings-quintessence-label-col-width) !important;
+  min-width: var(--wodru-settings-quintessence-label-col-width) !important;
+  max-width: var(--wodru-settings-quintessence-label-col-width) !important;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.quintessence."])
+  > .clearareaBox
+  > .clearareaBox:has(> label.pullLeft, > input.sheet-infoValues)
+  > input.sheet-infoValues.numberBox {
+  width: var(--wodru-settings-quintessence-value-col-width) !important;
+  min-width: var(--wodru-settings-quintessence-value-col-width) !important;
+  max-width: var(--wodru-settings-quintessence-value-col-width) !important;
+
+  box-sizing: border-box;
+}

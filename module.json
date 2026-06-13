@@ -60,8 +60,12 @@
     "styles/charsheet/pages-layout/ru-gear.css",
     "styles/charsheet/pages-layout/ru-notes.css",
     "styles/charsheet/pages-layout/ru-effects.css",
+    "styles/charsheet/pages-layout/ru-mortal-stats.css",
     "styles/charsheet/pages-layout/ru-settings-attr.css",
+    "styles/charsheet/pages-layout/ru-settings-attr-mortal.css",
     "styles/charsheet/pages-layout/ru-settings-abilities.css",
+    "styles/charsheet/pages-layout/ru-settings-abilities-mortal.css",
+    "styles/charsheet/pages-layout/ru-settings-powers.css",
     "styles/charsheet/pages-layout/ru-settings-combat.css",
     "styles/charsheet/pages-layout/ru-settings-sheet.css",
     "styles/typography/ru-fonts.css",
@@ -74,7 +78,10 @@
     "styles/charsheet/pages-typography/ru-typ-notes.css",
     "styles/charsheet/pages-typography/ru-typ-effects.css",
     "styles/charsheet/pages-typography/ru-typ-settings-attr.css",
+    "styles/charsheet/pages-typography/ru-typ-settings-attr-mortal.css",
     "styles/charsheet/pages-typography/ru-typ-settings-abilities.css",
+    "styles/charsheet/pages-typography/ru-typ-settings-abilities-mortal.css",
+    "styles/charsheet/pages-typography/ru-typ-settings-powers.css",
     "styles/charsheet/pages-typography/ru-typ-settings-combat.css",
     "styles/charsheet/pages-typography/ru-typ-settings-sheet.css"
   ]

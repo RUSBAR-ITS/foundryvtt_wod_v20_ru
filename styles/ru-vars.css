@@ -15,7 +15,7 @@
    * ========================================================== */
   --wodru-sheet-min-width: 1300px;
   --wodru-sheet-width: 1300px; /* optional; can be removed to rely on min-width only */
-  --wodru-sheet-min-height: 900px;
+  --wodru-sheet-min-height: 600px;
   --wodru-inner-width: 1240px;
 
   /* ============================================================
@@ -330,6 +330,53 @@
    * Row height used for vertical centering in the two-column rows.
    */
   --wodru-settings-graphics-row-height: 30px;
+
+  /* ============================================================
+   * Settings tab: Used advantages (Attributes -> settings.usedadvantages)
+   * ============================================================ */
+  --wodru-settings-usedadv-label-col-width: 180px;
+  --wodru-settings-usedadv-icon-col-width: 34px;
+  --wodru-settings-usedadv-row-gap: 8px;
+
+  /* ============================================================
+   * Mortal sheet: Virtue rows (label vs dots)
+   * ============================================================ */
+  --wodru-mortal-virtue-label-width: 56%;
+  --wodru-mortal-virtue-dots-width: 44%;
+
+  /* ============================================================
+   * Mortal sheet: Experience banner layout
+   * ============================================================ */
+  --wodru-mortal-xp-banner-margin-bottom: 6px;
+  --wodru-mortal-xp-banner-padding-y: 2px;
+
+  /* ============================================================
+   * Settings -> Attributes -> Bloodpool section
+   * ============================================================ */
+  --wodru-settings-bloodpool-label-col-width: 180px;
+  --wodru-settings-bloodpool-value-col-width: 80px;
+  --wodru-settings-bloodpool-row-gap: 8px;
+
+  /* ============================================================
+   * Settings -> Attributes -> Quintessence section
+   * ============================================================ */
+  --wodru-settings-quintessence-label-col-width: 180px;
+  --wodru-settings-quintessence-value-col-width: 80px;
+  --wodru-settings-quintessence-row-gap: 8px;
+
+  /* ============================================================
+   * Settings -> Abilities (Mortal) -> abilitiesmaxrating (layout)
+   * ============================================================ */
+  --wodru-settings-abilitiesmaxrating-label-col-width: 300px;
+  --wodru-settings-abilitiesmaxrating-control-col-width: 110px;
+  --wodru-settings-abilitiesmaxrating-row-gap: 10px;
+
+  /* ============================================================
+   * Settings -> Power tab (layout)
+   * ============================================================ */
+  --wodru-settings-power-label-col-width: 400px;
+  --wodru-settings-power-control-col-width: 100px;
+  --wodru-settings-power-row-gap: 10px;
 
 }
 

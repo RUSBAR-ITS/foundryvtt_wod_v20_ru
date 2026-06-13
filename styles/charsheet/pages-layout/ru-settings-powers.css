@@ -1,0 +1,14 @@
+/**
+ * RU: Settings -> Power tab
+ *
+ * Task (ONLY):
+ * - Two fixed-width columns
+ * - Vertical align: center
+ * - Horizontal align: left (inside both columns)
+ * - Label text can wrap to multiple lines
+ *
+ * Uses variables (must already exist in styles/ru-vars.css):
+ * - --wodru-settings-power-table-label-col-width
+ * - --wodru-settings-power-table-control-col-width
+ * - --wodru-settings-power-table-col-gap
+ */

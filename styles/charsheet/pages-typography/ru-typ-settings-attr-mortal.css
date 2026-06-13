@@ -1,0 +1,111 @@
+/**
+ * RU: Settings -> Attributes
+ * Typography for:
+ * - settings.usedadvantages visibility list
+ * - bloodpool section
+ * - quintessence section
+ *
+ * System template:
+ * - Foundry_WoD20/templates/actor/parts/settings_attribute.html
+ *
+ * Notes:
+ * - We define reusable utility classes AND apply the same typography via selectors,
+ *   because the system template does not include our custom classes.
+ * - All typography values are driven by CSS variables in styles/typography/ru-typography-vars.css.
+ */
+
+/* ------------------------------------------------------------------------- */
+/* Utility classes (reusable)                                                */
+/* ------------------------------------------------------------------------- */
+
+/* Used advantages */
+.wodru-typ-usedadv-heading {
+  font-size: var(--wodru-typ-usedadv-heading-size);
+  font-weight: var(--wodru-typ-usedadv-heading-weight);
+}
+
+.wodru-typ-usedadv-label {
+  font-size: var(--wodru-typ-usedadv-label-size);
+  font-weight: var(--wodru-typ-usedadv-label-weight);
+}
+
+/* Bloodpool */
+.wodru-typ-bloodpool-heading {
+  font-size: var(--wodru-typ-bloodpool-heading-size);
+  font-weight: var(--wodru-typ-bloodpool-heading-weight);
+}
+
+.wodru-typ-bloodpool-body {
+  font-size: var(--wodru-typ-bloodpool-body-size);
+  font-weight: var(--wodru-typ-bloodpool-body-weight);
+}
+
+/* Quintessence */
+.wodru-typ-quintessence-heading {
+  font-size: var(--wodru-typ-quintessence-heading-size);
+  font-weight: var(--wodru-typ-quintessence-heading-weight);
+}
+
+.wodru-typ-quintessence-body {
+  font-size: var(--wodru-typ-quintessence-body-size);
+  font-weight: var(--wodru-typ-quintessence-body-weight);
+}
+
+/* ------------------------------------------------------------------------- */
+/* Applied typography (RU-only)                                               */
+/* ------------------------------------------------------------------------- */
+
+/* Used advantages: heading (the headlineGroup just before the visibility rows) */
+.langRU .tab.settings .tab.attributes
+  .headlineGroup.splatFont:has(+ .clearareaBox.row .switch[data-switchtype]) {
+  font-size: var(--wodru-typ-usedadv-heading-size);
+  font-weight: var(--wodru-typ-usedadv-heading-weight);
+}
+
+/* Used advantages: label column (names) */
+.langRU .tab.settings .tab.attributes
+  .clearareaBox.row:has(.switch[data-switchtype])
+  > label.pullLeft.headlineNormal {
+  font-size: var(--wodru-typ-usedadv-label-size);
+  font-weight: var(--wodru-typ-usedadv-label-weight);
+}
+
+/* Used advantages: icon column uses the same body typography */
+.langRU .tab.settings .tab.attributes
+  .clearareaBox.row:has(.switch[data-switchtype])
+  > .switch[data-switchtype] {
+  font-size: var(--wodru-typ-usedadv-label-size);
+  font-weight: var(--wodru-typ-usedadv-label-weight);
+}
+
+/* Bloodpool: heading */
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.bloodpool."]) .headlineGroup.splatFont {
+  font-size: var(--wodru-typ-bloodpool-heading-size);
+  font-weight: var(--wodru-typ-bloodpool-heading-weight);
+}
+
+/* Bloodpool: all text in columns and boxes (labels + inputs) */
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.bloodpool."]) label.pullLeft.headlineNormal,
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.bloodpool."]) input.sheet-infoValues {
+  font-size: var(--wodru-typ-bloodpool-body-size);
+  font-weight: var(--wodru-typ-bloodpool-body-weight);
+}
+
+/* Quintessence: heading */
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.quintessence."]) .headlineGroup.splatFont {
+  font-size: var(--wodru-typ-quintessence-heading-size);
+  font-weight: var(--wodru-typ-quintessence-heading-weight);
+}
+
+/* Quintessence: all text in columns and boxes (labels + inputs) */
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.quintessence."]) label.pullLeft.headlineNormal,
+.langRU .tab.settings .tab.attributes
+  .sheet-area:has(input[name^="system.advantages.quintessence."]) input.sheet-infoValues {
+  font-size: var(--wodru-typ-quintessence-body-size);
+  font-weight: var(--wodru-typ-quintessence-body-weight);
+}

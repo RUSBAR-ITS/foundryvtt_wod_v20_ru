@@ -1,0 +1,81 @@
+/**
+ * RU: Settings -> Abilities (Mortal) typography patch
+ *
+ * Section:
+ * - abilitiesmaxrating
+ *
+ * System references (verified in system archive):
+ * - Foundry_WoD20/module/config.js:
+ *     wod.sheettype.mortal = "Mortal"
+ * - Foundry_WoD20/templates/actor/parts/settings_abilities.html:
+ *     <div class="pullLeft settings-verticalcenter bold" data-type="{{config.sheettype.mortal}}">
+ *       ... select/input ...
+ *     </div>
+ *     <div class="clearareaBox information-area">{{localize "wod.labels.settings.maxability"}}</div>
+ *
+ * Requirements:
+ * - Typography class for the row label AND the control content (same class for both).
+ * - Typography class for the hint text.
+ *
+ * Notes:
+ * - We define reusable utility classes AND apply via selectors because system templates
+ *   do not include our custom classes.
+ * - For the label we must target the row container; we use :has() which is supported in
+ *   modern Chromium (Foundry v13).
+ * - Typography vars are in styles/typography/ru-typography-vars.css:
+ *   - --wodru-typ-abilitiesmaxrating-body-size / --wodru-typ-abilitiesmaxrating-body-weight
+ *   - --wodru-typ-abilitiesmaxrating-hint-size / --wodru-typ-abilitiesmaxrating-hint-weight
+ */
+
+/* ------------------------------------------------------------------------- */
+/* Utility classes (reusable)                                                */
+/* ------------------------------------------------------------------------- */
+
+.wodru-typ-abilitiesmaxrating-body {
+  font-size: var(--wodru-typ-abilitiesmaxrating-body-size);
+  font-weight: var(--wodru-typ-abilitiesmaxrating-body-weight);
+}
+
+.wodru-typ-abilitiesmaxrating-hint {
+  font-size: var(--wodru-typ-abilitiesmaxrating-hint-size);
+  font-weight: var(--wodru-typ-abilitiesmaxrating-hint-weight);
+}
+
+/* ------------------------------------------------------------------------- */
+/* Applied typography (RU-only)                                               */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * abilitiesmaxrating row container:
+ * .clearareaBox
+ *   > .pullLeft.headlineNormal (label)
+ *   > .pullLeft.settings-verticalcenter.bold[data-type="Mortal"]
+ *       -> select.selectAbilityMaxSetting OR input.sheet-infoValues.half[readonly]
+ */
+
+/* Label text */
+.langRU .tab.abilities
+  .clearareaBox:has(.settings-verticalcenter.bold[data-type="Mortal"])
+  > .pullLeft.headlineNormal {
+  font-size: var(--wodru-typ-abilitiesmaxrating-body-size);
+  font-weight: var(--wodru-typ-abilitiesmaxrating-body-weight);
+}
+
+/* Control content (select or locked input) */
+.langRU .tab.abilities
+  .settings-verticalcenter.bold[data-type="Mortal"]
+  select.selectAbilityMaxSetting,
+.langRU .tab.abilities
+  .settings-verticalcenter.bold[data-type="Mortal"]
+  input.sheet-infoValues.half[readonly] {
+  font-size: var(--wodru-typ-abilitiesmaxrating-body-size);
+  font-weight: var(--wodru-typ-abilitiesmaxrating-body-weight);
+}
+
+/* Hint line directly below abilitiesmaxrating row */
+.langRU .tab.abilities
+  .clearareaBox:has(.settings-verticalcenter.bold[data-type="Mortal"])
+  + .clearareaBox.information-area {
+  font-size: var(--wodru-typ-abilitiesmaxrating-hint-size);
+  font-weight: var(--wodru-typ-abilitiesmaxrating-hint-weight);
+}

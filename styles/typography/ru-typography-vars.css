@@ -323,4 +323,45 @@
   --wodru-typ-settings-sheet-hint-size: 12px;
   --wodru-typ-settings-sheet-hint-weight: 400;
 
+  /* ============================================================
+   * Settings -> Attributes -> settings.usedadvantages typography
+   * ============================================================ */
+  --wodru-typ-usedadv-heading-size: 18px;
+  --wodru-typ-usedadv-heading-weight: 700;
+
+  --wodru-typ-usedadv-label-size: 16px;
+  --wodru-typ-usedadv-label-weight: 400;
+
+  /* ============================================================
+   * Settings -> Attributes -> Bloodpool typography
+   * ============================================================ */
+  --wodru-typ-bloodpool-heading-size: 18px;
+  --wodru-typ-bloodpool-heading-weight: 700;
+
+  --wodru-typ-bloodpool-body-size: 16px;
+  --wodru-typ-bloodpool-body-weight: 400;
+
+  /* ============================================================
+   * Settings -> Attributes -> Quintessence typography
+   * ============================================================ */
+  --wodru-typ-quintessence-heading-size: 18px;
+  --wodru-typ-quintessence-heading-weight: 700;
+
+  --wodru-typ-quintessence-body-size: 16px;
+  --wodru-typ-quintessence-body-weight: 400;
+
+  /* ============================================================
+   * Settings -> Abilities (Mortal) -> abilitiesmaxrating (typography)
+   * ============================================================ */
+  --wodru-typ-abilitiesmaxrating-body-size: 16px;
+  --wodru-typ-abilitiesmaxrating-body-weight: 400;
+
+  --wodru-typ-abilitiesmaxrating-hint-size: 12px;
+  --wodru-typ-abilitiesmaxrating-hint-weight: 400;
+
+  /* ============================================================
+   * Settings -> Power tab (table typography)
+   * ============================================================ */
+  --wodru-typ-settings-power-table-size: 16px;
+  --wodru-typ-settings-power-table-weight: 400;
 }

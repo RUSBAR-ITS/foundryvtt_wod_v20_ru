@@ -1,0 +1,129 @@
+/*
+ * RU Mortal Stats Layout Patch
+ *
+ * Scope:
+ * - Applies only when active language is Russian (module adds .langRU).
+ * - Targets Mortal actor sheet (system adds .mortal).
+ *
+ * Goals:
+ * - Center virtue and health headlines inside their columns.
+ * - Control virtue row sizing (label vs dots) via RU variables.
+ * - Render the Mortal experience header as a banner and place it above the XP value.
+ *
+ * Notes:
+ * - We intentionally do not modify system templates.
+ * - Some system templates contain inline styles; we override them with minimal !important usage.
+ */
+
+/* ------------------------------------------------------------------------- */
+/* Virtue + Health: center headlines within their columns                     */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * System banner headlines can have fixed min-width; for RU we let them shrink
+ * to the column width and enforce centered layout.
+ */
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  .sheet-banner-small.sheet-headline {
+  min-width: 0 !important;
+  width: 100% !important;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Virtue: control label vs dots widths                                       */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * Virtues are rendered by systems/worldofdarkness/templates/actor/parts/stats_virtue.html.
+ * Each row is a .sheet-boxcontainer with two visual columns:
+ * - .ability-headlineWidth (label)
+ * - .resource-value (dots)
+ *
+ * RU uses global layout variables defined in styles/ru-vars.css:
+ * - --wodru-mortal-virtue-label-width
+ * - --wodru-mortal-virtue-dots-width
+ */
+
+/* Turn each virtue row into a predictable two-column flex layout. */
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  > .pullLeft .sheet-boxcontainer {
+  display: flex;
+  align-items: center;
+}
+
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  > .pullLeft .sheet-boxcontainer .ability-headlineWidth {
+  width: var(--wodru-mortal-virtue-label-width) !important;
+  flex: 0 0 var(--wodru-mortal-virtue-label-width);
+}
+
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  > .pullLeft .sheet-boxcontainer .resource-value {
+  width: var(--wodru-mortal-virtue-dots-width) !important;
+  flex: 0 0 var(--wodru-mortal-virtue-dots-width);
+
+  /* Prevent float-based layout from fighting our flex columns */
+  float: none !important;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Experience: make header look like a banner and place it above the value    */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * Mortal experience block is rendered in systems/worldofdarkness/templates/actor/parts/stats.html:
+ * <div class="clearareaBox sheet-headline headlineGroup splatFont" style="...padding-left:35px;">
+ *   <div class="pullLeft item-row">
+ *     <div>Experience</div>
+ *     <div class="total experienceValue">X</div>
+ *   </div>
+ * </div>
+ */
+
+/* Remove template padding that visually offsets the block for RU. */
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  .headlineGroup {
+  padding-left: 0 !important;
+}
+
+/* Stack the label over the value and center them within the column. */
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  .headlineGroup .pullLeft.item-row {
+  float: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Style the first DIV (label) to visually match a small banner. */
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  .headlineGroup .pullLeft.item-row > div:first-child {
+  width: 100%;
+  text-align: center;
+
+  /* Typography variables live in styles/typography/ru-typography-vars.css */
+  font-size: var(--wodru-typ-mortal-xp-banner-size);
+  font-weight: var(--wodru-typ-mortal-xp-banner-weight);
+
+  background: var(--main-wod-banner-small);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  /* Layout variables live in styles/ru-vars.css */
+  margin-bottom: var(--wodru-mortal-xp-banner-margin-bottom);
+  padding: var(--wodru-mortal-xp-banner-padding-y) 0;
+}
+
+/* Center the numeric value under the banner label. */
+.langRU .mortal .clearareaBox[style*="display: flex"]
+  .headlineGroup .experienceValue {
+  width: 100%;
+  text-align: center;
+}

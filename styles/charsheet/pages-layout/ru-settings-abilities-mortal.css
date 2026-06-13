@@ -1,0 +1,91 @@
+/**
+ * RU: Settings -> Abilities (Mortal) layout patch
+ *
+ * Section:
+ * - abilitiesmaxrating
+ *
+ * System template:
+ * - systems/worldofdarkness/templates/actor/parts/settings_abilities.html
+ *
+ * Requirements:
+ * - Control column widths (label column / control column).
+ *
+ * Notes:
+ * - This file intentionally avoids :has() for maximum compatibility.
+ * - We anchor by the stable wrapper:
+ *   .settings-verticalcenter.bold[data-type="{{config.sheettype.mortal}}"]
+ * - All layout values are driven by variables in styles/ru-vars.css.
+ * - CSS-only, RU-only.
+ */
+
+/*
+ * abilitiesmaxrating row is:
+ * .sheet-area.flex-columns
+ *   .clearareaBox
+ *     .pullLeft.headlineNormal            (label)
+ *     .pullLeft.settings-verticalcenter   (control wrapper) [data-type=mortal]
+ *
+ * We DO NOT change display model; we just enforce widths on the two columns.
+ * This avoids any dependence on parent selection / :has().
+ */
+
+/* Control column wrapper (stable anchor) */
+.langRU .tab.abilities
+  .sheet-area.flex-columns
+  .settings-verticalcenter.bold[data-type="mortal"] {
+  width: var(--wodru-settings-abilitiesmaxrating-control-col-width) !important;
+  min-width: var(--wodru-settings-abilitiesmaxrating-control-col-width) !important;
+  max-width: var(--wodru-settings-abilitiesmaxrating-control-col-width) !important;
+
+  box-sizing: border-box;
+}
+
+/* Set label width by targeting the label element inside the same clearareaBox row */
+.langRU .tab.abilities
+  .sheet-area.flex-columns
+  .clearareaBox
+  > .pullLeft.headlineNormal {
+  width: var(--wodru-settings-abilitiesmaxrating-label-col-width) !important;
+  min-width: var(--wodru-settings-abilitiesmaxrating-label-col-width) !important;
+  max-width: var(--wodru-settings-abilitiesmaxrating-label-col-width) !important;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+/*
+ * IMPORTANT: We must restrict the label width rule to the abilitiesmaxrating row only.
+ * In this template, the only clearareaBox that contains .settings-verticalcenter.bold[data-type="mortal"]
+ * is the abilitiesmaxrating row.
+ *
+ * So we scope the label rule tighter: label that shares the row with that control wrapper.
+ */
+.langRU .tab.abilities
+  .sheet-area.flex-columns
+  .clearareaBox:has(.settings-verticalcenter.bold[data-type="mortal"])
+  > .pullLeft.headlineNormal {
+  width: var(--wodru-settings-abilitiesmaxrating-label-col-width) !important;
+  min-width: var(--wodru-settings-abilitiesmaxrating-label-col-width) !important;
+  max-width: var(--wodru-settings-abilitiesmaxrating-label-col-width) !important;
+}
+
+/* Keep the control itself within the control column */
+.langRU .tab.abilities
+  .sheet-area.flex-columns
+  .settings-verticalcenter.bold[data-type="mortal"]
+  select.selectAbilityMaxSetting,
+.langRU .tab.abilities
+  .sheet-area.flex-columns
+  .settings-verticalcenter.bold[data-type="mortal"]
+  input.sheet-infoValues.half[readonly] {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Optional spacing between the two columns (works with floats too) */
+.langRU .tab.abilities
+  .sheet-area.flex-columns
+  .clearareaBox:has(.settings-verticalcenter.bold[data-type="mortal"]) {
+  column-gap: var(--wodru-settings-abilitiesmaxrating-row-gap);
+}
